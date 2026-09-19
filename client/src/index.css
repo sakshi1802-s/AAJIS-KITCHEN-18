@@ -1,0 +1,186 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/fraunces";
+@import "@fontsource-variable/inter";
+@import "@fontsource/mukta/400.css";
+@import "@fontsource/mukta/600.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Aji's Kitchen design tokens.
+ * Warm terracotta + deep maroon, turmeric/saffron accent, cream paper, muted leaf green.
+ * Anything default-Tailwind-blue is a bug. Light-first; dark is a warm brown, never slate.
+ *
+ * Semantic tokens (background, primary, …) live on :root / .dark so dark mode can swap
+ * them; `@theme inline` exposes them as Tailwind utilities (bg-primary, text-maroon, …).
+ */
+@theme inline {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Fraunces Variable", ui-serif, Georgia, serif;
+  --font-marathi: "Mukta", "Inter Variable", sans-serif;
+
+  /* brand palette */
+  --color-cream: var(--cream);
+  --color-terracotta: var(--terracotta);
+  --color-maroon: var(--maroon);
+  --color-saffron: var(--saffron);
+  --color-leaf: var(--leaf);
+  --color-leaf-foreground: var(--leaf-foreground);
+
+  /* shadcn semantic tokens */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --radius: 0.75rem;
+
+  /* brand */
+  --cream: oklch(0.975 0.014 80);          /* #FBF5EC paper */
+  --terracotta: oklch(0.56 0.135 40);      /* #B65A36 clay */
+  --maroon: oklch(0.36 0.105 18);          /* #6E2127 kumkum */
+  --saffron: oklch(0.79 0.15 75);          /* #EAA23A haldi */
+  --leaf: oklch(0.52 0.085 145);           /* #4F7A4E curry leaf */
+  --leaf-foreground: oklch(0.985 0.01 80);
+
+  --background: var(--cream);
+  --foreground: oklch(0.27 0.045 30);      /* warm ink */
+  --card: oklch(0.99 0.007 80);
+  --card-foreground: oklch(0.27 0.045 30);
+  --popover: oklch(0.99 0.007 80);
+  --popover-foreground: oklch(0.27 0.045 30);
+  --primary: var(--terracotta);
+  --primary-foreground: oklch(0.985 0.01 80);
+  --secondary: oklch(0.935 0.03 75);       /* sand */
+  --secondary-foreground: var(--maroon);
+  --muted: oklch(0.945 0.018 78);
+  --muted-foreground: oklch(0.49 0.035 45);
+  --accent: oklch(0.93 0.065 85);          /* turmeric wash */
+  --accent-foreground: oklch(0.33 0.08 30);
+  --destructive: oklch(0.52 0.19 25);
+  --border: oklch(0.885 0.025 70);
+  --input: oklch(0.86 0.03 70);
+  --ring: oklch(0.62 0.13 45);
+
+  --chart-1: var(--terracotta);
+  --chart-2: var(--saffron);
+  --chart-3: var(--leaf);
+  --chart-4: var(--maroon);
+  --chart-5: oklch(0.72 0.06 70);
+
+  --sidebar: oklch(0.96 0.02 78);
+  --sidebar-foreground: oklch(0.27 0.045 30);
+  --sidebar-primary: var(--terracotta);
+  --sidebar-primary-foreground: oklch(0.985 0.01 80);
+  --sidebar-accent: oklch(0.93 0.065 85);
+  --sidebar-accent-foreground: oklch(0.33 0.08 30);
+  --sidebar-border: oklch(0.885 0.025 70);
+  --sidebar-ring: oklch(0.62 0.13 45);
+}
+
+.dark {
+  --cream: oklch(0.19 0.02 40);
+  --terracotta: oklch(0.68 0.13 45);
+  --maroon: oklch(0.78 0.09 20);
+  --saffron: oklch(0.8 0.14 78);
+  --leaf: oklch(0.7 0.1 145);
+  --leaf-foreground: oklch(0.2 0.03 145);
+
+  --background: oklch(0.19 0.02 40);       /* roasted brown, not slate */
+  --foreground: oklch(0.94 0.02 80);
+  --card: oklch(0.23 0.024 40);
+  --card-foreground: oklch(0.94 0.02 80);
+  --popover: oklch(0.23 0.024 40);
+  --popover-foreground: oklch(0.94 0.02 80);
+  --primary: var(--terracotta);
+  --primary-foreground: oklch(0.18 0.03 40);
+  --secondary: oklch(0.29 0.03 40);
+  --secondary-foreground: oklch(0.92 0.03 80);
+  --muted: oklch(0.27 0.025 40);
+  --muted-foreground: oklch(0.74 0.03 70);
+  --accent: oklch(0.32 0.05 60);
+  --accent-foreground: oklch(0.94 0.03 80);
+  --destructive: oklch(0.66 0.18 25);
+  --border: oklch(0.34 0.025 45);
+  --input: oklch(0.38 0.03 45);
+  --ring: oklch(0.68 0.13 45);
+
+  --chart-1: var(--terracotta);
+  --chart-2: var(--saffron);
+  --chart-3: var(--leaf);
+  --chart-4: var(--maroon);
+  --chart-5: oklch(0.6 0.05 70);
+
+  --sidebar: oklch(0.22 0.022 40);
+  --sidebar-foreground: oklch(0.94 0.02 80);
+  --sidebar-primary: var(--terracotta);
+  --sidebar-primary-foreground: oklch(0.18 0.03 40);
+  --sidebar-accent: oklch(0.32 0.05 60);
+  --sidebar-accent-foreground: oklch(0.94 0.03 80);
+  --sidebar-border: oklch(0.34 0.025 45);
+  --sidebar-ring: oklch(0.68 0.13 45);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground min-h-dvh;
+  }
+  h1, h2, h3, h4 {
+    @apply font-heading tracking-tight;
+    font-optical-sizing: auto;
+  }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+  /* Marathi dish names: lang="mr" gets the Devanagari face automatically. */
+  :lang(mr) {
+    @apply font-marathi;
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "aji-kitchen",
+  "private": true,
+  "description": "Aji's Kitchen — home catering platform (client + server)",
+  "scripts": {
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install",
+    "dev": "concurrently -k -n server,client -c yellow,magenta \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "typecheck": "npm --prefix server run typecheck && npm --prefix client run typecheck",
+    "test": "npm --prefix server test",
+    "build": "npm --prefix server run build && npm --prefix client run build"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}
