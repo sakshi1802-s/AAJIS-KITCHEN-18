@@ -79,6 +79,10 @@ export interface MenuQuery {
   search?: string;
 }
 
+export interface MenuListResponse {
+  items: MenuItemDTO[];
+}
+
 /** Owner create / edit payload (paise). */
 export interface MenuItemInput {
   name: string;

@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { env, isProd } from "./config/env";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 import { healthRouter } from "./routes/health.routes";
+import { menuRouter } from "./routes/menu.routes";
 
 /** Builds the Express app without listening — tests import this directly. */
 export function createApp() {
@@ -23,6 +24,7 @@ export function createApp() {
   app.use(cookieParser());
 
   app.use("/api/health", healthRouter);
+  app.use("/api/menu", menuRouter);
 
   app.use("/api", notFoundHandler);
   app.use(errorHandler);
