@@ -1,11 +1,10 @@
 /**
- * Runs before every test file. Each file gets its own throwaway MongoDB:
- * an in-memory mongod (mongodb-memory-server), or — if TEST_MONGODB_URI is
- * set — a uniquely named database on that cluster, dropped afterwards.
+ * Runs before every test file: connects to this run's throwaway MongoDB
+ * (see globalSetup.ts) using a database name unique to the file, and drops it
+ * afterwards.
  */
-import { MongoMemoryServer } from "mongodb-memory-server";
 import mongoose from "mongoose";
-import { afterAll, beforeAll } from "vitest";
+import { afterAll, beforeAll, inject } from "vitest";
 
 process.env.NODE_ENV = "test";
 process.env.MONGODB_URI ??= "mongodb://set-in-beforeAll";
@@ -15,23 +14,12 @@ process.env.OWNER_EMAIL = "aji@example.com";
 process.env.GEMINI_API_KEY = "";
 process.env.N8N_WEBHOOK_URL = "";
 
-let mongod: MongoMemoryServer | undefined;
-
 beforeAll(async () => {
-  let uri: string;
-  const external = process.env.TEST_MONGODB_URI;
-  if (external) {
-    const dbName = `aji_test_${process.pid}_${Date.now()}`;
-    uri = external.replace(/\/(\?|$)/, `/${dbName}$1`);
-  } else {
-    mongod = await MongoMemoryServer.create();
-    uri = mongod.getUri("aji_test");
-  }
-  await mongoose.connect(uri);
+  const dbName = `aji_test_${process.pid}_${Math.random().toString(36).slice(2, 8)}`;
+  await mongoose.connect(inject("mongoUri"), { dbName });
 });
 
 afterAll(async () => {
-  if (process.env.TEST_MONGODB_URI) await mongoose.connection.dropDatabase();
+  await mongoose.connection.dropDatabase();
   await mongoose.disconnect();
-  await mongod?.stop();
 });

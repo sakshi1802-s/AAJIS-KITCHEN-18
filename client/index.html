@@ -9,6 +9,16 @@
     <title>Aji's Kitchen</title>
   </head>
   <body>
+    <script>
+      // Applies the saved theme before first paint, so dark mode never flashes white.
+      try {
+        var t = localStorage.getItem("aji-theme");
+        if (t === "dark") {
+          document.documentElement.classList.add("dark");
+          document.documentElement.style.colorScheme = "dark";
+        }
+      } catch (e) {}
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

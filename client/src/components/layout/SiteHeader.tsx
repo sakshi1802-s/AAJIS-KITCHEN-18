@@ -1,5 +1,6 @@
 import { Link, NavLink } from "react-router";
 import { cn } from "@/lib/utils";
+import { AccountMenu } from "./AccountMenu";
 import { BrandMark } from "./BrandMark";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
@@ -11,16 +12,22 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md supports-[backdrop-filter]:bg-background/70">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4">
-        <Link to="/" className="flex items-center gap-2.5 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-3 px-4">
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        >
           <BrandMark />
-          <span className="font-heading text-xl font-semibold text-maroon">Aji's Kitchen</span>
+          <span className="font-heading text-lg font-semibold text-maroon sm:text-xl">Aji's Kitchen</span>
         </Link>
-        <nav aria-label="Main" className="flex items-center gap-1">
-          <NavLink to="/menu" className={navLinkClass}>
-            Menu
-          </NavLink>
-        </nav>
+        <div className="flex items-center gap-1 sm:gap-2">
+          <nav aria-label="Main" className="flex items-center">
+            <NavLink to="/menu" className={navLinkClass}>
+              Menu
+            </NavLink>
+          </nav>
+          <AccountMenu />
+        </div>
       </div>
     </header>
   );

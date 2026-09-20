@@ -4,8 +4,10 @@ import express from "express";
 import helmet from "helmet";
 import { env, isProd } from "./config/env";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
+import { authRouter } from "./routes/auth.routes";
 import { healthRouter } from "./routes/health.routes";
 import { menuRouter } from "./routes/menu.routes";
+import { usersRouter } from "./routes/users.routes";
 
 /** Builds the Express app without listening — tests import this directly. */
 export function createApp() {
@@ -25,6 +27,8 @@ export function createApp() {
 
   app.use("/api/health", healthRouter);
   app.use("/api/menu", menuRouter);
+  app.use("/api/auth", authRouter);
+  app.use("/api/users", usersRouter);
 
   app.use("/api", notFoundHandler);
   app.use(errorHandler);
