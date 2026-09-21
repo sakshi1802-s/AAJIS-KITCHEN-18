@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { CartButton } from "@/features/cart/CartButton";
 import { AccountMenu } from "./AccountMenu";
 import { BrandMark } from "./BrandMark";
+import { ThemeToggle } from "./ThemeToggle";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
@@ -27,6 +28,7 @@ export function SiteHeader() {
               Menu
             </NavLink>
           </nav>
+          <ThemeToggle />
           <CartButton />
           <AccountMenu />
         </div>

@@ -1,4 +1,4 @@
-import { ArrowLeft, PartyPopper } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { Link, useParams, useSearchParams } from "react-router";
 import { toast } from "sonner";
 import { ErrorState } from "@/components/states/ErrorState";
@@ -9,6 +9,7 @@ import { useCancelOrder, useOrder } from "@/features/checkout/useOrders";
 import { ApiError } from "@/lib/api";
 import { SLOT_LABELS } from "@/lib/constants";
 import { formatINR } from "@/lib/format";
+import { OrderPlacedCelebration } from "./OrderPlacedCelebration";
 import { StatusChip } from "./StatusChip";
 
 const formatDate = (date: string) =>
@@ -56,14 +57,12 @@ export function OrderDetailPage() {
       </Button>
 
       {justPlaced && (
-        <div className="mb-5 flex items-start gap-3 rounded-2xl border border-leaf/30 bg-leaf/10 p-4">
-          <PartyPopper className="mt-0.5 size-5 shrink-0 text-leaf" aria-hidden="true" />
-          <div>
-            <p className="font-semibold">Order sent to Aji</p>
-            <p className="text-sm text-muted-foreground">
-              She'll confirm it herself — you'll see the status change here.
-            </p>
-          </div>
+        <div className="mb-5 rounded-2xl border border-leaf/30 bg-leaf/10 p-5 text-center">
+          <OrderPlacedCelebration />
+          <p className="mt-2 font-heading text-2xl font-semibold text-maroon">Order sent to Aji</p>
+          <p className="text-muted-foreground">
+            She confirms every order herself — you'll see the status change right here.
+          </p>
         </div>
       )}
 

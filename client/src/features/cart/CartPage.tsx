@@ -1,4 +1,5 @@
 import { ArrowRight, Minus, Plus, Trash2 } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { Link, useNavigate } from "react-router";
 import { DishImage } from "@/components/DishImage";
 import { EmptyState } from "@/components/states/EmptyState";
@@ -10,6 +11,7 @@ import { useCart } from "./cartContext";
 
 export function CartPage() {
   const { lines, total, setQuantity, remove, clear } = useCart();
+  const reduceMotion = useReducedMotion();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -41,8 +43,17 @@ export function CartPage() {
       </header>
 
       <ul className="space-y-3">
+        <AnimatePresence initial={false}>
         {lines.map((line) => (
-          <li key={line.menuItemId} className="flex gap-3 rounded-2xl border bg-card p-3">
+          <motion.li
+            key={line.menuItemId}
+            layout={!reduceMotion}
+            initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, x: -24 }}
+            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="flex gap-3 rounded-2xl border bg-card p-3"
+          >
             <div className="w-24 shrink-0 overflow-hidden rounded-xl sm:w-28">
               <DishImage
                 src={line.imageUrl}
@@ -103,8 +114,9 @@ export function CartPage() {
                 <p className="font-semibold text-maroon tabular-nums">{formatINR(line.price * line.quantity)}</p>
               </div>
             </div>
-          </li>
+          </motion.li>
         ))}
+        </AnimatePresence>
       </ul>
 
       <div className="mt-6 rounded-2xl border bg-card p-5">

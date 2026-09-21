@@ -4,10 +4,9 @@ import { CATEGORIES, type Category } from "@shared/api";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
 import { Button } from "@/components/ui/button";
-import { AddToCartButton } from "@/features/cart/AddToCartButton";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { cn } from "@/lib/utils";
-import { MenuCard } from "./MenuCard";
+import { MenuGrid } from "./MenuGrid";
 import { MenuFilters } from "./MenuFilters";
 import { MenuGridSkeleton } from "./MenuGridSkeleton";
 import { useMenu } from "./useMenu";
@@ -115,16 +114,13 @@ export function MenuPage() {
             <p className="mb-4 text-sm text-muted-foreground" aria-live="polite">
               {menu.data.length} {menu.data.length === 1 ? "dish" : "dishes"}
             </p>
-            <div
+            <MenuGrid
+              items={menu.data}
               className={cn(
                 "grid grid-cols-1 gap-5 transition-opacity min-[520px]:grid-cols-2 lg:grid-cols-3",
                 menu.isPlaceholderData && "opacity-60",
               )}
-            >
-              {menu.data.map((item, i) => (
-                <MenuCard key={item.id} item={item} eagerImage={i < 2} action={<AddToCartButton item={item} />} />
-              ))}
-            </div>
+            />
           </>
         )}
       </section>
