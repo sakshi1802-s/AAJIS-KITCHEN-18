@@ -1,6 +1,7 @@
 import { ArrowRight, CalendarClock, HandPlatter, ShoppingBasket } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
+import { AddToCartButton } from "@/features/cart/AddToCartButton";
 import { MenuCard } from "@/features/menu/MenuCard";
 import { useMenu } from "@/features/menu/useMenu";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -85,7 +86,7 @@ export function LandingPage() {
         <div className="mt-6 grid grid-cols-1 gap-5 min-[520px]:grid-cols-2 lg:grid-cols-3">
           {menu.isPending
             ? Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="aspect-[4/5] rounded-2xl" />)
-            : featured.map((item) => <MenuCard key={item.id} item={item} />)}
+            : featured.map((item) => <MenuCard key={item.id} item={item} action={<AddToCartButton item={item} />} />)}
         </div>
       </section>
     </>

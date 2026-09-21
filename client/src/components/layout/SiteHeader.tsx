@@ -1,5 +1,6 @@
 import { Link, NavLink } from "react-router";
 import { cn } from "@/lib/utils";
+import { CartButton } from "@/features/cart/CartButton";
 import { AccountMenu } from "./AccountMenu";
 import { BrandMark } from "./BrandMark";
 
@@ -26,6 +27,7 @@ export function SiteHeader() {
               Menu
             </NavLink>
           </nav>
+          <CartButton />
           <AccountMenu />
         </div>
       </div>

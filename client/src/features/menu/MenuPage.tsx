@@ -4,6 +4,7 @@ import { CATEGORIES, type Category } from "@shared/api";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
 import { Button } from "@/components/ui/button";
+import { AddToCartButton } from "@/features/cart/AddToCartButton";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { cn } from "@/lib/utils";
 import { MenuCard } from "./MenuCard";
@@ -121,7 +122,7 @@ export function MenuPage() {
               )}
             >
               {menu.data.map((item, i) => (
-                <MenuCard key={item.id} item={item} eagerImage={i < 2} />
+                <MenuCard key={item.id} item={item} eagerImage={i < 2} action={<AddToCartButton item={item} />} />
               ))}
             </div>
           </>

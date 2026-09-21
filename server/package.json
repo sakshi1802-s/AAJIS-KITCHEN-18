@@ -9,7 +9,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "seed": "tsx scripts/seed.ts"
+    "seed": "tsx scripts/seed.ts",
+    "dev:session": "tsx scripts/dev/devSession.ts",
+    "dev:poke": "tsx scripts/dev/poke.ts"
   },
   "type": "module",
   "dependencies": {

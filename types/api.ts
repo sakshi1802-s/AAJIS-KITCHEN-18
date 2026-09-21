@@ -196,10 +196,15 @@ export type CartConflict =
   | { kind: "NOT_FOUND"; menuItemId: string; name: string | null }
   | { kind: "UNAVAILABLE"; menuItemId: string; name: string }
   | { kind: "INSUFFICIENT_STOCK"; menuItemId: string; name: string; requested: number; available: number }
-  | { kind: "PRICE_CHANGED"; menuItemId: string; name: string; oldPrice: number; newPrice: number };
+  | { kind: "PRICE_CHANGED"; menuItemId: string; name: string; oldPrice: number; newPrice: number }
+  | { kind: "BELOW_MINIMUM"; menuItemId: string; name: string; requested: number; minQuantity: number };
 
 export interface CartConflictDetails {
   conflicts: CartConflict[];
+}
+
+export interface OrdersListResponse {
+  orders: OrderDTO[];
 }
 
 // ── Owner ────────────────────────────────────────────────────────────────
