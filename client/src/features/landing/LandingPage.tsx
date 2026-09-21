@@ -1,11 +1,16 @@
 import { ArrowRight, CalendarClock, HandPlatter, ShoppingBasket } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
+import { lazy, Suspense } from "react";
 import { Link } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMenu } from "@/features/menu/useMenu";
-import { FeaturedCarousel } from "./FeaturedCarousel";
 import { useSmoothScroll } from "./useSmoothScroll";
+
+// Below the fold and the only user of the carousel library — load it on demand.
+const FeaturedCarousel = lazy(() =>
+  import("./FeaturedCarousel").then((m) => ({ default: m.FeaturedCarousel })),
+);
 
 const STEPS = [
   {
@@ -158,7 +163,9 @@ export function LandingPage() {
               ))}
             </div>
           ) : featured.length > 0 ? (
-            <FeaturedCarousel items={featured} />
+            <Suspense fallback={<Skeleton className="aspect-[4/5] rounded-2xl" />}>
+              <FeaturedCarousel items={featured} />
+            </Suspense>
           ) : (
             <p className="text-muted-foreground">The menu is being written — check back soon.</p>
           )}

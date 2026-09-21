@@ -1,0 +1,33 @@
+# Render blueprint for the API. Create the service from this file, then fill in
+# the secret values in the dashboard (they are deliberately not stored here).
+services:
+  - type: web
+    name: aji-kitchen-api
+    runtime: node
+    plan: free
+    region: singapore
+    rootDir: server
+    buildCommand: npm ci && npm run build
+    startCommand: node dist/index.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false # Atlas connection string (Network Access must allow 0.0.0.0/0 for Render)
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_ORIGIN
+        sync: false # https://<your-project>.vercel.app
+      - key: OWNER_EMAIL
+        sync: false # Aji's Google account
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.5-flash-lite
+      - key: N8N_WEBHOOK_URL
+        sync: false # optional — leave unset and notifications no-op
+      - key: N8N_SECRET
+        sync: false

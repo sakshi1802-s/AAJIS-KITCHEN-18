@@ -1,0 +1,192 @@
+{
+  "info": {
+    "name": "Aji's Kitchen API",
+    "description": "Every endpoint. Auth is a session cookie: run 'Sign in with Google' with a real ID token, or paste a token from `npm --prefix server run dev:session` into the aji_session cookie. Money is in paise.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000" },
+    { "key": "menuItemId", "value": "" },
+    { "key": "orderId", "value": "" },
+    { "key": "addressId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /api/health",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/health" }
+        }
+      ]
+    },
+    {
+      "name": "Menu (public)",
+      "item": [
+        {
+          "name": "GET /api/menu",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/menu" }
+        },
+        {
+          "name": "GET /api/menu (filtered)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/menu?category=sweets&isVeg=true&search=modak",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "menu"],
+              "query": [
+                { "key": "category", "value": "sweets" },
+                { "key": "isVeg", "value": "true" },
+                { "key": "search", "value": "modak" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GET /api/menu/:id",
+          "request": { "method": "GET", "url": "{{baseUrl}}/api/menu/{{menuItemId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /api/auth/google",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"credential\": \"<Google ID token>\"\n}" },
+            "url": "{{baseUrl}}/api/auth/google"
+          }
+        },
+        { "name": "GET /api/auth/me", "request": { "method": "GET", "url": "{{baseUrl}}/api/auth/me" } },
+        { "name": "POST /api/auth/logout", "request": { "method": "POST", "url": "{{baseUrl}}/api/auth/logout" } }
+      ]
+    },
+    {
+      "name": "Customer",
+      "item": [
+        {
+          "name": "PATCH /api/users/me",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Asha Kore\",\n  \"phone\": \"+91 98765 43210\"\n}" },
+            "url": "{{baseUrl}}/api/users/me"
+          }
+        },
+        {
+          "name": "POST /api/users/me/addresses",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Home\",\n  \"line1\": \"Flat 3, Shanti Nivas\",\n  \"line2\": \"Off FC Road\",\n  \"city\": \"Pune\",\n  \"pincode\": \"411004\",\n  \"isDefault\": true\n}"
+            },
+            "url": "{{baseUrl}}/api/users/me/addresses"
+          }
+        },
+        {
+          "name": "DELETE /api/users/me/addresses/:id",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/api/users/me/addresses/{{addressId}}" }
+        },
+        {
+          "name": "POST /api/orders",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    { \"menuItemId\": \"{{menuItemId}}\", \"quantity\": 11, \"expectedPrice\": 3000 }\n  ],\n  \"requestedFor\": { \"date\": \"2026-10-01\", \"slot\": \"evening\" },\n  \"deliveryAddress\": {\n    \"label\": \"Home\",\n    \"line1\": \"Flat 3, Shanti Nivas\",\n    \"line2\": \"\",\n    \"city\": \"Pune\",\n    \"pincode\": \"411004\"\n  },\n  \"customerPhone\": \"9876543210\",\n  \"customerNotes\": \"kam tikhat\"\n}"
+            },
+            "url": "{{baseUrl}}/api/orders",
+            "description": "Send a stale expectedPrice to see the 409 CART_CONFLICT diff."
+          }
+        },
+        { "name": "GET /api/orders/me", "request": { "method": "GET", "url": "{{baseUrl}}/api/orders/me" } },
+        { "name": "GET /api/orders/:id", "request": { "method": "GET", "url": "{{baseUrl}}/api/orders/{{orderId}}" } },
+        {
+          "name": "POST /api/orders/:id/cancel",
+          "request": { "method": "POST", "url": "{{baseUrl}}/api/orders/{{orderId}}/cancel" }
+        },
+        {
+          "name": "POST /api/ai/suggest",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"haldi at home, 60 log, mostly veg, kuch sweet bhi chahiye\"\n}"
+            },
+            "url": "{{baseUrl}}/api/ai/suggest",
+            "description": "Rate limited to 10 per hour per user."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Owner (Aji only)",
+      "item": [
+        {
+          "name": "GET /api/owner/orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/owner/orders?status=PLACED",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "owner", "orders"],
+              "query": [
+                { "key": "status", "value": "PLACED" },
+                { "key": "date", "value": "2026-10-01", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "PATCH /api/owner/orders/:id/status",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"decision\": \"ACCEPTED\"\n}" },
+            "url": "{{baseUrl}}/api/owner/orders/{{orderId}}/status",
+            "description": "Declining requires a reason: { \"decision\": \"DECLINED\", \"reason\": \"...\" }"
+          }
+        },
+        { "name": "GET /api/owner/stats", "request": { "method": "GET", "url": "{{baseUrl}}/api/owner/stats" } },
+        {
+          "name": "POST /api/owner/menu",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sabudana Khichdi\",\n  \"nameMarathi\": \"साबुदाणा खिचडी\",\n  \"description\": \"Soaked sago with ghee, jeera and peanut.\",\n  \"category\": \"upvas\",\n  \"unitLabel\": \"per plate\",\n  \"price\": 6000,\n  \"minQuantity\": 10,\n  \"servesApprox\": 1,\n  \"isVeg\": true,\n  \"stockCount\": null,\n  \"tags\": [\"upvas\", \"breakfast\"]\n}"
+            },
+            "url": "{{baseUrl}}/api/owner/menu"
+          }
+        },
+        {
+          "name": "PATCH /api/owner/menu/:id",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "content-type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"isAvailable\": false,\n  \"stockCount\": 12\n}" },
+            "url": "{{baseUrl}}/api/owner/menu/{{menuItemId}}",
+            "description": "Only the fields sent are changed — nothing else is touched."
+          }
+        },
+        {
+          "name": "DELETE /api/owner/menu/:id",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/api/owner/menu/{{menuItemId}}",
+            "description": "Soft delete: hidden from the menu, old orders keep working."
+          }
+        }
+      ]
+    }
+  ]
+}

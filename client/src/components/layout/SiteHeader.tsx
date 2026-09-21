@@ -27,6 +27,9 @@ export function SiteHeader() {
             <NavLink to="/menu" className={navLinkClass}>
               Menu
             </NavLink>
+            <NavLink to="/plan" className={navLinkClass}>
+              Plan
+            </NavLink>
           </nav>
           <ThemeToggle />
           <CartButton />

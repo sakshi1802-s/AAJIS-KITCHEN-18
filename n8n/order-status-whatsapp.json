@@ -1,0 +1,157 @@
+{
+  "name": "Aji's Kitchen — order status to WhatsApp",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "aji-order-status",
+        "authentication": "headerAuth",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "a1111111-1111-4111-8111-111111111111",
+      "name": "Order status webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-360, 0],
+      "webhookId": "aji-order-status",
+      "notes": "Guarded by Header Auth: x-webhook-secret must match the server's N8N_SECRET."
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "version": 2 },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.status }}",
+                    "rightValue": "ACCEPTED",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "accepted"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "version": 2 },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.status }}",
+                    "rightValue": "DECLINED",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "declined"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a2222222-2222-4222-8222-222222222222",
+      "name": "Which status?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [-120, 0],
+      "notes": "CANCELLED falls out of the switch: the customer already knows."
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "m1",
+              "name": "to",
+              "type": "string",
+              "value": "=whatsapp:+91{{ $json.body.customerPhone }}"
+            },
+            {
+              "id": "m2",
+              "name": "message",
+              "type": "string",
+              "value": "=Namaskar {{ $json.body.customerName }}! Aji has accepted your order {{ $json.body.orderNumber }} for {{ $json.body.requestedFor.date }} ({{ $json.body.requestedFor.slot }}). Total ₹{{ ($json.body.total / 100).toFixed(0) }}. She'll see you then!"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a3333333-3333-4333-8333-333333333333",
+      "name": "Accepted message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [140, -120]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d1",
+              "name": "to",
+              "type": "string",
+              "value": "=whatsapp:+91{{ $json.body.customerPhone }}"
+            },
+            {
+              "id": "d2",
+              "name": "message",
+              "type": "string",
+              "value": "=Namaskar {{ $json.body.customerName }}, Aji can't take order {{ $json.body.orderNumber }} for {{ $json.body.requestedFor.date }}. Reason: {{ $json.body.ownerNote }}. Nothing has been charged — do try another day."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a4444444-4444-4444-8444-444444444444",
+      "name": "Declined message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [140, 100]
+    },
+    {
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "whatsapp:+14155238886",
+        "to": "={{ $json.to }}",
+        "toWhatsapp": true,
+        "message": "={{ $json.message }}",
+        "options": {}
+      },
+      "id": "a5555555-5555-4555-8555-555555555555",
+      "name": "Send on WhatsApp",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [420, -10],
+      "notes": "Twilio sandbox number. Each recipient must send the join code once."
+    }
+  ],
+  "connections": {
+    "Order status webhook": {
+      "main": [[{ "node": "Which status?", "type": "main", "index": 0 }]]
+    },
+    "Which status?": {
+      "main": [
+        [{ "node": "Accepted message", "type": "main", "index": 0 }],
+        [{ "node": "Declined message", "type": "main", "index": 0 }]
+      ]
+    },
+    "Accepted message": {
+      "main": [[{ "node": "Send on WhatsApp", "type": "main", "index": 0 }]]
+    },
+    "Declined message": {
+      "main": [[{ "node": "Send on WhatsApp", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {},
+  "meta": {
+    "description": "Receives order status changes from Aji's Kitchen and sends the customer a WhatsApp message. Import, then attach a Header Auth credential (x-webhook-secret) and Twilio credentials."
+  }
+}
