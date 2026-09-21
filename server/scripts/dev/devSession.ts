@@ -9,14 +9,17 @@ import { connectDB, disconnectDB } from "../../src/lib/db";
 import { Order } from "../../src/models/Order";
 import { User } from "../../src/models/User";
 
-const EMAIL = "qa.tester@example.invalid";
+const CUSTOMER_EMAIL = "qa.tester@example.invalid";
+const OWNER_EMAIL = "qa.aji@example.invalid";
+const owner = process.argv.includes("--owner");
+const EMAIL = owner ? OWNER_EMAIL : CUSTOMER_EMAIL;
 
 async function main() {
   if (env.NODE_ENV === "production") throw new Error("Never run this against production");
   await connectDB(env.MONGODB_URI);
 
   if (process.argv.includes("--delete")) {
-    const user = await User.findOne({ email: EMAIL });
+    const user = await User.findOne({ email: { $in: [CUSTOMER_EMAIL, OWNER_EMAIL] } });
     if (user) {
       const { deletedCount } = await Order.deleteMany({ userId: user._id });
       await user.deleteOne();
@@ -31,7 +34,12 @@ async function main() {
   const user = await User.findOneAndUpdate(
     { email: EMAIL },
     {
-      $set: { googleId: "dev-qa-tester", name: "QA Tester", role: "customer", phone: "9876543210" },
+      $set: {
+        googleId: owner ? "dev-qa-aji" : "dev-qa-tester",
+        name: owner ? "QA Aji" : "QA Tester",
+        role: owner ? "owner" : "customer",
+        phone: "9876543210",
+      },
       $setOnInsert: {
         addresses: [
           {

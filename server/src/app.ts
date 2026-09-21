@@ -8,6 +8,7 @@ import { authRouter } from "./routes/auth.routes";
 import { healthRouter } from "./routes/health.routes";
 import { menuRouter } from "./routes/menu.routes";
 import { ordersRouter } from "./routes/orders.routes";
+import { ownerRouter } from "./routes/owner.routes";
 import { usersRouter } from "./routes/users.routes";
 
 /** Builds the Express app without listening — tests import this directly. */
@@ -31,6 +32,7 @@ export function createApp() {
   app.use("/api/auth", authRouter);
   app.use("/api/users", usersRouter);
   app.use("/api/orders", ordersRouter);
+  app.use("/api/owner", ownerRouter);
 
   app.use("/api", notFoundHandler);
   app.use(errorHandler);

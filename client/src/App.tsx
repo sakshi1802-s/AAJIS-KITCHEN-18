@@ -10,6 +10,10 @@ import { CheckoutPage } from "@/features/checkout/CheckoutPage";
 import { LandingPage } from "@/features/landing/LandingPage";
 import { MenuPage } from "@/features/menu/MenuPage";
 import { MyOrdersPage } from "@/features/orders/MyOrdersPage";
+import { MenuManagerPage } from "@/features/owner/MenuManagerPage";
+import { OwnerLayout } from "@/features/owner/OwnerLayout";
+import { OwnerOrderDetailPage } from "@/features/owner/OwnerOrderDetailPage";
+import { OwnerOrdersPage } from "@/features/owner/OwnerOrdersPage";
 import { OrderDetailPage } from "@/features/orders/OrderDetailPage";
 import { ProfilePage } from "@/features/profile/ProfilePage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
@@ -32,6 +36,15 @@ export default function App() {
                 <Route path="orders" element={<MyOrdersPage />} />
                 <Route path="orders/:id" element={<OrderDetailPage />} />
                 <Route path="account" element={<ProfilePage />} />
+              </Route>
+
+              {/* Aji only */}
+              <Route element={<ProtectedRoute ownerOnly />}>
+                <Route path="owner" element={<OwnerLayout />}>
+                  <Route index element={<OwnerOrdersPage />} />
+                  <Route path="orders/:id" element={<OwnerOrderDetailPage />} />
+                  <Route path="menu" element={<MenuManagerPage />} />
+                </Route>
               </Route>
 
               <Route path="*" element={<NotFoundPage />} />
