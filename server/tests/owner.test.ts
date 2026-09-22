@@ -171,7 +171,7 @@ describe("the menu manager", () => {
       .send({
         name: "Sabudana Khichdi",
         nameMarathi: "साबुदाणा खिचडी",
-        category: "upvas",
+        category: "snacks",
         unitLabel: "per plate",
         price: 6000,
         minQuantity: 10,

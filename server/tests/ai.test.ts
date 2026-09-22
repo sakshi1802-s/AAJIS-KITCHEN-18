@@ -23,7 +23,7 @@ async function seedMenu() {
   await MenuItem.deleteMany({});
   const modak = await makeMenuItem({
     name: "Ukadiche Modak",
-    category: "sweets",
+    category: "faral",
     price: 3000,
     minQuantity: 11,
     servesApprox: 1,
@@ -32,7 +32,7 @@ async function seedMenu() {
   });
   const bhat = await makeMenuItem({
     name: "Masale Bhat",
-    category: "meals",
+    category: "thali-veg",
     price: 36000,
     minQuantity: 2,
     servesApprox: 5,
@@ -40,7 +40,7 @@ async function seedMenu() {
   });
   const vada = await makeMenuItem({
     name: "Sabudana Vada",
-    category: "upvas",
+    category: "snacks",
     price: 6000,
     minQuantity: 10,
     servesApprox: 1,
@@ -48,7 +48,7 @@ async function seedMenu() {
   });
   const chicken = await makeMenuItem({
     name: "Chicken Rassa",
-    category: "meals",
+    category: "thali-nonveg",
     price: 90000,
     minQuantity: 1,
     servesApprox: 5,

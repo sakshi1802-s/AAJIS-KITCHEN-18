@@ -13,6 +13,11 @@ function ScrollToTop() {
 }
 
 export function RootLayout() {
+  const { pathname } = useLocation();
+  // The landing page carries its own navigation over the photograph, so the
+  // site header stays out of its way.
+  const isLanding = pathname === "/";
+
   return (
     <div className="flex min-h-dvh flex-col">
       <ScrollToTop />
@@ -22,7 +27,7 @@ export function RootLayout() {
       >
         Skip to content
       </a>
-      <SiteHeader />
+      {!isLanding && <SiteHeader />}
       <main id="main" className="flex-1">
         <PageTransition>
           <Outlet />

@@ -1,12 +1,10 @@
 import type { Category, Slot } from "@shared/api";
 
 export const CATEGORY_LABELS: Record<Category, { en: string; mr: string }> = {
-  breakfast: { en: "Breakfast", mr: "न्याहारी" },
-  snacks: { en: "Snacks", mr: "फराळ" },
-  meals: { en: "Meals", mr: "जेवण" },
-  sweets: { en: "Sweets", mr: "गोड" },
-  festive: { en: "Festive", mr: "सणासुदीचे" },
-  upvas: { en: "Upvas", mr: "उपवास" },
+  snacks: { en: "Marathi Snacks", mr: "खास महाराष्ट्राची चव" },
+  faral: { en: "Diwali Faral", mr: "सणासुदीचे" },
+  "thali-veg": { en: "Veg Thali", mr: "शाकाहारी थाळी" },
+  "thali-nonveg": { en: "Non-veg Thali", mr: "मांसाहारी थाळी" },
 };
 
 export const SLOT_LABELS: Record<Slot, { label: string; hint: string }> = {

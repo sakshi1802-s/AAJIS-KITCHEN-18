@@ -7,10 +7,10 @@ const dish = (over: Partial<MenuItemDTO> = {}): MenuItemDTO => ({
   name: "Ukadiche Modak",
   nameMarathi: "उकडीचे मोदक",
   description: "",
-  category: "sweets",
+  category: "snacks",
   unitLabel: "per piece",
   price: 3000,
-  minQuantity: 11,
+  minQuantity: 1,
   servesApprox: 1,
   isAvailable: true,
   stockCount: 21,
@@ -21,21 +21,26 @@ const dish = (over: Partial<MenuItemDTO> = {}): MenuItemDTO => ({
 });
 
 describe("cartReducer", () => {
-  it("a first add is raised to the dish's minimum quantity", () => {
+  it("one tap adds one — never a whole tray", () => {
     const lines = cartReducer([], { type: "add", item: dish(), quantity: 1 });
     expect(lines).toHaveLength(1);
-    expect(lines[0]!.quantity).toBe(11);
+    expect(lines[0]!.quantity).toBe(1);
+  });
+
+  it("still respects a dish that genuinely has a minimum above one", () => {
+    const lines = cartReducer([], { type: "add", item: dish({ minQuantity: 6 }), quantity: 1 });
+    expect(lines[0]!.quantity).toBe(6);
   });
 
   it("adding again increases the quantity instead of duplicating the line", () => {
-    const once = cartReducer([], { type: "add", item: dish(), quantity: 11 });
-    const twice = cartReducer(once, { type: "add", item: dish(), quantity: 5 });
+    const once = cartReducer([], { type: "add", item: dish(), quantity: 1 });
+    const twice = cartReducer(once, { type: "add", item: dish(), quantity: 1 });
     expect(twice).toHaveLength(1);
-    expect(twice[0]!.quantity).toBe(16);
+    expect(twice[0]!.quantity).toBe(2);
   });
 
   it("setting a quantity to zero removes the line", () => {
-    const lines = cartReducer([lineFrom(dish(), 11)], { type: "setQuantity", menuItemId: "modak", quantity: 0 });
+    const lines = cartReducer([lineFrom(dish(), 3)], { type: "setQuantity", menuItemId: "modak", quantity: 0 });
     expect(lines).toEqual([]);
   });
 
@@ -46,9 +51,9 @@ describe("cartReducer", () => {
   });
 
   it("reconcile raises the quantity when the minimum went up", () => {
-    const stale = [lineFrom(dish({ minQuantity: 11 }), 11)];
-    const fresh = cartReducer(stale, { type: "reconcile", item: dish({ minQuantity: 21 }) });
-    expect(fresh[0]!.quantity).toBe(21);
+    const stale = [lineFrom(dish({ minQuantity: 1 }), 2)];
+    const fresh = cartReducer(stale, { type: "reconcile", item: dish({ minQuantity: 6 }) });
+    expect(fresh[0]!.quantity).toBe(6);
   });
 
   it("totals multiply the snapshot price by quantity, in paise", () => {
@@ -57,6 +62,6 @@ describe("cartReducer", () => {
   });
 
   it("clear empties everything", () => {
-    expect(cartReducer([lineFrom(dish(), 11)], { type: "clear" })).toEqual([]);
+    expect(cartReducer([lineFrom(dish(), 2)], { type: "clear" })).toEqual([]);
   });
 });

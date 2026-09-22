@@ -28,7 +28,11 @@ const SeedItem = z.object({
   isVeg: z.boolean(),
   isAvailable: z.boolean().default(true),
   stockCount: z.number().int().min(0).nullable(),
-  imageUrl: z.string().url().nullable().default(null),
+  // A full URL, or a path the client serves (/dishes/<slug>.webp).
+  imageUrl: z
+    .union([z.url(), z.string().regex(/^\/[\w\-./]+\.(webp|jpg|jpeg|png|avif)$/i)])
+    .nullable()
+    .default(null),
   tags: z.array(z.string()),
 });
 const SeedFile = z.object({ items: z.array(SeedItem).min(1) });

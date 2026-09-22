@@ -1,4 +1,5 @@
-import type { ReactNode } from "react";
+import { Info } from "lucide-react";
+import { useState, type ReactNode } from "react";
 import type { MenuItemDTO } from "@shared/api";
 import { DishImage } from "@/components/DishImage";
 import { VegMark } from "@/components/VegMark";
@@ -14,13 +15,15 @@ const BADGE_TONES: Record<AvailabilityTone, string> = {
 
 interface MenuCardProps {
   item: MenuItemDTO;
-  /** The add-to-cart control (wired in Phase 3). */
+  /** The add-to-cart control. */
   action?: ReactNode;
   eagerImage?: boolean;
 }
 
 export function MenuCard({ item, action, eagerImage }: MenuCardProps) {
   const availability = getAvailability(item);
+  // Hover covers a mouse; the ⓘ button covers a phone.
+  const [showDetails, setShowDetails] = useState(false);
 
   return (
     <article
@@ -30,7 +33,7 @@ export function MenuCard({ item, action, eagerImage }: MenuCardProps) {
       )}
       aria-labelledby={`dish-${item.id}`}
     >
-      <div className="relative">
+      <div className="relative" onMouseLeave={() => setShowDetails(false)}>
         <DishImage
           src={item.imageUrl}
           name={item.name}
@@ -39,6 +42,7 @@ export function MenuCard({ item, action, eagerImage }: MenuCardProps) {
           eager={eagerImage}
           className={cn(!availability.canOrder && "grayscale-[60%]")}
         />
+
         {availability.badge && (
           <span
             className={cn(
@@ -48,6 +52,30 @@ export function MenuCard({ item, action, eagerImage }: MenuCardProps) {
           >
             {availability.badge.label}
           </span>
+        )}
+
+        {item.description && (
+          <>
+            <button
+              type="button"
+              aria-expanded={showDetails}
+              aria-label={`What's in ${item.name}?`}
+              onClick={() => setShowDetails((open) => !open)}
+              className="absolute top-3 right-3 flex size-8 items-center justify-center rounded-full bg-background/85 text-foreground shadow-sm outline-none backdrop-blur-sm transition-opacity focus-visible:ring-3 focus-visible:ring-ring/50 sm:opacity-0 sm:group-hover:opacity-100"
+            >
+              <Info className="size-4" />
+            </button>
+
+            {/* What's in it — on hover for a mouse, on tap for a phone. */}
+            <div
+              className={cn(
+                "absolute inset-0 flex items-end bg-gradient-to-t from-black/90 via-black/70 to-black/25 p-4 transition-opacity duration-200",
+                showDetails ? "opacity-100" : "pointer-events-none opacity-0 sm:group-hover:opacity-100",
+              )}
+            >
+              <p className="text-sm leading-snug text-white">{item.description}</p>
+            </div>
+          </>
         )}
       </div>
 
@@ -68,9 +96,7 @@ export function MenuCard({ item, action, eagerImage }: MenuCardProps) {
 
         {item.description && <p className="line-clamp-2 text-sm text-muted-foreground">{item.description}</p>}
 
-        <p className="text-xs text-muted-foreground">
-          Serves ~{item.servesApprox} · Min. {item.minQuantity}
-        </p>
+        <p className="text-xs text-muted-foreground">Serves ~{item.servesApprox}</p>
 
         <div className="mt-auto flex items-end justify-between gap-3 pt-2">
           <p>

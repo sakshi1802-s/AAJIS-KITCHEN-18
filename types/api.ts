@@ -11,7 +11,8 @@
 
 // ── Enums ────────────────────────────────────────────────────────────────
 
-export const CATEGORIES = ["breakfast", "snacks", "meals", "sweets", "festive", "upvas"] as const;
+/** The four sections of Aji's menu, in the order they appear on the page. */
+export const CATEGORIES = ["snacks", "faral", "thali-veg", "thali-nonveg"] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 export const SLOTS = ["morning", "afternoon", "evening"] as const;

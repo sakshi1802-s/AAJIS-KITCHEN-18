@@ -12,8 +12,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/features/auth/useAuth";
+import { cn } from "@/lib/utils";
 
-export function AccountMenu() {
+/** `onHero` sits this over the photograph, where the styling has to be light. */
+export function AccountMenu({ onHero = false }: { onHero?: boolean }) {
   const { user, isLoading, isOwner, signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -21,7 +23,12 @@ export function AccountMenu() {
 
   if (!user) {
     return (
-      <Button asChild variant="outline" size="sm" className="h-9 rounded-full px-4">
+      <Button
+        asChild
+        variant={onHero ? "ghost" : "outline"}
+        size="sm"
+        className={cn("h-9 rounded-full px-4", onHero && "text-white hover:bg-white/15 hover:text-white")}
+      >
         <Link to="/signin">Sign in</Link>
       </Button>
     );
@@ -34,23 +41,45 @@ export function AccountMenu() {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          size="icon"
-          className="size-9 rounded-full bg-secondary font-semibold text-maroon"
-          aria-label="Your account"
+          size={isOwner ? "sm" : "icon"}
+          className={cn(
+            "rounded-full font-semibold",
+            isOwner ? "h-9 gap-2 px-2.5" : "size-9",
+            onHero ? "bg-white/15 text-white hover:bg-white/25" : "bg-secondary text-maroon",
+          )}
+          aria-label={isOwner ? "Aji's account" : "Your account"}
         >
-          {initial}
+          <span
+            className={cn(
+              "flex size-6 items-center justify-center rounded-full text-sm",
+              onHero ? "bg-white/25" : "bg-terracotta/15",
+            )}
+          >
+            {initial}
+          </span>
+          {/* Aji should never have to guess which account she's in. */}
+          {isOwner && <span className="text-xs tracking-wide uppercase">Owner</span>}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+
+      <DropdownMenuContent align="end" className="w-60">
         <DropdownMenuLabel className="truncate">
           {user.name}
           <span className="block text-xs font-normal text-muted-foreground">{user.email}</span>
+          <span
+            className={cn(
+              "mt-1.5 inline-block rounded-full px-2 py-0.5 text-[11px] font-medium",
+              isOwner ? "bg-maroon/10 text-maroon" : "bg-secondary text-secondary-foreground",
+            )}
+          >
+            {isOwner ? "Kitchen owner" : "Customer"}
+          </span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {isOwner && (
           <DropdownMenuItem asChild>
             <Link to="/owner">
-              <ChefHat /> Aji's dashboard
+              <ChefHat /> Kitchen dashboard
             </Link>
           </DropdownMenuItem>
         )}

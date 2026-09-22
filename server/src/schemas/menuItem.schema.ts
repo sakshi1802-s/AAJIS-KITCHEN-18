@@ -22,7 +22,13 @@ const fields = {
   isAvailable: z.boolean(),
   // null = made to order (unlimited); a number = a fixed batch.
   stockCount: z.number().int().min(0).max(10_000).nullable(),
-  imageUrl: z.url("That doesn't look like an image link").nullable(),
+  // Either a full URL (Cloudinary, or anywhere else) or a path served by the
+  // client itself, like "/dishes/sabudana-vada.webp".
+  imageUrl: z
+    .union([z.url(), z.string().regex(/^\/[\w\-./]+\.(webp|jpg|jpeg|png|avif)$/i)], {
+      error: "Use a full image link or a path like /dishes/name.webp",
+    })
+    .nullable(),
   isVeg: z.boolean(),
   tags: z.array(z.string().trim().min(1).max(30)).max(12),
 };

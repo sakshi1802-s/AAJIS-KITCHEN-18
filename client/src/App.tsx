@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/features/auth/AuthProvider";
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute";
+import { OwnerLoginPage } from "@/features/auth/OwnerLoginPage";
 import { SignInPage } from "@/features/auth/SignInPage";
 import { CartProvider } from "@/features/cart/CartProvider";
 import { CartPage } from "@/features/cart/CartPage";
@@ -56,6 +57,7 @@ export default function App() {
                 <Route path="cart" element={<CartPage />} />
                 <Route path="plan" element={<PlanMyOrderPage />} />
                 <Route path="signin" element={<SignInPage />} />
+                <Route path="owner-login" element={<OwnerLoginPage />} />
 
                 {/* Signed-in customers */}
                 <Route element={<ProtectedRoute />}>

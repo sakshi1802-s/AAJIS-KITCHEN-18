@@ -8,7 +8,10 @@ export function CartButton() {
 
   return (
     <Button asChild variant="ghost" size="icon" className="relative size-9 rounded-full">
-      <Link to="/cart" aria-label={itemCount > 0 ? `Cart, ${itemCount} items` : "Cart, empty"}>
+      <Link
+        to="/cart"
+        aria-label={itemCount > 0 ? `Cart, ${itemCount} ${itemCount === 1 ? "item" : "items"}` : "Cart, empty"}
+      >
         <ShoppingBasket />
         {itemCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 flex min-w-5 items-center justify-center rounded-full bg-terracotta px-1 text-[11px] font-semibold text-primary-foreground tabular-nums">

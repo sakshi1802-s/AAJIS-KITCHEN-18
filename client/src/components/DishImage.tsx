@@ -3,12 +3,10 @@ import type { Category } from "@shared/api";
 import { cn } from "@/lib/utils";
 
 const TINTS: Record<Category, { bg: string; ring: string }> = {
-  breakfast: { bg: "bg-saffron/25", ring: "stroke-saffron" },
   snacks: { bg: "bg-terracotta/20", ring: "stroke-terracotta" },
-  meals: { bg: "bg-leaf/20", ring: "stroke-leaf" },
-  sweets: { bg: "bg-maroon/15", ring: "stroke-maroon" },
-  festive: { bg: "bg-saffron/30", ring: "stroke-terracotta" },
-  upvas: { bg: "bg-leaf/15", ring: "stroke-saffron" },
+  faral: { bg: "bg-saffron/30", ring: "stroke-saffron" },
+  "thali-veg": { bg: "bg-leaf/20", ring: "stroke-leaf" },
+  "thali-nonveg": { bg: "bg-maroon/15", ring: "stroke-maroon" },
 };
 
 interface DishImageProps {

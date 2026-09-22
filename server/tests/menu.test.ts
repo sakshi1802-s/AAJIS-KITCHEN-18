@@ -12,17 +12,17 @@ const names = (body: MenuListResponse) => body.items.map((i) => i.name);
 describe("GET /api/menu", () => {
   beforeAll(async () => {
     await MenuItem.deleteMany({});
-    await makeMenuItem({ name: "Kanda Pohe", nameMarathi: "कांदा पोहे", category: "breakfast", tags: ["breakfast", "light"] });
-    await makeMenuItem({ name: "Sabudana Vada", nameMarathi: "साबुदाणा वडा", category: "upvas", tags: ["upvas", "fried"] });
-    await makeMenuItem({ name: "Ukadiche Modak", category: "sweets", stockCount: 3, tags: ["sweet", "festive"] });
-    await makeMenuItem({ name: "Chicken Rassa", category: "meals", isVeg: false, tags: ["spicy"] });
-    await makeMenuItem({ name: "Bharli Vangi", category: "meals", isAvailable: false });
+    await makeMenuItem({ name: "Kanda Pohe", nameMarathi: "कांदा पोहे", category: "snacks", tags: ["breakfast", "light"] });
+    await makeMenuItem({ name: "Sabudana Vada", nameMarathi: "साबुदाणा वडा", category: "snacks", tags: ["upvas", "fried"] });
+    await makeMenuItem({ name: "Ukadiche Modak", category: "faral", stockCount: 3, tags: ["sweet", "festive"] });
+    await makeMenuItem({ name: "Chicken Rassa", category: "thali-nonveg", isVeg: false, tags: ["spicy"] });
+    await makeMenuItem({ name: "Bharli Vangi", category: "thali-veg", isAvailable: false });
     await makeMenuItem({ name: "Old Dish", category: "snacks", isDeleted: true });
   });
 
   it("lists every non-deleted dish, including unavailable ones, in category order", async () => {
     const res = await request(app).get("/api/menu").expect(200);
-    expect(names(res.body)).toEqual(["Kanda Pohe", "Bharli Vangi", "Chicken Rassa", "Ukadiche Modak", "Sabudana Vada"]);
+    expect(names(res.body)).toEqual(["Kanda Pohe", "Sabudana Vada", "Ukadiche Modak", "Bharli Vangi", "Chicken Rassa"]);
   });
 
   it("returns the public DTO shape — prices in paise, nullable stock, no internals", async () => {
@@ -36,8 +36,8 @@ describe("GET /api/menu", () => {
   });
 
   it("filters by category", async () => {
-    const res = await request(app).get("/api/menu?category=meals").expect(200);
-    expect(names(res.body)).toEqual(["Bharli Vangi", "Chicken Rassa"]);
+    const res = await request(app).get("/api/menu?category=thali-nonveg").expect(200);
+    expect(names(res.body)).toEqual(["Chicken Rassa"]);
   });
 
   it("filters veg / non-veg", async () => {

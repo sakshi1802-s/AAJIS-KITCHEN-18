@@ -20,7 +20,12 @@ export function SiteHeader() {
           className="flex items-center gap-2.5 rounded-lg outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <BrandMark />
-          <span className="font-heading text-lg font-semibold text-maroon sm:text-xl">Aji's Kitchen</span>
+          <span className="flex items-baseline gap-1.5">
+            <span lang="mr" className="font-display-mr text-xl text-terracotta sm:text-2xl">
+              आजी
+            </span>
+            <span className="font-heading text-lg font-semibold text-maroon sm:text-xl">Kitchen</span>
+          </span>
         </Link>
         <div className="flex items-center gap-1 sm:gap-2">
           <nav aria-label="Main" className="flex items-center">

@@ -29,7 +29,7 @@ export function AddToCartButton({ item }: { item: MenuItemDTO }) {
         className="rounded-full"
         onClick={() => {
           add(item);
-          toast.success(`${item.name} added`, { description: `Minimum ${item.minQuantity} ${item.unitLabel}` });
+          toast.success(`${item.name} added`, { description: item.unitLabel });
         }}
       >
         <Plus /> Add

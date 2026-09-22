@@ -185,7 +185,10 @@ const KEYWORD_TAGS: { pattern: RegExp; tags: string[] }[] = [
     pattern: /\b(haldi|wedding|lagna|puja|pooja|festive|festival|ganpati|diwali|celebration)\b/i,
     tags: ["festive", "wedding", "puja"],
   },
-  { pattern: /\b(lunch|dinner|jevan|meal|thali)\b/i, tags: ["meal"] },
+  { pattern: /\b(lunch|dinner|jevan|meal|thali)\b/i, tags: ["meal", "thali"] },
+  { pattern: /\b(faral|tin|box|gift)\b/i, tags: ["faral", "diwali"] },
+  { pattern: /\b(fish|seafood|bombil|surmai|prawns?|kolambi|malvani)\b/i, tags: ["seafood", "malvani"] },
+  { pattern: /\b(chicken|kombdi|mutton|non[-\s]?veg)\b/i, tags: ["chicken", "non-veg"] },
   // Devanagari has no \b word boundary, so these match as plain substrings.
   { pattern: /(गोड|मिठाई)/, tags: ["sweet"] },
   { pattern: /(उपवास)/, tags: ["upvas"] },

@@ -47,7 +47,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       lines,
       total: cartTotal(lines),
       itemCount: lines.reduce((count, line) => count + line.quantity, 0),
-      add: (item, quantity = item.minQuantity) => dispatch({ type: "add", item, quantity }),
+      // One tap adds one. The reducer still raises it if a dish ever carries a
+      // minimum above 1.
+      add: (item, quantity = 1) => dispatch({ type: "add", item, quantity }),
       setQuantity: (menuItemId, quantity) => dispatch({ type: "setQuantity", menuItemId, quantity }),
       remove: (menuItemId) => dispatch({ type: "remove", menuItemId }),
       clear: () => dispatch({ type: "clear" }),
