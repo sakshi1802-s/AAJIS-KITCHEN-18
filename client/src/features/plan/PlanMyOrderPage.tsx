@@ -50,8 +50,8 @@ export function PlanMyOrderPage() {
         <p className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-sm font-medium text-maroon">
           <Sparkles className="size-4" aria-hidden="true" /> Optional helper
         </p>
-        <h1 className="mt-3 text-4xl font-semibold text-maroon">Plan my order</h1>
-        <p className="mt-2 text-muted-foreground">
+        <h1 className="mt-3 font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">Plan my order</h1>
+        <p className="mt-2 text-cream/80">
           Describe the occasion and we'll suggest a spread from Aji's menu. Every suggestion is editable, and you
           can always{" "}
           <Link to="/menu" className="underline">

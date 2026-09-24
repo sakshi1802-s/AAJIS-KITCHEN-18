@@ -49,8 +49,8 @@ export function ProfilePage() {
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6 px-4 py-8 sm:py-10">
       <header>
-        <h1 className="text-4xl font-semibold text-maroon">Your details</h1>
-        <p className="mt-2 text-muted-foreground">
+        <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">Your details</h1>
+        <p className="mt-2 text-cream/80">
           Signed in as {user.email}. Aji uses your phone number to reach you about an order.
         </p>
       </header>

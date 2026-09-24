@@ -22,8 +22,8 @@ export function ErrorState({ title = "Something went wrong", error, onRetry, cla
       <span className="flex size-14 items-center justify-center rounded-full bg-destructive/10 text-destructive">
         <Icon className="size-6" aria-hidden="true" />
       </span>
-      <h2 className="text-xl font-semibold">{title}</h2>
-      <p className="max-w-sm text-muted-foreground">{message}</p>
+      <h2 className="font-royal text-xl font-bold tracking-wide text-gold">{title}</h2>
+      <p className="max-w-sm text-cream/80">{message}</p>
       {onRetry && (
         <Button variant="outline" size="lg" onClick={onRetry} className="mt-2">
           <RotateCcw /> Try again

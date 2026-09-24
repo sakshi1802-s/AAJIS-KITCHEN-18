@@ -104,18 +104,11 @@ export function ReviewsMarquee() {
 
   return (
     <section className="relative overflow-hidden py-14 sm:py-20" aria-labelledby="reviews-heading">
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-wood-deep bg-repeat"
-        style={{ backgroundImage: "url('/textures/wood-planks.jpg')", backgroundSize: "auto 100%" }}
-      />
-      <div aria-hidden="true" className="absolute inset-0 bg-black/60" />
-
       <motion.div
-        initial={reduceMotion ? false : { opacity: 0, y: 32 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 70 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
         className="relative"
       >
         <div className="mx-auto mb-8 w-full max-w-5xl px-4 text-center">

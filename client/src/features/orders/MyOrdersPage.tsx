@@ -17,7 +17,7 @@ export function MyOrdersPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
-      <h1 className="text-4xl font-semibold text-maroon">Your orders</h1>
+      <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">Your orders</h1>
 
       <div className="mt-6">
         {orders.isPending ? (

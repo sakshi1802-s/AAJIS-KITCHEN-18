@@ -86,8 +86,8 @@ export function CheckoutPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
-      <h1 className="text-4xl font-semibold text-maroon">Checkout</h1>
-      <p className="mt-2 text-muted-foreground">
+      <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">Checkout</h1>
+      <p className="mt-2 text-cream/80">
         Aji sees this order on her phone and confirms it herself. Nothing is charged online.
       </p>
 

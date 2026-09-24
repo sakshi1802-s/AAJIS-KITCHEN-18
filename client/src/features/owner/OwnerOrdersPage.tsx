@@ -79,11 +79,11 @@ export function OwnerOrdersPage() {
       ) : (
         <>
           <section>
-            <h2 className="mb-3 text-xl font-semibold">
+            <h2 className="mb-3 font-royal text-xl font-bold tracking-wide text-gold">
               Needs your decision {waiting.length > 0 && <span className="text-terracotta">({waiting.length})</span>}
             </h2>
             {waiting.length === 0 ? (
-              <p className="rounded-2xl border border-dashed p-6 text-center text-muted-foreground">
+              <p className="rounded-2xl border border-dashed border-cream/25 p-6 text-center text-cream/75">
                 Nothing waiting — you're all caught up.
               </p>
             ) : (
@@ -99,7 +99,7 @@ export function OwnerOrdersPage() {
 
           {rest.length > 0 && (
             <section>
-              <h2 className="mb-3 text-xl font-semibold">Everything else</h2>
+              <h2 className="mb-3 font-royal text-xl font-bold tracking-wide text-gold">Everything else</h2>
               <ul className="space-y-3">
                 {rest.map((order) => (
                   <li key={order.id}>

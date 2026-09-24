@@ -49,7 +49,7 @@ export function MenuManagerPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-3xl font-semibold text-maroon">My menu</h1>
+        <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">My menu</h1>
         <Button size="lg" className="h-12 text-base" onClick={() => setEditing("new")}>
           <Plus /> Add dish
         </Button>

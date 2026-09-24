@@ -34,10 +34,10 @@ export function CartPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
       <header className="mb-6 flex items-end justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-semibold text-maroon">Your cart</h1>
-          <p className="mt-1 text-muted-foreground">Prices are confirmed again when you place the order.</p>
+          <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">Your cart</h1>
+          <p className="mt-1 text-cream/80">Prices are confirmed again when you place the order.</p>
         </div>
-        <Button variant="ghost" size="sm" onClick={clear}>
+        <Button variant="ghost" size="sm" className="text-cream/80 hover:bg-white/10 hover:text-cream" onClick={clear}>
           Clear
         </Button>
       </header>

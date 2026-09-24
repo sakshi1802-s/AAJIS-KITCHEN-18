@@ -63,11 +63,11 @@ export function MenuPage() {
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:py-10">
       <header className="mb-6 max-w-2xl">
-        <h1 className="text-4xl font-semibold text-maroon sm:text-5xl">The menu</h1>
-        <p lang="mr" className="mt-1 text-xl text-muted-foreground">
+        <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">The menu</h1>
+        <p lang="mr" className="mt-1 font-display-mr text-2xl text-cream/80">
           आजीचा मेनू
         </p>
-        <p className="mt-3 text-muted-foreground">
+        <p className="mt-3 text-cream/80">
           Everything is made to order in Aji's kitchen. Pick what you'd like and when you need it — she'll look
           at your order and confirm it herself.
         </p>
@@ -111,13 +111,13 @@ export function MenuPage() {
           />
         ) : (
           <>
-            <p className="mb-4 text-sm text-muted-foreground" aria-live="polite">
+            <p className="mb-4 text-sm text-cream/70" aria-live="polite">
               {menu.data.length} {menu.data.length === 1 ? "dish" : "dishes"}
             </p>
             <MenuGrid
               items={menu.data}
               className={cn(
-                "grid grid-cols-1 gap-5 transition-opacity min-[520px]:grid-cols-2 lg:grid-cols-3",
+                "grid grid-cols-2 gap-3 transition-opacity sm:gap-4 md:grid-cols-3 lg:grid-cols-4",
                 menu.isPlaceholderData && "opacity-60",
               )}
             />

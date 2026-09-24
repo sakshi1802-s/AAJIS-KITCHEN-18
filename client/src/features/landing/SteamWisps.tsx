@@ -34,21 +34,24 @@ interface Plume {
 
 // The thali she carries low, in her right hand.
 const LOWER_PLATE: Plume[] = [
-  { x: 250, y: 585, size: 210, delay: 0, duration: 8, sway: 46, peak: 0.62, spin: -1 },
-  { x: 330, y: 560, size: 170, delay: 2.1, duration: 9.5, sway: -38, peak: 0.5, spin: 1 },
-  { x: 430, y: 545, size: 230, delay: 4.2, duration: 8.8, sway: 40, peak: 0.58, spin: -1 },
-  { x: 540, y: 575, size: 180, delay: 6.1, duration: 10, sway: -44, peak: 0.46, spin: 1 },
-  { x: 350, y: 520, size: 260, delay: 3.2, duration: 11, sway: 30, peak: 0.4, spin: -1 },
+  { x: 235, y: 590, size: 200, delay: 0, duration: 7.5, sway: 38, peak: 0.72, spin: -1 },
+  { x: 300, y: 565, size: 165, delay: 1.2, duration: 8.2, sway: -30, peak: 0.6, spin: 1 },
+  { x: 360, y: 545, size: 215, delay: 2.4, duration: 7.8, sway: 32, peak: 0.68, spin: -1 },
+  { x: 430, y: 555, size: 175, delay: 3.6, duration: 8.6, sway: -34, peak: 0.62, spin: 1 },
+  { x: 500, y: 575, size: 205, delay: 4.8, duration: 8, sway: 30, peak: 0.66, spin: -1 },
+  { x: 275, y: 520, size: 240, delay: 6, duration: 9.2, sway: -26, peak: 0.5, spin: 1 },
+  { x: 400, y: 500, size: 255, delay: 2.9, duration: 9.6, sway: 24, peak: 0.46, spin: -1 },
 ];
 
 // The raised thali, up near her shoulder.
 const RAISED_PLATE: Plume[] = [
-  { x: 1020, y: 320, size: 200, delay: 1.1, duration: 8.6, sway: 42, peak: 0.7, spin: 1 },
-  { x: 1140, y: 285, size: 165, delay: 3.4, duration: 9.8, sway: -36, peak: 0.6, spin: -1 },
-  { x: 1265, y: 300, size: 220, delay: 5.5, duration: 9, sway: 38, peak: 0.66, spin: 1 },
-  { x: 1380, y: 330, size: 175, delay: 7.4, duration: 10.4, sway: -40, peak: 0.56, spin: -1 },
-  { x: 1300, y: 210, size: 190, delay: 4.6, duration: 10.8, sway: 34, peak: 0.5, spin: 1 },
-  { x: 1150, y: 250, size: 250, delay: 2.4, duration: 11.5, sway: 26, peak: 0.38, spin: 1 },
+  { x: 1000, y: 330, size: 195, delay: 0.6, duration: 7.6, sway: 36, peak: 0.74, spin: 1 },
+  { x: 1075, y: 300, size: 160, delay: 1.8, duration: 8.4, sway: -30, peak: 0.62, spin: -1 },
+  { x: 1150, y: 285, size: 210, delay: 3, duration: 7.9, sway: 32, peak: 0.7, spin: 1 },
+  { x: 1235, y: 300, size: 175, delay: 4.2, duration: 8.8, sway: -34, peak: 0.64, spin: -1 },
+  { x: 1320, y: 325, size: 200, delay: 5.4, duration: 8.1, sway: 30, peak: 0.68, spin: 1 },
+  { x: 1120, y: 235, size: 235, delay: 2.2, duration: 9.4, sway: 22, peak: 0.5, spin: 1 },
+  { x: 1270, y: 225, size: 225, delay: 6.4, duration: 9.8, sway: -24, peak: 0.46, spin: -1 },
 ];
 
 const PLUMES = [...LOWER_PLATE, ...RAISED_PLATE];

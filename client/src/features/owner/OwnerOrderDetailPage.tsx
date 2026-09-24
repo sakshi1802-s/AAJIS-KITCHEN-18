@@ -58,8 +58,8 @@ export function OwnerOrderDetailPage() {
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-semibold text-maroon">{data.customer?.name ?? "Customer"}</h1>
-          <p className="font-mono text-sm text-muted-foreground">{data.orderNumber}</p>
+          <h1 className="font-royal text-2xl font-bold tracking-wide text-gold sm:text-3xl">{data.customer?.name ?? "Customer"}</h1>
+          <p className="font-mono text-sm text-cream/70">{data.orderNumber}</p>
         </div>
         <StatusChip status={data.status} className="px-4 py-1.5 text-base" />
       </div>

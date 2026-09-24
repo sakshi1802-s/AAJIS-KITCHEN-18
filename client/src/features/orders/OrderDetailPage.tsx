@@ -68,8 +68,8 @@ export function OrderDetailPage() {
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="font-mono text-2xl font-semibold text-maroon">{data.orderNumber}</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="font-mono text-2xl font-semibold text-gold">{data.orderNumber}</h1>
+          <p className="text-sm text-cream/70">
             Placed on {new Date(data.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "long" })}
           </p>
         </div>
@@ -158,7 +158,7 @@ export function OrderDetailPage() {
           >
             {cancelOrder.isPending ? "Cancelling…" : "Cancel this order"}
           </Button>
-          <p className="mt-2 text-center text-sm text-muted-foreground">
+          <p className="mt-2 text-center text-sm text-cream/70">
             You can cancel while Aji hasn't decided yet.
           </p>
         </div>

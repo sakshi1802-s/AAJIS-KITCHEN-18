@@ -33,8 +33,8 @@ export function EmptyState({ title, description, action, illustration, className
   return (
     <div className={cn("flex flex-col items-center gap-3 px-6 py-14 text-center", className)}>
       {illustration ?? <ThaliIllustration />}
-      <h2 className="text-xl font-semibold">{title}</h2>
-      {description && <p className="max-w-sm text-muted-foreground">{description}</p>}
+      <h2 className="font-royal text-xl font-bold tracking-wide text-gold">{title}</h2>
+      {description && <p className="max-w-sm text-cream/80">{description}</p>}
       {action && <div className="mt-2">{action}</div>}
     </div>
   );

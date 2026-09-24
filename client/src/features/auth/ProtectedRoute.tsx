@@ -38,8 +38,8 @@ export function ProtectedRoute({ ownerOnly = false }: { ownerOnly?: boolean }) {
         <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-destructive/10 text-destructive">
           <ShieldX className="size-7" aria-hidden="true" />
         </span>
-        <h1 className="mt-4 font-royal text-2xl font-bold">Not your kitchen</h1>
-        <p className="mt-2 text-muted-foreground">
+        <h1 className="mt-4 font-royal text-2xl font-bold text-gold">Not your kitchen</h1>
+        <p className="mt-2 text-cream/80">
           This area belongs to Aji. Your account, {user.email}, is a customer account — which is all you need to
           order.
         </p>

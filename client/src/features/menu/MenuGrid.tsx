@@ -21,10 +21,10 @@ export function MenuGrid({ items, className }: { items: MenuItemDTO[]; className
         return (
           <motion.div
             key={item.id}
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 36 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.35, delay: Math.min(i, 5) * 0.05, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ duration: 0.5, delay: Math.min(i, 5) * 0.06, ease: [0.16, 1, 0.3, 1] }}
           >
             {card}
           </motion.div>
