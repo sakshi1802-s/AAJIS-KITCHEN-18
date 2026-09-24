@@ -7,6 +7,9 @@
 @import "@fontsource/mukta/600.css";
 @import "@fontsource/yatra-one/devanagari-400.css";
 @import "@fontsource/yatra-one/400.css";
+@import "@fontsource/cinzel/400.css";
+@import "@fontsource/cinzel/600.css";
+@import "@fontsource/cinzel/700.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -20,11 +23,15 @@
  */
 @theme inline {
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Fraunces Variable", ui-serif, Georgia, serif;
+  --font-heading: "Cinzel", "Fraunces Variable", ui-serif, Georgia, serif;
+  /* The royal face: inscriptional Roman capitals, used for every heading,
+     nav label and button on the site. */
+  --font-royal: "Cinzel", ui-serif, Georgia, serif;
   --font-marathi: "Mukta", "Inter Variable", sans-serif;
   /* Display Devanagari for the logo and the chatak-matak line. Swap in a
      bought calligraphy face here and the whole site follows. */
-  --font-display-mr: "Yatra One", "Mukta", serif;
+  /* Brush-style Devanagari, closest free match to the calligraphy reference. */
+  --font-display-mr: "Yatra One", "Mukta", cursive;
 
   /* brand palette */
   --color-cream: var(--cream);
@@ -200,45 +207,53 @@
 }
 
 /* ── Hero steam ──────────────────────────────────────────────────────────
-   A wisp starts small and low, rises while drifting sideways, spreads and
-   fades. Blur plus a soft radial gradient is what keeps it looking like
-   steam rather than smoke. */
-@keyframes steam-rise {
+   A plume climbs while it twists and swells, so it reads as a curl of steam
+   rather than a rising dot. The odd border-radius plus the rotation is what
+   gives the whirl; the blur is set per-plume in the component. */
+@keyframes steam-plume {
   0% {
     opacity: 0;
-    transform: translate3d(0, 10%, 0) scale(0.6);
+    transform: translate3d(0, 6%, 0) scale(0.45) rotate(0deg);
   }
-  18% {
-    opacity: var(--steam-opacity, 0.32);
+  10% {
+    opacity: var(--peak, 0.5);
   }
-  70% {
-    opacity: calc(var(--steam-opacity, 0.32) * 0.55);
+  32% {
+    transform: translate3d(calc(var(--sway, 30px) * -0.85), -32%, 0) scale(0.85)
+      rotate(calc(var(--spin, 1) * 55deg));
+  }
+  58% {
+    opacity: calc(var(--peak, 0.5) * 0.8);
+    transform: translate3d(var(--sway, 30px), -72%, 0) scale(1.2) rotate(calc(var(--spin, 1) * -40deg));
+  }
+  82% {
+    opacity: calc(var(--peak, 0.5) * 0.4);
+    transform: translate3d(calc(var(--sway, 30px) * -0.5), -112%, 0) scale(1.6)
+      rotate(calc(var(--spin, 1) * 70deg));
   }
   100% {
     opacity: 0;
-    transform: translate3d(var(--steam-drift, 14px), -150%, 0) scale(1.75);
+    transform: translate3d(0, -155%, 0) scale(2) rotate(calc(var(--spin, 1) * 95deg));
   }
 }
 
-.steam-wisp {
+.steam-plume {
   position: absolute;
-  border-radius: 9999px;
-  background: radial-gradient(
-    ellipse at 50% 70%,
-    rgba(255, 252, 245, 0.85) 0%,
-    rgba(255, 250, 240, 0.4) 45%,
-    rgba(255, 250, 240, 0) 72%
-  );
-  filter: blur(14px);
+  /* An uneven blob curls far better than a circle when it rotates. */
+  border-radius: 58% 42% 63% 37% / 46% 58% 42% 54%;
+  background:
+    radial-gradient(60% 50% at 38% 72%, rgba(255, 253, 248, 0.95) 0%, rgba(255, 250, 240, 0) 68%),
+    radial-gradient(55% 60% at 68% 40%, rgba(255, 252, 245, 0.8) 0%, rgba(255, 250, 240, 0) 72%);
+  mix-blend-mode: screen;
   opacity: 0;
   will-change: transform, opacity;
-  animation-name: steam-rise;
+  animation-name: steam-plume;
   animation-iteration-count: infinite;
-  animation-timing-function: cubic-bezier(0.35, 0, 0.6, 1);
+  animation-timing-function: cubic-bezier(0.4, 0, 0.55, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .steam-wisp {
+  .steam-plume {
     display: none;
   }
 }
@@ -255,12 +270,14 @@
 }
 
 .marquee-track {
-  animation: marquee-left 46s linear infinite;
+  animation: marquee-left 60s linear infinite;
   will-change: transform;
 }
 
 .marquee:hover .marquee-track,
-.marquee:focus-within .marquee-track {
+.marquee:focus-within .marquee-track,
+/* holding a finger on the strip pauses it, so it can be read on a phone */
+.marquee:active .marquee-track {
   animation-play-state: paused;
 }
 

@@ -27,7 +27,11 @@ export function AccountMenu({ onHero = false }: { onHero?: boolean }) {
         asChild
         variant={onHero ? "ghost" : "outline"}
         size="sm"
-        className={cn("h-9 rounded-full px-4", onHero && "text-white hover:bg-white/15 hover:text-white")}
+        className={cn(
+          "h-9 rounded-full px-4 font-royal tracking-wide",
+          onHero &&
+            "border border-white/30 bg-black/20 text-white backdrop-blur-[3px] [text-shadow:0_2px_10px_rgba(0,0,0,0.85)] hover:bg-white/20 hover:text-white",
+        )}
       >
         <Link to="/signin">Sign in</Link>
       </Button>

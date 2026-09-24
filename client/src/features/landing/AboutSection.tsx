@@ -1,25 +1,29 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
-import { Button } from "@/components/ui/button";
 
 /**
- * Aji's own photographs aren't in yet, so the frame cycles through her food
- * until they are. Drop files into client/public/aji/ and list them here — the
- * layout doesn't change.
+ * Section two: a small framed slideshow that rises into place as you scroll,
+ * her story beside it, on the gavti wood.
+ *
+ * The pictures are close-ups cut from the hero photograph at near-native
+ * resolution (server/scripts/dev/cropHero.py) — the collage tiles were too
+ * small to fill a frame this size without going soft. When Aji's own photos
+ * arrive, drop them into client/public/aji/ and list them here.
  */
 const SLIDES = [
-  { src: "/dishes/puran-poli-thali.webp", caption: "Puran poli, rolled thin enough to see through" },
-  { src: "/dishes/ukadiche-modak.webp", caption: "Twenty-one modak, steamed every Ganpati morning" },
-  { src: "/dishes/thalipeeth.webp", caption: "Bhajani ground at home, not bought in a packet" },
-  { src: "/dishes/veg-thali.webp", caption: "A full thali — the way lunch is meant to arrive" },
+  { src: "/aji/thali-lower.webp", caption: "Sabudana khichdi, vada pav, thecha — an everyday plate" },
+  { src: "/aji/thali-raised.webp", caption: "A full thali: bhaji, varan bhaat, puri, koshimbir, shrikhand" },
+  { src: "/aji/carrying.webp", caption: "Carried to the table the way it's been done for forty years" },
 ];
 
-const SLIDE_MS = 4200;
+const SLIDE_MS = 4500;
 
 export function AboutSection() {
   const reduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
+  // Guard against a stale index (hot reload, or a shorter list next time).
+  const current = SLIDES[index] ?? SLIDES[0]!;
 
   useEffect(() => {
     if (reduceMotion) return;
@@ -28,41 +32,56 @@ export function AboutSection() {
   }, [reduceMotion]);
 
   const reveal = (delay = 0) => ({
-    initial: reduceMotion ? false : { opacity: 0, y: 26 },
+    initial: reduceMotion ? false : { opacity: 0, y: 48 },
     whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true, margin: "-80px" },
-    transition: { duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] as const },
+    viewport: { once: true, margin: "-90px" },
+    transition: { duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] as const },
   });
 
   return (
-    <section id="about-aji" className="relative scroll-mt-4 overflow-hidden bg-wood py-16 sm:py-24">
-      {/* Woody grain: warm bands rather than a photograph. */}
+    <section id="about-aji" className="relative scroll-mt-4 overflow-hidden py-16 sm:py-24">
+      {/* Gavti wood. Tiled at its own height so the grain stays sharp. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.16] mix-blend-overlay"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(90deg, rgba(255,240,210,0.5) 0 2px, rgba(0,0,0,0) 2px 26px), repeating-linear-gradient(90deg, rgba(0,0,0,0.35) 0 1px, rgba(0,0,0,0) 1px 90px)",
-        }}
+        className="absolute inset-0 bg-wood-deep bg-repeat"
+        style={{ backgroundImage: "url('/textures/wood-planks.jpg')", backgroundSize: "auto 100%" }}
       />
+      <div aria-hidden="true" className="absolute inset-0 bg-black/35" />
 
-      <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 px-4 md:grid-cols-2 md:gap-14">
-        <motion.figure {...reveal()} className="relative">
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2rem] border-4 border-gold/60 bg-wood-deep shadow-2xl">
-            {SLIDES.map((slide, i) => (
-              <img
-                key={slide.src}
-                src={slide.src}
-                alt={slide.caption}
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 size-full object-cover transition-opacity duration-1000"
-                style={{ opacity: i === index ? 1 : 0 }}
-              />
-            ))}
-            <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-            <figcaption className="absolute inset-x-0 bottom-0 p-5 text-sm text-white/90" aria-live="off">
-              {SLIDES[index]!.caption}
+      <div className="relative mx-auto grid w-full max-w-5xl items-center gap-10 px-4 md:grid-cols-[minmax(0,0.85fr)_minmax(0,1fr)] md:gap-12">
+        {/* The frame — deliberately smaller than the text column. */}
+        <motion.figure {...reveal()} className="mx-auto w-full max-w-[19rem]">
+          <div className="rounded-lg border border-gold/60 bg-[#f6ecd9] p-2 shadow-[0_18px_50px_rgba(0,0,0,0.6)] ring-1 ring-black/30">
+            {/* The floral strip frames the picture, top and bottom. */}
+            <img
+              src="/textures/floral-border.png"
+              alt=""
+              aria-hidden="true"
+              className="h-4 w-full scale-y-[-1] object-cover"
+            />
+            <div className="relative my-1.5 aspect-[4/3] w-full overflow-hidden">
+              {SLIDES.map((slide, i) => (
+                <img
+                  key={slide.src}
+                  src={slide.src}
+                  alt={slide.caption}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 size-full object-cover transition-opacity duration-[1200ms]"
+                  style={{ opacity: i === index ? 1 : 0 }}
+                />
+              ))}
+            </div>
+
+            <img
+              src="/textures/floral-border.png"
+              alt=""
+              aria-hidden="true"
+              className="h-4 w-full object-cover"
+            />
+
+            <figcaption className="px-1 pt-2 pb-0.5 text-center font-royal text-[0.7rem] leading-snug tracking-wide text-[#6b3a1e]">
+              {current.caption}
             </figcaption>
           </div>
 
@@ -74,49 +93,53 @@ export function AboutSection() {
                 aria-label={`Show ${slide.caption}`}
                 aria-current={i === index}
                 onClick={() => setIndex(i)}
-                className={`h-1.5 rounded-full transition-all ${i === index ? "w-7 bg-gold" : "w-3 bg-white/35 hover:bg-white/60"}`}
+                className={`h-1.5 rounded-full transition-all ${i === index ? "w-7 bg-gold" : "w-3 bg-white/40 hover:bg-white/70"}`}
               />
             ))}
           </div>
         </motion.figure>
 
-        <div className="text-cream">
+        <div>
           <motion.p {...reveal(0.05)} lang="mr" className="font-display-mr text-3xl text-gold sm:text-4xl">
             आजीच्या हातची चव
           </motion.p>
 
-          <motion.h2 {...reveal(0.1)} className="mt-3 font-heading text-4xl font-semibold text-cream sm:text-5xl">
-            Forty years at the same stove.
+          <motion.h2
+            {...reveal(0.1)}
+            className="mt-3 font-royal text-3xl font-bold tracking-wide text-white sm:text-4xl"
+          >
+            Forty years at the same stove
           </motion.h2>
 
-          <motion.div {...reveal(0.18)} className="mt-5 space-y-4 text-lg text-cream/85">
+          <motion.div {...reveal(0.18)} className="mt-5 space-y-4 text-[1.05rem] leading-relaxed text-cream/90">
             <p>
-              Aji has been cooking for her family since she was nineteen — first for her own house, then for every
-              wedding, haldi and Ganpati in the building. Nothing here comes out of a packet. The bhajani is ground at
-              home, the masala is pounded and not bought, the ghee is her own, and the vegetables are picked the same
-              morning she cooks them.
+              Aji has cooked for her family since she was nineteen — first for her own house, then for every wedding,
+              haldi and Ganpati on the street. Nothing here comes out of a packet. The bhajani is ground at home, the
+              masala is pounded and not bought, the ghee is her own, and the vegetables are picked the morning she
+              cooks them.
             </p>
             <p>
-              She cooks one order at a time, which is why she confirms each one herself. If she can't do your day, she
-              will say so — she would rather turn an order down than send out food she isn't proud of.
+              She cooks one order at a time, which is why she reads and confirms each one herself. If she cannot do
+              your day, she will say so — she would rather turn an order down than send out food she isn't proud of.
             </p>
-            <p className="font-heading text-xl text-gold">
+            <p className="font-royal text-lg tracking-wide text-gold sm:text-xl">
               Food that tastes like someone's home, because it came from one.
             </p>
           </motion.div>
 
           <motion.div {...reveal(0.26)} className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg" className="h-12 rounded-full px-6 text-base">
-              <Link to="/menu">See what she's making</Link>
-            </Button>
-            <Button
-              asChild
-              variant="outline"
-              size="lg"
-              className="h-12 rounded-full border-cream/40 bg-transparent px-6 text-base text-cream hover:bg-cream/10 hover:text-cream"
+            <Link
+              to="/menu"
+              className="rounded-full bg-gold px-7 py-3 font-royal text-sm font-bold tracking-wide text-black outline-none transition-colors hover:bg-saffron focus-visible:ring-3 focus-visible:ring-gold/60 sm:text-base"
             >
-              <Link to="/plan">Plan an occasion</Link>
-            </Button>
+              See what she's making
+            </Link>
+            <Link
+              to="/plan"
+              className="rounded-full border border-cream/50 px-7 py-3 font-royal text-sm font-bold tracking-wide text-cream outline-none transition-colors hover:border-gold hover:text-gold focus-visible:ring-3 focus-visible:ring-cream/40 sm:text-base"
+            >
+              Plan an occasion
+            </Link>
           </motion.div>
         </div>
       </div>

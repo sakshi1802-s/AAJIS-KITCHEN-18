@@ -32,10 +32,16 @@ describe("the owner gate", () => {
   it("a customer gets 403 on every owner route; signed out gets 401", async () => {
     const customer = await makeUser();
     const cookie = sessionCookie(customer);
+    // Every admin route, not a sample: the dashboard URL being unlisted is
+    // tidiness, and this is the part that actually keeps customers out.
+    const id = "64b000000000000000000000";
     const routes: [string, string][] = [
       ["get", "/api/owner/orders"],
       ["get", "/api/owner/stats"],
       ["post", "/api/owner/menu"],
+      ["patch", `/api/owner/menu/${id}`],
+      ["delete", `/api/owner/menu/${id}`],
+      ["patch", `/api/owner/orders/${id}/status`],
     ];
 
     for (const [method, path] of routes) {

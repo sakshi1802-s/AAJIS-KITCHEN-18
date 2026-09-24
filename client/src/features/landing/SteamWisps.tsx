@@ -2,48 +2,56 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Steam over the food in the hero photograph.
+ * Steam curling off the food in the hero photograph.
  *
- * Each wisp is a soft blurred ellipse that rises, drifts sideways, widens and
- * fades — the way steam actually behaves. They run on long, offset loops so
- * the pattern never looks like it's repeating. No particles and no glow: this
- * should read as a slightly hazy photo, not an effect.
+ * Each plume is a soft, irregular blob that rises while it twists, swells and
+ * fades — so it reads as a curl of steam rather than a rising dot. Several
+ * plumes per plate, on offset loops, give a continuous column.
  *
  * Positions are given in the PHOTOGRAPH's own pixels and mapped through the
- * same maths `object-fit: cover` uses, so a wisp stays over its katori
+ * same maths `object-fit: cover` uses, so a plume stays over its katori
  * whichever way the image gets cropped.
  */
 
 const IMAGE_W = 1536;
 const IMAGE_H = 1024;
 
-interface Wisp {
-  /** centre of the wisp, in the photograph's pixels */
+interface Plume {
+  /** where it starts, in the photograph's pixels */
   x: number;
   y: number;
-  w: number;
-  h: number;
+  /** size in photograph pixels */
+  size: number;
   delay: number;
   duration: number;
-  drift: number;
-  opacity: number;
+  /** how far it wanders sideways as it climbs */
+  sway: number;
+  /** brightest it ever gets */
+  peak: number;
+  /** which way it curls */
+  spin: 1 | -1;
 }
 
-// The thali she carries low in her right hand.
-const LOWER_PLATE: Wisp[] = [
-  { x: 250, y: 560, w: 150, h: 240, delay: 0, duration: 11, drift: -26, opacity: 0.46 },
-  { x: 390, y: 505, w: 130, h: 215, delay: 3.4, duration: 13, drift: 18, opacity: 0.38 },
-  { x: 520, y: 545, w: 140, h: 225, delay: 6.8, duration: 12, drift: -12, opacity: 0.34 },
+// The thali she carries low, in her right hand.
+const LOWER_PLATE: Plume[] = [
+  { x: 250, y: 585, size: 210, delay: 0, duration: 8, sway: 46, peak: 0.62, spin: -1 },
+  { x: 330, y: 560, size: 170, delay: 2.1, duration: 9.5, sway: -38, peak: 0.5, spin: 1 },
+  { x: 430, y: 545, size: 230, delay: 4.2, duration: 8.8, sway: 40, peak: 0.58, spin: -1 },
+  { x: 540, y: 575, size: 180, delay: 6.1, duration: 10, sway: -44, peak: 0.46, spin: 1 },
+  { x: 350, y: 520, size: 260, delay: 3.2, duration: 11, sway: 30, peak: 0.4, spin: -1 },
 ];
 
 // The raised thali, up near her shoulder.
-const RAISED_PLATE: Wisp[] = [
-  { x: 1010, y: 300, w: 135, h: 220, delay: 1.6, duration: 12.5, drift: 22, opacity: 0.4 },
-  { x: 1160, y: 250, w: 120, h: 200, delay: 5.2, duration: 11.5, drift: -18, opacity: 0.36 },
-  { x: 1310, y: 290, w: 130, h: 210, delay: 8.6, duration: 13.5, drift: 14, opacity: 0.3 },
+const RAISED_PLATE: Plume[] = [
+  { x: 1020, y: 320, size: 200, delay: 1.1, duration: 8.6, sway: 42, peak: 0.7, spin: 1 },
+  { x: 1140, y: 285, size: 165, delay: 3.4, duration: 9.8, sway: -36, peak: 0.6, spin: -1 },
+  { x: 1265, y: 300, size: 220, delay: 5.5, duration: 9, sway: 38, peak: 0.66, spin: 1 },
+  { x: 1380, y: 330, size: 175, delay: 7.4, duration: 10.4, sway: -40, peak: 0.56, spin: -1 },
+  { x: 1300, y: 210, size: 190, delay: 4.6, duration: 10.8, sway: 34, peak: 0.5, spin: 1 },
+  { x: 1150, y: 250, size: 250, delay: 2.4, duration: 11.5, sway: 26, peak: 0.38, spin: 1 },
 ];
 
-const WISPS = [...LOWER_PLATE, ...RAISED_PLATE];
+const PLUMES = [...LOWER_PLATE, ...RAISED_PLATE];
 
 interface CoverBox {
   scale: number;
@@ -59,9 +67,16 @@ function useCoverBox(ref: RefObject<HTMLElement | null>): CoverBox | null {
     const element = ref.current;
     if (!element) return;
 
+    let frame = 0;
+
     const measure = () => {
       const { width, height } = element.getBoundingClientRect();
-      if (width === 0 || height === 0) return;
+      if (width === 0 || height === 0) {
+        // Mounted in a hidden tab or a collapsed pane: keep looking until the
+        // box has a size, rather than rendering nothing for ever.
+        frame = requestAnimationFrame(measure);
+        return;
+      }
       const scale = Math.max(width / IMAGE_W, height / IMAGE_H);
       setBox({
         scale,
@@ -73,7 +88,10 @@ function useCoverBox(ref: RefObject<HTMLElement | null>): CoverBox | null {
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(element);
-    return () => observer.disconnect();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, [ref]);
 
   return box;
@@ -90,22 +108,23 @@ export function SteamWisps({ className }: { className?: string }) {
       aria-hidden="true"
     >
       {box &&
-        WISPS.map((wisp, i) => {
-          const width = wisp.w * box.scale;
-          const height = wisp.h * box.scale;
+        PLUMES.map((plume, i) => {
+          const size = plume.size * box.scale;
           return (
             <span
               key={i}
-              className="steam-wisp"
+              className="steam-plume"
               style={{
-                left: box.offsetX + wisp.x * box.scale - width / 2,
-                top: box.offsetY + wisp.y * box.scale - height / 2,
-                width,
-                height,
-                animationDelay: `${wisp.delay}s`,
-                animationDuration: `${wisp.duration}s`,
-                ["--steam-drift" as string]: `${wisp.drift}px`,
-                ["--steam-opacity" as string]: wisp.opacity,
+                left: box.offsetX + plume.x * box.scale - size / 2,
+                top: box.offsetY + plume.y * box.scale - size / 2,
+                width: size,
+                height: size * 1.25,
+                animationDelay: `${plume.delay}s`,
+                animationDuration: `${plume.duration}s`,
+                ["--sway" as string]: `${plume.sway * box.scale}px`,
+                ["--peak" as string]: plume.peak,
+                ["--spin" as string]: plume.spin,
+                filter: `blur(${Math.max(10, 16 * box.scale)}px)`,
               }}
             />
           );

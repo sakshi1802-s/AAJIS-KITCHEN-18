@@ -1,5 +1,5 @@
-import { ChefHat, ShoppingBasket } from "lucide-react";
-import { Link, Navigate, useLocation } from "react-router";
+import { ShoppingBasket } from "lucide-react";
+import { Navigate, useLocation } from "react-router";
 import { BrandMark } from "@/components/layout/BrandMark";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { GoogleSignInButton } from "./GoogleSignInButton";
@@ -10,9 +10,12 @@ interface SignInState {
 }
 
 /**
- * Two clearly separate doors. Both are the same Google button — the account
- * decides the role — but a customer should never have to wonder which one is
- * theirs, and Aji should have a page that says "kitchen" on it.
+ * The public sign-in: customers only.
+ *
+ * The kitchen dashboard has its own unlisted login (/owner-login) which is
+ * deliberately not linked from anywhere on the public site. That's tidiness,
+ * not security — the server checks the signed-in user's role on every
+ * /api/owner request, so knowing the URL gets you nothing.
  */
 export function SignInPage() {
   const { user, isOwner } = useAuth();
@@ -26,7 +29,7 @@ export function SignInPage() {
       <Card className="w-full">
         <CardHeader className="items-center text-center">
           <BrandMark className="mx-auto size-12" />
-          <CardTitle className="mt-3 flex items-center justify-center gap-2 font-heading text-2xl">
+          <CardTitle className="mt-3 flex items-center justify-center gap-2 font-royal text-2xl">
             <ShoppingBasket className="size-5 text-terracotta" aria-hidden="true" /> Sign in to order
           </CardTitle>
           <CardDescription>
@@ -41,18 +44,6 @@ export function SignInPage() {
           </p>
         </CardContent>
       </Card>
-
-      <div className="mt-6 w-full rounded-2xl border border-dashed p-4 text-center">
-        <p className="flex items-center justify-center gap-2 font-medium">
-          <ChefHat className="size-4 text-maroon" aria-hidden="true" /> Are you Aji?
-        </p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          The kitchen dashboard — where orders are accepted and the menu is edited — has its own door.
-        </p>
-        <Link to="/owner-login" className="mt-2 inline-block text-sm font-medium text-terracotta underline">
-          Go to the kitchen login
-        </Link>
-      </div>
     </div>
   );
 }

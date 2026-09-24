@@ -1,107 +1,154 @@
-import { Star } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
+import { Quote, Star } from "lucide-react";
 
 interface Review {
   name: string;
   where: string;
+  when: string;
   rating: number;
   text: string;
 }
 
 /**
- * Sample reviews — written to show what the section looks like, and labelled
- * as samples so nobody reads them as real customers. Replace them with real
- * ones the moment Aji has them.
+ * Sample reviews — written to show what the section looks like, and marked as
+ * samples so nobody mistakes them for real customers. Replace them the moment
+ * Aji has her own.
  */
 const REVIEWS: Review[] = [
   {
     name: "Meenal Deshpande",
-    where: "Ganpati at home",
+    where: "Ganpati at home · 21 modak",
+    when: "Sept 2026",
     rating: 5,
-    text: "Twenty-one modak, delivered warm at eight in the morning. My mother-in-law asked for the recipe, which has never happened before.",
+    text: "Delivered warm at eight in the morning, exactly as promised. The ukad was soft and the saaran wasn't over-sweet. My mother-in-law asked who made them, then asked for the recipe — that has genuinely never happened.",
   },
   {
     name: "Rohit Kulkarni",
-    where: "Office Diwali",
+    where: "Office Diwali · faral tins",
+    when: "Nov 2025",
     rating: 5,
-    text: "Ordered faral tins for the whole team. The chakli was still crisp four days later. Everyone asked where it came from.",
+    text: "Ordered chakli, shankarpali and besan ladoo for twenty people. Still crisp four days later, which tells you the oil was clean. Three colleagues have ordered since.",
   },
   {
     name: "Sneha Patil",
-    where: "Haldi, 60 guests",
+    where: "Haldi · 60 guests",
+    when: "Aug 2026",
     rating: 5,
-    text: "She called to check how spicy we wanted the misal. Who does that any more? Food arrived exactly on time.",
+    text: "She called the evening before to ask how spicy we wanted the misal and whether there were children eating. Food reached at 11 sharp, hot, and nothing ran out. For sixty people that is no small thing.",
   },
   {
     name: "Ajay Salunkhe",
-    where: "Sunday lunch",
+    where: "Sunday lunch · surmai thali",
+    when: "July 2026",
     rating: 4,
-    text: "The surmai thali is the real thing — proper malvani masala, and the solkadhi was perfect. Only wish the portions of rice were bigger.",
+    text: "Proper malvani masala, the fish fresh and fried right, and the solkadhi was the best I've had outside Malvan. Only complaint is I wanted more rice with it.",
   },
   {
     name: "Prachi Joshi",
-    where: "Upvas order",
+    where: "Upvas · sabudana khichdi",
+    when: "Sept 2026",
     rating: 5,
-    text: "Sabudana khichdi that isn't sticky. I've given up ordering it anywhere else.",
+    text: "Not sticky, not oily, each sago separate, with enough peanut. I've stopped ordering khichdi anywhere else on fasting days.",
   },
   {
     name: "Nikhil Rane",
-    where: "Puran poli for Holi",
+    where: "Holi · puran poli",
+    when: "March 2026",
     rating: 5,
-    text: "Thin, soft, and the puran was not too sweet. Tasted like my grandmother's, which is the highest thing I can say.",
+    text: "Thin, soft, even puran right to the edge, and she sent katachi aamti with it without being asked. Tasted like my aaji's, which is the highest thing I can say about food.",
+  },
+  {
+    name: "Sushma Kelkar",
+    where: "Satyanarayan puja · naivedya",
+    when: "June 2026",
+    rating: 5,
+    text: "She understood exactly what a naivedya thali needs — no onion, no garlic, sheera made in ghee. Punctual, neatly packed, and the brass looked lovely on the table.",
   },
 ];
 
-function Card({ review }: { review: Review }) {
+function ReviewCard({ review }: { review: Review }) {
   return (
-    <figure className="w-[19rem] shrink-0 rounded-2xl border border-gold/25 bg-wood-deep/70 p-5 text-cream shadow-lg sm:w-[22rem]">
-      <div className="flex items-center gap-1" aria-label={`${review.rating} out of 5`}>
-        {Array.from({ length: 5 }, (_, i) => (
-          <Star
-            key={i}
-            className={i < review.rating ? "size-4 fill-gold text-gold" : "size-4 text-cream/30"}
-            aria-hidden="true"
-          />
-        ))}
+    <figure className="flex h-full w-[17rem] shrink-0 flex-col rounded-2xl border border-gold/30 bg-black/45 p-5 text-cream backdrop-blur-[2px] sm:w-[21rem]">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-0.5" aria-label={`${review.rating} out of 5`}>
+          {Array.from({ length: 5 }, (_, i) => (
+            <Star
+              key={i}
+              className={i < review.rating ? "size-4 fill-gold text-gold" : "size-4 text-cream/25"}
+              aria-hidden="true"
+            />
+          ))}
+        </div>
+        <Quote className="size-5 text-gold/40" aria-hidden="true" />
       </div>
-      <blockquote className="mt-3 text-cream/90">“{review.text}”</blockquote>
-      <figcaption className="mt-4 text-sm">
-        <span className="font-semibold text-gold">{review.name}</span>
-        <span className="block text-cream/60">{review.where}</span>
+
+      <blockquote className="mt-3 flex-1 text-sm leading-relaxed text-cream/90">{review.text}</blockquote>
+
+      <figcaption className="mt-4 flex items-center gap-3 border-t border-gold/20 pt-3">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gold/20 font-royal text-sm font-bold text-gold">
+          {review.name.charAt(0)}
+        </span>
+        <span className="min-w-0">
+          <span className="block truncate font-royal text-sm font-bold tracking-wide text-gold">{review.name}</span>
+          <span className="block truncate text-xs text-cream/60">
+            {review.where} · {review.when}
+          </span>
+        </span>
       </figcaption>
     </figure>
   );
 }
 
 export function ReviewsMarquee() {
-  return (
-    <section className="overflow-hidden bg-wood-deep py-14 sm:py-20" aria-labelledby="reviews-heading">
-      <div className="mx-auto mb-8 w-full max-w-6xl px-4">
-        <h2 id="reviews-heading" className="font-heading text-4xl font-semibold text-cream">
-          What people say
-        </h2>
-        <p className="mt-1 text-sm text-cream/55">
-          Sample reviews — real ones will replace these as Aji's customers send them in.
-        </p>
-      </div>
+  const reduceMotion = useReducedMotion();
 
-      <div className="marquee relative">
-        {/* The track holds the list twice, so the loop has no visible seam. */}
-        <div className="marquee-track flex w-max gap-5 px-4">
-          {[...REVIEWS, ...REVIEWS].map((review, i) => (
-            <Card key={`${review.name}-${i}`} review={review} />
-          ))}
+  return (
+    <section className="relative overflow-hidden py-14 sm:py-20" aria-labelledby="reviews-heading">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-wood-deep bg-repeat"
+        style={{ backgroundImage: "url('/textures/wood-planks.jpg')", backgroundSize: "auto 100%" }}
+      />
+      <div aria-hidden="true" className="absolute inset-0 bg-black/60" />
+
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0, y: 32 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-80px" }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="relative"
+      >
+        <div className="mx-auto mb-8 w-full max-w-5xl px-4 text-center">
+          <p lang="mr" className="font-display-mr text-2xl text-gold sm:text-3xl">
+            ग्राहक काय म्हणतात
+          </p>
+          <h2 id="reviews-heading" className="mt-1 font-royal text-3xl font-bold tracking-wide text-white sm:text-4xl">
+            What people say
+          </h2>
+          <p className="mt-2 text-xs text-cream/50">
+            Sample reviews — real ones replace these as Aji's customers send them in.
+          </p>
         </div>
 
-        {/* Fade the strip into the background at both ends. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-wood-deep to-transparent"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-wood-deep to-transparent"
-        />
-      </div>
+        {/* Two copies of the list make the loop seamless. Hovering, focusing or
+            holding a finger on the strip pauses it so it can be read. */}
+        <div className="marquee relative">
+          <div className="marquee-track flex w-max items-stretch gap-4 px-4 sm:gap-5">
+            {[...REVIEWS, ...REVIEWS].map((review, i) => (
+              <ReviewCard key={`${review.name}-${i}`} review={review} />
+            ))}
+          </div>
+
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-black/70 to-transparent sm:w-20"
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-black/70 to-transparent sm:w-20"
+          />
+        </div>
+      </motion.div>
     </section>
   );
 }
