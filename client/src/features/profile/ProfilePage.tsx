@@ -51,7 +51,7 @@ export function ProfilePage() {
       <header>
         <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">Your details</h1>
         <p className="mt-2 text-cream/80">
-          Signed in as {user.email}. Aji uses your phone number to reach you about an order.
+          Signed in as {user.email}. Aaji uses your phone number to reach you about an order.
         </p>
       </header>
 

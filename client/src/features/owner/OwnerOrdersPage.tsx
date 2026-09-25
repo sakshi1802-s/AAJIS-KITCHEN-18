@@ -84,7 +84,7 @@ export function OwnerOrdersPage() {
             </h2>
             {waiting.length === 0 ? (
               <p className="rounded-2xl border border-dashed border-cream/25 p-6 text-center text-cream/75">
-                Nothing waiting — you're all caught up.
+                Nothing waiting, you're all caught up.
               </p>
             ) : (
               <ul className="space-y-3">

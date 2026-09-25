@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 /**
  * Smooth scrolling, landing page only — it suits a long marketing page and
- * would only get in the way of the menu, the cart or Aji's dashboard.
+ * would only get in the way of the menu, the cart or Aaji's dashboard.
  * Loaded on demand so it never lands in the first download, and skipped
  * entirely for anyone who prefers reduced motion.
  */

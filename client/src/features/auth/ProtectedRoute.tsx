@@ -40,7 +40,7 @@ export function ProtectedRoute({ ownerOnly = false }: { ownerOnly?: boolean }) {
         </span>
         <h1 className="mt-4 font-royal text-2xl font-bold text-gold">Not your kitchen</h1>
         <p className="mt-2 text-cream/80">
-          This area belongs to Aji. Your account, {user.email}, is a customer account — which is all you need to
+          This area belongs to Aaji. Your account, {user.email}, is a customer account, which is all you need to
           order.
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">

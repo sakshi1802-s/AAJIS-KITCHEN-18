@@ -78,7 +78,7 @@ export function MenuCard({ item, action, eagerImage }: MenuCardProps) {
               <Info className="size-3.5" />
             </button>
 
-            {/* What's in it — on hover for a mouse, on tap for a phone. */}
+            {/* What's in it, on hover for a mouse, on tap for a phone. */}
             <div
               className={cn(
                 "absolute inset-0 flex items-end bg-gradient-to-t from-black/90 via-black/70 to-black/25 p-3 transition-opacity duration-200",

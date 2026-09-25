@@ -13,7 +13,7 @@ describe("getAvailability", () => {
     expect(getAvailability(item())).toEqual({ canOrder: true, maxQuantity: Infinity, badge: null });
   });
 
-  it("Aji's toggle wins over stock", () => {
+  it("Aaji's toggle wins over stock", () => {
     const a = getAvailability(item({ isAvailable: false, stockCount: 50 }));
     expect(a.canOrder).toBe(false);
     expect(a.badge?.label).toBe("Not available today");

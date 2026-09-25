@@ -14,7 +14,6 @@ export function SiteFooter() {
             <span lang="mr">घरगुती चव, प्रेमाने</span>
           </span>
         </div>
-        <p>Home-cooked, made to order. Every order is confirmed by Aji herself.</p>
       </div>
     </footer>
   );

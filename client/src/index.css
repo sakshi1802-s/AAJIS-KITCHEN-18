@@ -10,6 +10,8 @@
 @import "@fontsource/cinzel/400.css";
 @import "@fontsource/cinzel/600.css";
 @import "@fontsource/cinzel/700.css";
+@import "@fontsource/cormorant-garamond/400-italic.css";
+@import "@fontsource/cormorant-garamond/600-italic.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -27,6 +29,8 @@
   /* The royal face: inscriptional Roman capitals, used for every heading,
      nav label and button on the site. */
   --font-royal: "Cinzel", ui-serif, Georgia, serif;
+  /* For lines that should look written by hand, not typed. */
+  --font-script: "Cormorant Garamond", ui-serif, Georgia, serif;
   --font-marathi: "Mukta", "Inter Variable", sans-serif;
   /* Display Devanagari for the logo and the chatak-matak line. Swap in a
      bought calligraphy face here and the whole site follows. */
@@ -285,4 +289,26 @@
   .marquee-track {
     animation: none;
   }
+}
+
+/* ── Cards are paper ─────────────────────────────────────────────────────
+   Every panel on the site — menu cards, the cart, forms, dialogs — sits on
+   the same parchment as the sign-in box rather than flat white. Set here
+   once so no component has to remember it. */
+.bg-card,
+[data-slot="card"],
+[data-slot="dialog-content"],
+[data-slot="dropdown-menu-content"] {
+  background-color: #e8d5b0;
+  background-image: url("/textures/parchment-tile.png");
+  background-size: 400px auto;
+  color: #3b1d0c;
+}
+
+/* Inputs stay a shade lighter so a field still reads as a field. */
+.bg-card input,
+[data-slot="card"] input,
+.bg-card textarea,
+[data-slot="card"] textarea {
+  background-color: #fdf6e7;
 }

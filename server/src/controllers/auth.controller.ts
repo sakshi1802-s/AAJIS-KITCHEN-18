@@ -2,8 +2,10 @@ import type { RequestHandler } from "express";
 import type { UserDTO } from "@shared/api";
 import { toUserDTO } from "../models/User";
 import { valid } from "../middleware/validate";
-import { googleAuthSchema } from "../schemas/auth.schema";
+import { googleAuthSchema, loginSchema, registerSchema } from "../schemas/auth.schema";
 import {
+  loginWithPassword,
+  registerWithPassword,
   clearSessionCookie,
   setSessionCookie,
   signSession,
@@ -17,6 +19,22 @@ export const googleSignIn: RequestHandler = async (req, res) => {
 
   const profile = await verifyGoogleCredential(credential);
   const user = await upsertUserFromGoogle(profile);
+  setSessionCookie(res, signSession(user));
+
+  const body: UserDTO = toUserDTO(user);
+  res.json(body);
+};
+
+export const register: RequestHandler = async (req, res) => {
+  const user = await registerWithPassword(valid(req, "body", registerSchema));
+  setSessionCookie(res, signSession(user));
+
+  const body: UserDTO = toUserDTO(user);
+  res.status(201).json(body);
+};
+
+export const login: RequestHandler = async (req, res) => {
+  const user = await loginWithPassword(valid(req, "body", loginSchema));
   setSessionCookie(res, signSession(user));
 
   const body: UserDTO = toUserDTO(user);

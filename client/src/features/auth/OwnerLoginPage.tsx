@@ -6,7 +6,7 @@ import { GoogleSignInButton } from "./GoogleSignInButton";
 import { useAuth } from "./useAuth";
 
 /**
- * Aji's door. Same Google sign-in, different wording — and if the account that
+ * Aaji's door. Same Google sign-in, different wording — and if the account that
  * signs in here isn't the kitchen's, it says so plainly instead of dropping
  * them on the home page wondering what happened.
  */
@@ -24,7 +24,7 @@ export function OwnerLoginPage() {
           </span>
           <CardTitle className="mt-3 font-heading text-2xl">Kitchen login</CardTitle>
           <CardDescription>
-            For Aji. Sign in with the kitchen's Google account to see today's orders, accept or decline them, and edit
+            For Aaji. Sign in with the kitchen's Google account to see today's orders, accept or decline them, and edit
             the menu.
           </CardDescription>
         </CardHeader>
@@ -36,8 +36,8 @@ export function OwnerLoginPage() {
                 {user.email} isn't the kitchen account.
               </p>
               <p className="mt-1 text-muted-foreground">
-                You're signed in as a customer, which is fine for ordering — the dashboard just isn't yours. Sign out
-                and use Aji's Google account, or carry on ordering.
+                You're signed in as a customer, which is fine for ordering, the dashboard just isn't yours. Sign out
+                and use Aaji's Google account, or carry on ordering.
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
                 <Button asChild size="sm">

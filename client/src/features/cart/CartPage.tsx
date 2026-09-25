@@ -20,7 +20,7 @@ export function CartPage() {
       <EmptyState
         className="py-20"
         title="Your cart is empty"
-        description="Add a few dishes from the menu and tell Aji when you'd like them."
+        description="Add a few dishes from the menu and tell Aaji when you'd like them."
         action={
           <Button asChild size="lg" className="rounded-full">
             <Link to="/menu">See the menu</Link>
@@ -35,7 +35,6 @@ export function CartPage() {
       <header className="mb-6 flex items-end justify-between gap-4">
         <div>
           <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">Your cart</h1>
-          <p className="mt-1 text-cream/80">Prices are confirmed again when you place the order.</p>
         </div>
         <Button variant="ghost" size="sm" className="text-cream/80 hover:bg-white/10 hover:text-cream" onClick={clear}>
           Clear
@@ -124,9 +123,6 @@ export function CartPage() {
           <span className="font-medium">Total</span>
           <span className="font-heading text-2xl font-semibold text-maroon tabular-nums">{formatINR(total)}</span>
         </div>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Nothing is charged online — you pay Aji directly when the food arrives.
-        </p>
         <Button
           size="lg"
           className="mt-4 h-12 w-full rounded-full text-base"

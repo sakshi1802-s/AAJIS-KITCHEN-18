@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { Sparkles, Wand2 } from "lucide-react";
+import { Wand2 } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
@@ -40,25 +40,14 @@ export function PlanMyOrderPage() {
       add(line.item, line.quantity);
       setQuantity(line.item.id, line.quantity);
     }
-    toast.success("Added to your cart — change anything you like");
+    toast.success("Added to your cart, change anything you like");
     void navigate("/cart");
   };
 
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
       <header className="max-w-2xl">
-        <p className="inline-flex items-center gap-2 rounded-full bg-accent px-3 py-1 text-sm font-medium text-maroon">
-          <Sparkles className="size-4" aria-hidden="true" /> Optional helper
-        </p>
         <h1 className="mt-3 font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">Plan my order</h1>
-        <p className="mt-2 text-cream/80">
-          Describe the occasion and we'll suggest a spread from Aji's menu. Every suggestion is editable, and you
-          can always{" "}
-          <Link to="/menu" className="underline">
-            pick dishes yourself
-          </Link>
-          .
-        </p>
       </header>
 
       <Card className="mt-6">
@@ -113,7 +102,7 @@ export function PlanMyOrderPage() {
             <p className="text-muted-foreground">{suggestion.summary}</p>
             {suggestion.source === "fallback" && (
               <p className="text-sm text-muted-foreground">
-                Put together by matching your words to the menu — have a look and change what you like.
+                Put together by matching your words to the menu, have a look and change what you like.
               </p>
             )}
           </CardHeader>
@@ -161,7 +150,7 @@ export function PlanMyOrderPage() {
                 </div>
 
                 <Button size="lg" className="mt-4 h-12 w-full rounded-full text-base" onClick={useThis}>
-                  Use this — I'll adjust it
+                  Use this, I'll adjust it
                 </Button>
               </>
             )}

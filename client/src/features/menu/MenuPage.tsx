@@ -22,7 +22,6 @@ export function MenuPage() {
   const [params, setParams] = useSearchParams();
   const categoryParam = params.get("category");
   const category = isCategory(categoryParam) ? categoryParam : undefined;
-  const vegOnly = params.get("veg") === "1";
   const urlSearch = params.get("q") ?? "";
 
   const [searchInput, setSearchInput] = useState(urlSearch);
@@ -57,8 +56,8 @@ export function MenuPage() {
     setParams({}, { replace: true });
   };
 
-  const menu = useMenu({ category, isVeg: vegOnly ? true : undefined, search: search || undefined });
-  const hasFilters = Boolean(category || vegOnly || search);
+  const menu = useMenu({ category, search: search || undefined });
+  const hasFilters = Boolean(category || search);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:py-10">
@@ -67,17 +66,11 @@ export function MenuPage() {
         <p lang="mr" className="mt-1 font-display-mr text-2xl text-cream/80">
           आजीचा मेनू
         </p>
-        <p className="mt-3 text-cream/80">
-          Everything is made to order in Aji's kitchen. Pick what you'd like and when you need it — she'll look
-          at your order and confirm it herself.
-        </p>
       </header>
 
       <MenuFilters
         category={category}
         onCategoryChange={(c) => updateParam("category", c)}
-        vegOnly={vegOnly}
-        onVegOnlyChange={(v) => updateParam("veg", v ? "1" : undefined)}
         search={searchInput}
         onSearchChange={setSearchInput}
       />
@@ -99,7 +92,7 @@ export function MenuPage() {
                 ? search
                   ? `Nothing on the menu matches “${search}”. Try another name, or clear the filters.`
                   : "Nothing in this selection right now. Try another category."
-                : "Aji hasn't added any dishes yet. Check back soon."
+                : "Aaji hasn't added any dishes yet. Check back soon."
             }
             action={
               hasFilters && (

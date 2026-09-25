@@ -15,7 +15,7 @@ import { MyOrdersPage } from "@/features/orders/MyOrdersPage";
 import { OrderDetailPage } from "@/features/orders/OrderDetailPage";
 import { NotFoundPage } from "@/pages/NotFoundPage";
 
-// Kept out of the first download: Aji is one person, and most customers never
+// Kept out of the first download: Aaji is one person, and most customers never
 // open the planner, the profile page or checkout on their first visit.
 const CheckoutPage = lazy(() =>
   import("@/features/checkout/CheckoutPage").then((m) => ({ default: m.CheckoutPage })),
@@ -67,7 +67,7 @@ export default function App() {
                   <Route path="account" element={<ProfilePage />} />
                 </Route>
 
-                {/* Aji only */}
+                {/* Aaji only */}
                 <Route element={<ProtectedRoute ownerOnly />}>
                   <Route path="owner" element={<OwnerLayout />}>
                     <Route index element={<OwnerOrdersPage />} />

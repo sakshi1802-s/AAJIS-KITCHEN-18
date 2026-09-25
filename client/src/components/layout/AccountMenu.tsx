@@ -51,7 +51,7 @@ export function AccountMenu({ onHero = false }: { onHero?: boolean }) {
             isOwner ? "h-9 gap-2 px-2.5" : "size-9",
             onHero ? "bg-white/15 text-white hover:bg-white/25" : "bg-secondary text-maroon",
           )}
-          aria-label={isOwner ? "Aji's account" : "Your account"}
+          aria-label={isOwner ? "Aaji's account" : "Your account"}
         >
           <span
             className={cn(
@@ -61,7 +61,7 @@ export function AccountMenu({ onHero = false }: { onHero?: boolean }) {
           >
             {initial}
           </span>
-          {/* Aji should never have to guess which account she's in. */}
+          {/* Aaji should never have to guess which account she's in. */}
           {isOwner && <span className="text-xs tracking-wide uppercase">Owner</span>}
         </Button>
       </DropdownMenuTrigger>

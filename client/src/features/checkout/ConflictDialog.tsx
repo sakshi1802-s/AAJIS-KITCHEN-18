@@ -73,9 +73,9 @@ export function ConflictDialog({ conflicts, onClose }: ConflictDialogProps) {
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Aji's kitchen changed something</DialogTitle>
+          <DialogTitle>Aaji's kitchen changed something</DialogTitle>
           <DialogDescription>
-            Your order hasn't been placed. Here's what's different — update your cart and try again.
+            Your order hasn't been placed. Here's what's different, update your cart and try again.
           </DialogDescription>
         </DialogHeader>
 

@@ -21,7 +21,7 @@ interface DishImageProps {
 
 /**
  * Dish photo with a fixed aspect ratio (no layout shift) and lazy loading.
- * Until Aji's real photos exist — or if one fails to load — it draws a warm
+ * Until Aaji's real photos exist — or if one fails to load — it draws a warm
  * plate illustration with the dish's Marathi name instead of a broken image.
  */
 export function DishImage({ src, name, nameMarathi, category, className, eager }: DishImageProps) {

@@ -21,6 +21,8 @@ import { env, isProd } from "../config/env";
 import { AppError, Forbidden, Unauthenticated } from "../lib/errors";
 import { logger } from "../lib/logger";
 import { User, type UserHydrated } from "../models/User";
+import { hashPassword, verifyPassword } from "../lib/password";
+import type { LoginInput, RegisterInput } from "../schemas/auth.schema";
 
 const COOKIE_NAME = "aji_session";
 const SESSION_DAYS = 7;
@@ -87,7 +89,7 @@ export async function verifyGoogleCredential(credential: string): Promise<Google
  * body can ever ask for a role.
  */
 export async function upsertUserFromGoogle(profile: GoogleProfile): Promise<UserHydrated> {
-  const role: Role = env.OWNER_EMAIL && profile.email === env.OWNER_EMAIL ? "owner" : "customer";
+  const role: Role = roleFor(profile.email);
   const fields = { email: profile.email, name: profile.name, role };
 
   try {
@@ -109,6 +111,46 @@ export async function upsertUserFromGoogle(profile: GoogleProfile): Promise<User
     }
     throw err;
   }
+}
+
+/** The role is decided by the email, never by anything the client sends. */
+function roleFor(email: string) {
+  return env.OWNER_EMAIL && email === env.OWNER_EMAIL ? "owner" : "customer";
+}
+
+/**
+ * Sign up with an email and a password. The password is hashed with scrypt;
+ * we never store or log the plain text.
+ */
+export async function registerWithPassword(input: RegisterInput): Promise<UserHydrated> {
+  const existing = await User.findOne({ email: input.email });
+  if (existing) {
+    throw new AppError(409, "VALIDATION_ERROR", "That email already has an account. Sign in instead.");
+  }
+
+  return User.create({
+    name: input.name,
+    email: input.email,
+    passwordHash: await hashPassword(input.password),
+    role: roleFor(input.email),
+    googleId: null,
+    phone: null,
+    addresses: [],
+  });
+}
+
+/**
+ * Sign in with an email and a password. The same message is returned whether
+ * the address is unknown or the password is wrong, so the form cannot be used
+ * to find out which addresses have accounts.
+ */
+export async function loginWithPassword(input: LoginInput): Promise<UserHydrated> {
+  const user = await User.findOne({ email: input.email });
+  const ok = await verifyPassword(input.password, user?.passwordHash ?? null);
+  if (!user || !ok) {
+    throw Unauthenticated("That email and password do not match.");
+  }
+  return user;
 }
 
 /** Step 3 — our own session token. Short-lived, signed with our secret. */

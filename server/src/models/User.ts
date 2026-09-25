@@ -12,7 +12,10 @@ export interface AddressSub {
 }
 
 export interface UserDoc {
-  googleId: string;
+  /** Set for accounts that signed up through Google. */
+  googleId: string | null;
+  /** Set for accounts that signed up with an email and password. */
+  passwordHash: string | null;
   name: string;
   email: string;
   phone: string | null;
@@ -33,7 +36,8 @@ const addressSchema = new Schema<AddressSub>({
 
 const userSchema = new Schema<UserDoc>(
   {
-    googleId: { type: String, required: true, unique: true },
+    googleId: { type: String, default: null },
+    passwordHash: { type: String, default: null },
     name: { type: String, required: true, trim: true, maxlength: 80 },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     phone: { type: String, default: null },
@@ -41,6 +45,14 @@ const userSchema = new Schema<UserDoc>(
     addresses: { type: [addressSchema], default: [] },
   },
   { timestamps: true, collection: "users" },
+);
+
+// Unique only among accounts that actually have a Google id. A plain unique
+// index (even a sparse one) would treat every email/password account's null
+// googleId as a duplicate of the last one.
+userSchema.index(
+  { googleId: 1 },
+  { unique: true, partialFilterExpression: { googleId: { $type: "string" } } },
 );
 
 export const User = model<UserDoc>("User", userSchema);

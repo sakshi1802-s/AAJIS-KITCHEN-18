@@ -23,7 +23,7 @@ export function useOwnerOrders(query: OwnerOrdersQuery = {}) {
     queryKey: ownerKeys.orders(query),
     queryFn: () => api.get<OrdersListResponse>("/owner/orders", { status: query.status, date: query.date }),
     select: (data) => data.orders,
-    // Aji leaves this open on her phone; new orders should appear on their own.
+    // Aaji leaves this open on her phone; new orders should appear on their own.
     refetchInterval: 60_000,
   });
 }

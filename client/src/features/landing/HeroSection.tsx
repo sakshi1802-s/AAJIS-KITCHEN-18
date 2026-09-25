@@ -1,46 +1,13 @@
 import { motion, useReducedMotion } from "motion/react";
-import { useEffect, useState } from "react";
 import { SteamWisps } from "./SteamWisps";
+import { WrittenLine } from "./WrittenLine";
 
-const TAGLINE = "Bringing Aji's authentic Marathi food straight to your table";
-
-/** Types the line out, a character at a time, once it appears. */
-function TypedLine({ text, delayMs = 900 }: { text: string; delayMs?: number }) {
-  const reduceMotion = useReducedMotion();
-  const [shown, setShown] = useState(reduceMotion ? text.length : 0);
-
-  useEffect(() => {
-    if (reduceMotion) return;
-    let i = 0;
-    let timer: ReturnType<typeof setTimeout>;
-    const start = setTimeout(function tick() {
-      i += 1;
-      setShown(i);
-      if (i < text.length) timer = setTimeout(tick, 34);
-    }, delayMs);
-    return () => {
-      clearTimeout(start);
-      clearTimeout(timer);
-    };
-  }, [text, delayMs, reduceMotion]);
-
-  return (
-    <span aria-label={text}>
-      <span aria-hidden="true">{text.slice(0, shown)}</span>
-      {shown < text.length && (
-        <span aria-hidden="true" className="ml-0.5 inline-block w-px animate-pulse bg-cream/80 align-middle">
-          &nbsp;
-        </span>
-      )}
-    </span>
-  );
-}
+const TAGLINE = "Bringing Aaji's authentic gaavran जेवण, cooked the way she always has, straight to your ताट...";
 
 /**
- * Section one: the photograph across the whole screen, with चटक मटक! sitting
- * in the gap between the two thalis and a single line typing itself out
- * beneath. The wordmark and navigation come from the shared header, so they
- * are identical here and on every other page.
+ * Section one: the photograph across the whole screen, with चटक मटक! in the
+ * gap between the two thalis and one written line beneath it. The wordmark
+ * and navigation come from the shared header.
  */
 export function HeroSection() {
   const reduceMotion = useReducedMotion();
@@ -49,7 +16,7 @@ export function HeroSection() {
     <section className="relative isolate min-h-svh w-full overflow-hidden bg-wood-deep">
       <img
         src="/hero/ajji-thalis.webp"
-        alt="Aji in a nauvari saree carrying two brass thalis of Maharashtrian food"
+        alt="Aaji in a nauvari saree carrying two brass thalis of Maharashtrian food"
         className="absolute inset-0 size-full object-cover object-center"
         fetchPriority="high"
       />
@@ -58,21 +25,27 @@ export function HeroSection() {
 
       <SteamWisps />
 
-      {/* चटक मटक!, lower and larger, with the line underneath. */}
       <div className="relative flex min-h-svh items-center justify-center px-4 pt-16">
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-[12vh] sm:mt-[14vh] sm:translate-x-[6%]"
+          transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mt-[12vh] sm:mt-[14vh] sm:translate-x-[16%]"
         >
-          <p lang="mr" className="flex flex-col leading-[0.88] text-gold [text-shadow:0_6px_30px_rgba(0,0,0,0.9)]">
+          {/* A soft warm light behind the words, so they lift off the photo. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-x-16 -inset-y-12 -z-10 rounded-full bg-[radial-gradient(60%_60%_at_45%_45%,rgba(255,196,96,0.34),rgba(255,170,60,0.14)_45%,transparent_72%)] blur-2xl"
+          />
+
+          <p lang="mr" className="flex flex-col leading-[0.88] text-gold [text-shadow:0_4px_26px_rgba(0,0,0,0.85),0_0_46px_rgba(255,190,90,0.35)]">
             <span className="font-display-mr text-6xl sm:text-7xl md:text-8xl">चटक</span>
             <span className="mt-1.5 ml-14 font-display-mr text-4xl sm:ml-20 sm:text-5xl md:text-6xl">मटक!</span>
           </p>
 
-          <p className="mt-4 max-w-xs text-sm font-medium text-cream/90 [text-shadow:0_2px_12px_rgba(0,0,0,0.95)] sm:max-w-sm sm:text-base">
-            <TypedLine text={TAGLINE} />
+          {/* Fixed height: the line draws itself without nudging anything. */}
+          <p className="mt-4 min-h-[5rem] max-w-md font-script text-lg italic text-cream [text-shadow:0_2px_14px_rgba(0,0,0,0.95)] sm:text-xl">
+            <WrittenLine text={TAGLINE} duration={4200} />
           </p>
         </motion.div>
       </div>

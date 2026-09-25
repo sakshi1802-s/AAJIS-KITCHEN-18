@@ -1,5 +1,5 @@
-import { motion, useReducedMotion } from "motion/react";
 import { Quote, Star } from "lucide-react";
+import { Reveal } from "@/components/Reveal";
 
 interface Review {
   name: string;
@@ -12,7 +12,7 @@ interface Review {
 /**
  * Sample reviews — written to show what the section looks like, and marked as
  * samples so nobody mistakes them for real customers. Replace them the moment
- * Aji has her own.
+ * Aaji has her own.
  */
 const REVIEWS: Review[] = [
   {
@@ -20,7 +20,7 @@ const REVIEWS: Review[] = [
     where: "Ganpati at home · 21 modak",
     when: "Sept 2026",
     rating: 5,
-    text: "Delivered warm at eight in the morning, exactly as promised. The ukad was soft and the saaran wasn't over-sweet. My mother-in-law asked who made them, then asked for the recipe — that has genuinely never happened.",
+    text: "Delivered warm at eight in the morning, exactly as promised. The ukad was soft and the saaran wasn't over-sweet. My mother-in-law asked who made them, then asked for the recipe, that has genuinely never happened.",
   },
   {
     name: "Rohit Kulkarni",
@@ -62,7 +62,7 @@ const REVIEWS: Review[] = [
     where: "Satyanarayan puja · naivedya",
     when: "June 2026",
     rating: 5,
-    text: "She understood exactly what a naivedya thali needs — no onion, no garlic, sheera made in ghee. Punctual, neatly packed, and the brass looked lovely on the table.",
+    text: "She understood exactly what a naivedya thali needs, no onion, no garlic, sheera made in ghee. Punctual, neatly packed, and the brass looked lovely on the table.",
   },
 ];
 
@@ -100,27 +100,13 @@ function ReviewCard({ review }: { review: Review }) {
 }
 
 export function ReviewsMarquee() {
-  const reduceMotion = useReducedMotion();
-
   return (
     <section className="relative overflow-hidden py-14 sm:py-20" aria-labelledby="reviews-heading">
-      <motion.div
-        initial={reduceMotion ? false : { opacity: 0, y: 70 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.15 }}
-        transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
-        className="relative"
-      >
+      <Reveal className="relative">
         <div className="mx-auto mb-8 w-full max-w-5xl px-4 text-center">
-          <p lang="mr" className="font-display-mr text-2xl text-gold sm:text-3xl">
-            ग्राहक काय म्हणतात
-          </p>
-          <h2 id="reviews-heading" className="mt-1 font-royal text-3xl font-bold tracking-wide text-white sm:text-4xl">
+          <h2 id="reviews-heading" className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">
             What people say
           </h2>
-          <p className="mt-2 text-xs text-cream/50">
-            Sample reviews — real ones replace these as Aji's customers send them in.
-          </p>
         </div>
 
         {/* Two copies of the list make the loop seamless. Hovering, focusing or
@@ -141,7 +127,7 @@ export function ReviewsMarquee() {
             className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-black/70 to-transparent sm:w-20"
           />
         </div>
-      </motion.div>
+      </Reveal>
     </section>
   );
 }

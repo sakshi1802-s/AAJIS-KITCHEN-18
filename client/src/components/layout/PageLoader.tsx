@@ -3,11 +3,11 @@ import { useLocation } from "react-router";
 import { cn } from "@/lib/utils";
 
 const SLOGANS = [
-  "घरगुती चव, प्रेमाने — home taste, made with love",
+  "घरगुती चव, प्रेमाने, home taste, made with love",
   "Ground at home. Pounded at home. Cooked to order.",
-  "Every order read and confirmed by Aji herself",
+  "Every order read and confirmed by Aaji herself",
   "Forty years at the same stove",
-  "चटक मटक! — the taste you remember",
+  "चटक मटक!, the taste you remember",
   "No packets, no shortcuts, no hurry",
 ];
 
@@ -57,7 +57,7 @@ function ThaliSpinner() {
 }
 
 /**
- * A short curtain between pages: Aji's mark, a turning thali and one line
+ * A short curtain between pages: Aaji's mark, a turning thali and one line
  * about her food. Deliberately brief — a beat, not a wait.
  *
  * It is rendered only while it is showing and never takes pointer events, so

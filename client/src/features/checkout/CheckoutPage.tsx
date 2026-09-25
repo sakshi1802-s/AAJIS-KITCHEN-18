@@ -87,9 +87,6 @@ export function CheckoutPage() {
   return (
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
       <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">Checkout</h1>
-      <p className="mt-2 text-cream/80">
-        Aji sees this order on her phone and confirms it herself. Nothing is charged online.
-      </p>
 
       <div className="mt-6 space-y-5">
         <Card>
@@ -191,9 +188,6 @@ export function CheckoutPage() {
                 ))}
               </div>
             </fieldset>
-            <p className="text-sm text-muted-foreground">
-              Aji will confirm whether she can manage that day — she'll let you know either way.
-            </p>
           </CardContent>
         </Card>
 
@@ -219,7 +213,7 @@ export function CheckoutPage() {
               )}
             </div>
             <div>
-              <Label htmlFor="checkout-notes">Notes for Aji (optional)</Label>
+              <Label htmlFor="checkout-notes">Notes for Aaji (optional)</Label>
               <textarea
                 id="checkout-notes"
                 rows={3}
@@ -261,7 +255,7 @@ export function CheckoutPage() {
               {placeOrder.isPending ? "Placing your order…" : "Place order"}
             </Button>
             <p className="mt-2 text-center text-sm text-muted-foreground">
-              You'll pay Aji directly. <Link to="/cart" className="underline">Back to cart</Link>
+              You'll pay Aaji directly. <Link to="/cart" className="underline">Back to cart</Link>
             </p>
           </CardContent>
         </Card>

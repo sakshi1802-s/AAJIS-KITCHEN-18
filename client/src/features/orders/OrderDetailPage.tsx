@@ -59,9 +59,9 @@ export function OrderDetailPage() {
       {justPlaced && (
         <div className="mb-5 rounded-2xl border border-leaf/30 bg-leaf/10 p-5 text-center">
           <OrderPlacedCelebration />
-          <p className="mt-2 font-heading text-2xl font-semibold text-maroon">Order sent to Aji</p>
+          <p className="mt-2 font-heading text-2xl font-semibold text-maroon">Order sent to Aaji</p>
           <p className="text-muted-foreground">
-            She confirms every order herself — you'll see the status change right here.
+            She confirms every order herself, you'll see the status change right here.
           </p>
         </div>
       )}
@@ -78,7 +78,7 @@ export function OrderDetailPage() {
 
       {data.status === "DECLINED" && data.ownerNote && (
         <p className="mt-4 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm">
-          <span className="font-medium">Aji couldn't take this one:</span> {data.ownerNote}
+          <span className="font-medium">Aaji couldn't take this one:</span> {data.ownerNote}
         </p>
       )}
 
@@ -158,9 +158,6 @@ export function OrderDetailPage() {
           >
             {cancelOrder.isPending ? "Cancelling…" : "Cancel this order"}
           </Button>
-          <p className="mt-2 text-center text-sm text-cream/70">
-            You can cancel while Aji hasn't decided yet.
-          </p>
         </div>
       )}
     </div>

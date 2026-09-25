@@ -8,7 +8,7 @@ const TABS = [
 ];
 
 /**
- * Aji's shell. She is not a power user and she's holding a phone: two tabs,
+ * Aaji's shell. She is not a power user and she's holding a phone: two tabs,
  * large text, thumb-sized targets, nothing else on the screen.
  */
 export function OwnerLayout() {

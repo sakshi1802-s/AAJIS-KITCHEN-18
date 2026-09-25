@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, type ReactNode } from "react";
 import type { UserDTO } from "@shared/api";
 import { ApiError, api } from "@/lib/api";
+import { forgetGoogleSelection } from "./googleIdentity";
 import { AuthContext, authKeys, type AuthContextValue } from "./authContext";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -32,6 +33,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = useMutation({
     mutationFn: () => api.post<void>("/auth/logout"),
     onSuccess: async () => {
+      forgetGoogleSelection();
       queryClient.setQueryData(authKeys.me, null);
       // Anything fetched as this user must go.
       await queryClient.invalidateQueries();

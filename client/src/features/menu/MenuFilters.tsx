@@ -3,15 +3,12 @@ import { Search, X } from "lucide-react";
 import { CATEGORIES, type Category } from "@shared/api";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { CATEGORY_LABELS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 interface MenuFiltersProps {
   category: Category | undefined;
   onCategoryChange: (category: Category | undefined) => void;
-  vegOnly: boolean;
-  onVegOnlyChange: (vegOnly: boolean) => void;
   search: string;
   onSearchChange: (search: string) => void;
 }
@@ -35,7 +32,7 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 }
 
 export function MenuFilters(props: MenuFiltersProps) {
-  const { category, onCategoryChange, vegOnly, onVegOnlyChange, search, onSearchChange } = props;
+  const { category, onCategoryChange, search, onSearchChange } = props;
 
   return (
     <div className="space-y-4">
@@ -65,12 +62,6 @@ export function MenuFilters(props: MenuFiltersProps) {
               <X className="size-4" />
             </button>
           )}
-        </div>
-        <div className="flex h-11 shrink-0 items-center gap-2 rounded-full border bg-card px-3 sm:px-4">
-          <Switch id="veg-only" checked={vegOnly} onCheckedChange={onVegOnlyChange} />
-          <Label htmlFor="veg-only" className="text-sm font-medium">
-            Veg<span className="sr-only sm:not-sr-only">&nbsp;only</span>
-          </Label>
         </div>
       </div>
 

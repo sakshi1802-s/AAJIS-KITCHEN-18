@@ -146,7 +146,7 @@ export function OwnerOrderDetailPage() {
       ) : (
         <p className="rounded-2xl border bg-muted/40 p-4 text-center text-muted-foreground">
           {data.status === "ACCEPTED"
-            ? "You've accepted this order — the customer has been told."
+            ? "You've accepted this order, the customer has been told."
             : data.status === "DECLINED"
               ? `You declined this order: ${data.ownerNote ?? ""}`
               : "The customer cancelled this order."}
@@ -158,7 +158,7 @@ export function OwnerOrderDetailPage() {
           <DialogHeader>
             <DialogTitle>Tell them why</DialogTitle>
             <DialogDescription>
-              The customer sees this, so a short line is enough — they'll know you saw the order.
+              The customer sees this, so a short line is enough, they'll know you saw the order.
             </DialogDescription>
           </DialogHeader>
           <div>

@@ -17,7 +17,7 @@ interface MenuItemFormProps {
 }
 
 /**
- * Aji types rupees; the API only ever sees paise. That conversion happens here
+ * Aaji types rupees; the API only ever sees paise. That conversion happens here
  * and nowhere else.
  */
 export function MenuItemForm({ item, onDone }: MenuItemFormProps) {

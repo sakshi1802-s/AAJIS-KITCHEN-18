@@ -72,3 +72,15 @@ export function loadGoogleIdentity(): Promise<GoogleIdentityApi> {
 
   return loader;
 }
+
+/**
+ * After a sign-out, tell Google not to auto-select the same account again, so
+ * the next sign-in shows the chooser rather than going straight back in.
+ */
+export function forgetGoogleSelection(): void {
+  try {
+    window.google?.accounts.id.disableAutoSelect();
+  } catch {
+    // GIS not loaded yet — nothing to forget.
+  }
+}
