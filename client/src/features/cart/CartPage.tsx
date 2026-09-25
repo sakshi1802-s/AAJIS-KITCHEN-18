@@ -19,7 +19,7 @@ export function CartPage() {
     return (
       <EmptyState
         className="py-20"
-        title="Your cart is empty"
+        title="Your plate is empty"
         description="Add a few dishes from the menu and tell Aaji when you'd like them."
         action={
           <Button asChild size="lg" className="rounded-full">
@@ -34,7 +34,7 @@ export function CartPage() {
     <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:py-10">
       <header className="mb-6 flex items-end justify-between gap-4">
         <div>
-          <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">Your cart</h1>
+          <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">Your plate</h1>
         </div>
         <Button variant="ghost" size="sm" className="text-cream/80 hover:bg-white/10 hover:text-cream" onClick={clear}>
           Clear

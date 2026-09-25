@@ -35,10 +35,10 @@ export function HeroSection() {
           {/* A soft warm light behind the words, so they lift off the photo. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-x-16 -inset-y-12 -z-10 rounded-full bg-[radial-gradient(60%_60%_at_45%_45%,rgba(255,196,96,0.34),rgba(255,170,60,0.14)_45%,transparent_72%)] blur-2xl"
+            className="pointer-events-none absolute -inset-x-24 -inset-y-16 -z-10 rounded-full bg-[radial-gradient(58%_58%_at_45%_45%,rgba(255,206,110,0.5),rgba(255,176,64,0.24)_48%,transparent_74%)] blur-3xl"
           />
 
-          <p lang="mr" className="flex flex-col leading-[0.88] text-gold [text-shadow:0_4px_26px_rgba(0,0,0,0.85),0_0_46px_rgba(255,190,90,0.35)]">
+          <p lang="mr" className="flex flex-col leading-[0.88] text-gold [text-shadow:0_4px_26px_rgba(0,0,0,0.8),0_0_28px_rgba(255,206,120,0.65),0_0_70px_rgba(255,180,70,0.45)]">
             <span className="font-display-mr text-6xl sm:text-7xl md:text-8xl">चटक</span>
             <span className="mt-1.5 ml-14 font-display-mr text-4xl sm:ml-20 sm:text-5xl md:text-6xl">मटक!</span>
           </p>

@@ -10,7 +10,7 @@ export function CartButton() {
     <Button asChild variant="ghost" size="icon" className="relative size-9 rounded-full">
       <Link
         to="/cart"
-        aria-label={itemCount > 0 ? `Cart, ${itemCount} ${itemCount === 1 ? "item" : "items"}` : "Cart, empty"}
+        aria-label={itemCount > 0 ? `Plate, ${itemCount} ${itemCount === 1 ? "item" : "items"}` : "Plate, empty"}
       >
         <ShoppingBasket />
         {itemCount > 0 && (

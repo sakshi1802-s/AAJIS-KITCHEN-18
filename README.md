@@ -17,7 +17,7 @@ what the customer wants and lets her decide.
 |---|---|
 | Client | Vite · React 19 · TypeScript · Tailwind CSS v4 · shadcn/ui · TanStack Query · React Router · Motion |
 | Server | Node · Express 5 · TypeScript · Mongoose · Zod |
-| Database | MongoDB Atlas (free M0), three collections |
+| Database | MongoDB Atlas (free M0), four collections |
 | Auth | Google Identity Services → server-verified ID token → our own JWT in an httpOnly cookie |
 | AI | Gemini Flash-Lite, server-side only, with a deterministic fallback |
 | Notifications | n8n webhook seam (optional, fire-and-forget) |
@@ -141,7 +141,7 @@ instead of fire-and-forget. None of that is worth building for one grandmother.
 
 ## Data model
 
-Three collections. That is the whole database.
+Four collections. That is the whole database.
 
 - **`users`** — `googleId`, name, email, phone, `role: "customer" | "owner"`,
   embedded addresses. Aji's account is the only owner, decided by `OWNER_EMAIL`.
@@ -151,6 +151,10 @@ Three collections. That is the whole database.
 - **`orders`** — line snapshots (`nameSnapshot`, `priceAtOrder`,
   `stockDecremented`), total, `requestedFor: { date, slot }`, address snapshot,
   status, `ownerNote`, `decidedAt`.
+- **`reviews`** — what a customer wrote, with `nameSnapshot`, `occasion`,
+  `rating` and `isPublished`. It is its own collection because a review is not
+  tied to one order and Aji moderates them one at a time: nothing reaches the
+  home page until she publishes it.
 
 **Order status — four states, one decision:**
 
@@ -210,13 +214,16 @@ cookie) and `npm --prefix server run dev:poke -- "Besan Ladoo" price 3000`
 
 ## API
 
-Public: `GET /api/menu`, `GET /api/menu/:id`
-Auth: `POST /api/auth/google`, `GET /api/auth/me`, `POST /api/auth/logout`
+Public: `GET /api/menu`, `GET /api/menu/:id`, `GET /api/reviews`
+Auth: `POST /api/auth/register`, `POST /api/auth/login`,
+`POST /api/auth/google`, `GET /api/auth/me`, `POST /api/auth/logout`
 Customer: `PATCH /api/users/me`, `POST|DELETE /api/users/me/addresses[/:id]`,
 `POST /api/orders`, `GET /api/orders/me`, `GET /api/orders/:id`,
-`POST /api/orders/:id/cancel`, `POST /api/ai/suggest`
+`POST /api/orders/:id/cancel`, `POST /api/ai/suggest`,
+`POST /api/reviews`, `GET /api/reviews/me`
 Owner: `GET /api/owner/orders`, `PATCH /api/owner/orders/:id/status`,
-`POST|PATCH|DELETE /api/owner/menu[/:id]`, `GET /api/owner/stats`
+`POST|PATCH|DELETE /api/owner/menu[/:id]`, `GET /api/owner/stats`,
+`GET /api/owner/reviews`, `PATCH /api/owner/reviews/:id`
 Plus `GET /api/health`.
 
 A Postman collection is in [`docs/`](docs/aji-kitchen.postman_collection.json).

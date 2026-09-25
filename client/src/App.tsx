@@ -34,6 +34,9 @@ const OwnerOrderDetailPage = lazy(() =>
 const MenuManagerPage = lazy(() =>
   import("@/features/owner/MenuManagerPage").then((m) => ({ default: m.MenuManagerPage })),
 );
+const ReviewsManagerPage = lazy(() =>
+  import("@/features/owner/ReviewsManagerPage").then((m) => ({ default: m.ReviewsManagerPage })),
+);
 
 function RouteFallback() {
   return (
@@ -73,6 +76,7 @@ export default function App() {
                     <Route index element={<OwnerOrdersPage />} />
                     <Route path="orders/:id" element={<OwnerOrderDetailPage />} />
                     <Route path="menu" element={<MenuManagerPage />} />
+                    <Route path="reviews" element={<ReviewsManagerPage />} />
                   </Route>
                 </Route>
 

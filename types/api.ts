@@ -231,6 +231,34 @@ export interface OwnerStatsDTO {
   weekTotal: number;
 }
 
+// ── Reviews ─────────────────────────────────────────────────────────────
+
+export interface ReviewDTO {
+  id: string;
+  name: string;
+  occasion: string;
+  /** 1 to 5 */
+  rating: number;
+  text: string;
+  /** Only Aaji sees this; the public list is published ones only. */
+  isPublished: boolean;
+  createdAt: string;
+}
+
+export interface ReviewsListResponse {
+  reviews: ReviewDTO[];
+}
+
+export interface CreateReviewRequest {
+  occasion: string;
+  rating: number;
+  text: string;
+}
+
+export interface PublishReviewRequest {
+  isPublished: boolean;
+}
+
 // ── AI: "Plan my order" ──────────────────────────────────────────────────
 
 export interface AiSuggestRequest {

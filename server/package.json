@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "seed": "tsx scripts/seed.ts",
+    "sync-indexes": "tsx scripts/syncIndexes.ts",
     "dev:session": "tsx scripts/dev/devSession.ts",
     "dev:poke": "tsx scripts/dev/poke.ts"
   },

@@ -1,0 +1,171 @@
+import type { ReviewDTO } from "@shared/api";
+import { Reveal } from "@/components/Reveal";
+import { LeaveReviewDialog } from "@/features/reviews/LeaveReviewDialog";
+import { Stars } from "@/features/reviews/Stars";
+import { usePublishedReviews } from "@/features/reviews/useReviews";
+import { cn } from "@/lib/utils";
+
+/**
+ * Shown only until Aaji has published real ones, and labelled as samples so
+ * nobody mistakes them for customers.
+ */
+const SAMPLES: ReviewDTO[] = [
+  {
+    id: "s1",
+    name: "Meenal Deshpande",
+    occasion: "Ganpati at home",
+    rating: 5,
+    text: "Twenty-one modak, delivered warm at eight in the morning exactly as promised. The ukad was soft and the saaran was not over-sweet.",
+    isPublished: true,
+    createdAt: "2026-09-04T03:30:00.000Z",
+  },
+  {
+    id: "s2",
+    name: "Rohit Kulkarni",
+    occasion: "Office Diwali",
+    rating: 5,
+    text: "Chakli, shankarpali and besan ladoo for twenty people. Still crisp four days later, which tells you the oil was clean.",
+    isPublished: true,
+    createdAt: "2025-11-02T05:00:00.000Z",
+  },
+  {
+    id: "s3",
+    name: "Sneha Patil",
+    occasion: "Haldi, 60 guests",
+    rating: 5,
+    text: "She called the evening before to ask how spicy we wanted the misal. Food reached at 11 sharp and nothing ran out.",
+    isPublished: true,
+    createdAt: "2026-08-17T06:00:00.000Z",
+  },
+  {
+    id: "s4",
+    name: "Ajay Salunkhe",
+    occasion: "Sunday lunch",
+    rating: 4,
+    text: "Proper malvani masala, the surmai fried right, and the best solkadhi I have had outside Malvan.",
+    isPublished: true,
+    createdAt: "2026-07-12T07:00:00.000Z",
+  },
+  {
+    id: "s5",
+    name: "Prachi Joshi",
+    occasion: "Upvas",
+    rating: 5,
+    text: "Sabudana khichdi that is not sticky and not oily, each sago separate, with enough peanut. I order nowhere else on fasting days.",
+    isPublished: true,
+    createdAt: "2026-09-09T04:00:00.000Z",
+  },
+  {
+    id: "s6",
+    name: "Nikhil Rane",
+    occasion: "Holi",
+    rating: 5,
+    text: "Thin, soft puran poli, even right to the edge, and she sent katachi aamti with it without being asked.",
+    isPublished: true,
+    createdAt: "2026-03-05T05:30:00.000Z",
+  },
+];
+
+const formatMonth = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-IN", { month: "short", year: "numeric" });
+
+/** A square torn out of a notebook, pinned to the wall at a slight angle. */
+function Cutout({ review, index }: { review: ReviewDTO; index: number }) {
+  // Fixed per position, so the wall looks hand-pinned and not random on
+  // every render.
+  const tilt = [-2.6, 1.8, -1.2, 2.4, -2, 1.4][index % 6];
+
+  return (
+    <figure
+      className="paper-cutout relative size-56 shrink-0 bg-[#f6e7c8] p-5 shadow-[0_14px_28px_rgba(80,45,15,0.28)] sm:size-64"
+      style={{ ["--tilt" as string]: `${tilt}deg`, animationDelay: `${(index % 6) * 0.9}s` }}
+    >
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_90%_at_50%_0%,rgba(255,255,255,0.45),transparent_60%)]"
+      />
+      <Stars rating={review.rating} />
+      <blockquote className="mt-2.5 line-clamp-5 text-[0.9rem] leading-snug text-[#5b3620]">
+        {review.text}
+      </blockquote>
+      <figcaption className="absolute right-5 bottom-4 left-5 border-t border-[#9a3412]/25 pt-2">
+        <span className="block truncate font-royal text-sm font-bold text-[#7c2d12]">{review.name}</span>
+        <span className="block truncate text-xs text-[#5b3620]/70">
+          {review.occasion ? `${review.occasion} · ` : ""}
+          {formatMonth(review.createdAt)}
+        </span>
+      </figcaption>
+    </figure>
+  );
+}
+
+/** Enough cards to cross a wide screen, so a short list still loops seamlessly. */
+const MIN_PER_COPY = 6;
+
+function Row({ reviews, reverse }: { reviews: ReviewDTO[]; reverse?: boolean }) {
+  if (reviews.length === 0) return null;
+
+  const copy: ReviewDTO[] = [];
+  while (copy.length < MIN_PER_COPY) copy.push(...reviews);
+
+  return (
+    <div className="marquee relative py-3">
+      {/* Two copies of the row make the loop seamless. */}
+      <div className={cn("marquee-track flex w-max items-center gap-8", reverse && "marquee-track--reverse")}>
+        {[...copy, ...copy].map((review, i) => (
+          <Cutout key={`${review.id}-${i}`} review={review} index={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Section three: Aaji's published reviews drifting past as paper cutouts, two
+ * rows running opposite ways. Customers add to it from here.
+ */
+export function ReviewsSection() {
+  const published = usePublishedReviews();
+  const reviews = published.data?.length ? published.data : SAMPLES;
+  const isSample = !published.data?.length;
+
+  // Two rows once there are enough reviews to fill both without repeating the
+  // same card on each; until then, one row.
+  const split = reviews.length >= 4;
+  const half = Math.ceil(reviews.length / 2);
+  const topRow = split ? reviews.slice(0, half) : reviews;
+  const bottomRow = split ? reviews.slice(half) : [];
+
+  return (
+    <section className="relative overflow-hidden py-16 sm:py-24" aria-labelledby="reviews-heading">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[#e8d5b0] bg-repeat"
+        style={{ backgroundImage: "url('/textures/parchment-tile.png')", backgroundSize: "400px auto" }}
+      />
+
+      <Reveal className="relative">
+        <div className="mx-auto mb-8 w-full max-w-5xl px-4 text-center">
+          <p lang="mr" className="font-display-mr text-2xl text-[#9a3412] sm:text-3xl">
+            लोक काय म्हणतात
+          </p>
+          <h2 id="reviews-heading" className="mt-1 font-royal text-3xl font-bold tracking-wide text-[#4a2410] sm:text-4xl">
+            What people say
+          </h2>
+        </div>
+
+        <Row reviews={topRow} />
+        <Row reviews={bottomRow} reverse />
+
+        <div className="mt-10 flex flex-col items-center gap-3 px-4">
+          <LeaveReviewDialog />
+          <p className="text-xs text-[#5b3620]/70">
+            {isSample
+              ? "Sample reviews, shown until Aaji publishes her own."
+              : "Aaji chooses which reviews appear here."}
+          </p>
+        </div>
+      </Reveal>
+    </section>
+  );
+}

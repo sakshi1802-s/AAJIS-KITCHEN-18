@@ -15,19 +15,18 @@ function ScrollToTop() {
 
 export function RootLayout() {
   const { pathname } = useLocation();
-  // The landing page's own photograph fills the screen; every other page sits
-  // on the wood, and needs room under the fixed wordmark and navigation.
   const isLanding = pathname === "/";
 
   return (
     <div className="relative flex min-h-dvh flex-col">
-      {/* The wooden ground, on every page. */}
+      {/* One photograph behind the whole home page; the laid table behind every
+          other page. Fixed, so it stays put while the content scrolls over it. */}
       <div
         aria-hidden="true"
-        className="fixed inset-0 -z-10 bg-wood-deep bg-repeat"
-        style={{ backgroundImage: "url('/textures/wood-planks.jpg')", backgroundSize: "auto 100%" }}
+        className="fixed inset-0 -z-10 bg-wood-deep bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url('${isLanding ? "/hero/home-bg.webp" : "/hero/table-bg.webp"}')` }}
       />
-      <div aria-hidden="true" className="fixed inset-0 -z-10 bg-black/45" />
+      <div aria-hidden="true" className={`fixed inset-0 -z-10 ${isLanding ? "bg-black/25" : "bg-black/45"}`} />
 
       <ScrollToTop />
       <PageLoader />

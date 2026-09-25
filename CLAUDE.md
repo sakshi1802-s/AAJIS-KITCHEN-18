@@ -5,10 +5,12 @@ Repo: `/client` (Vite + React + TS), `/server` (Express 5 + TS), `/types` (share
 
 ## Scope discipline
 
-- Three collections (`users`, `menuItems`, `orders`). A fourth needs an explicit reason.
+- Four collections (`users`, `menuItems`, `orders`, `reviews`). A fifth needs an explicit reason.
+  `reviews` earned its place: a review is not tied to one order, and Aji publishes them one by one.
 - The endpoint list in roadmap section 4 is the whole API, plus `GET /api/health` and
   the two password endpoints (`POST /api/auth/register`, `POST /api/auth/login`)
-  added so customers can sign up without a Google account.
+  added so customers can sign up without a Google account, and the four reviews
+  endpoints listed in the README.
 - No Redis, no queues, no websockets, no payment gateway, no GraphQL, no Docker for the app itself, no state library beyond Context plus TanStack Query.
 - No slot booking, no capacity engine, no scheduling logic. Aji accepts or declines; that is the whole availability system.
 - No delivery tracking, no preparing/out-for-delivery statuses. One decision, then done.

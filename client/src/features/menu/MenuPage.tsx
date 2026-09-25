@@ -1,122 +1,41 @@
-import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router";
-import { CATEGORIES, type Category } from "@shared/api";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
-import { Button } from "@/components/ui/button";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { cn } from "@/lib/utils";
-import { MenuGrid } from "./MenuGrid";
-import { MenuFilters } from "./MenuFilters";
-import { MenuGridSkeleton } from "./MenuGridSkeleton";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CookbookMenu } from "./CookbookMenu";
 import { useMenu } from "./useMenu";
 
-const isCategory = (value: string | null): value is Category =>
-  value !== null && (CATEGORIES as readonly string[]).includes(value);
-
 /**
- * The public menu. Filters live in the URL (?category=sweets&veg=1&q=modak)
- * so a filtered view can be shared and the back button behaves.
+ * The whole menu in one place, as Aaji's recipe book. The section buttons turn
+ * the pages, so there is nothing to filter and nothing to keep in the URL.
  */
 export function MenuPage() {
-  const [params, setParams] = useSearchParams();
-  const categoryParam = params.get("category");
-  const category = isCategory(categoryParam) ? categoryParam : undefined;
-  const urlSearch = params.get("q") ?? "";
-
-  const [searchInput, setSearchInput] = useState(urlSearch);
-  const search = useDebouncedValue(searchInput.trim(), 300);
-
-  // Push the debounced search into the URL.
-  useEffect(() => {
-    setParams(
-      (prev) => {
-        const next = new URLSearchParams(prev);
-        if (search) next.set("q", search);
-        else next.delete("q");
-        return next;
-      },
-      { replace: true },
-    );
-  }, [search, setParams]);
-
-  const updateParam = (key: string, value: string | undefined) =>
-    setParams(
-      (prev) => {
-        const next = new URLSearchParams(prev);
-        if (value) next.set(key, value);
-        else next.delete(key);
-        return next;
-      },
-      { replace: true },
-    );
-
-  const clearFilters = () => {
-    setSearchInput("");
-    setParams({}, { replace: true });
-  };
-
-  const menu = useMenu({ category, search: search || undefined });
-  const hasFilters = Boolean(category || search);
+  const menu = useMenu();
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:py-10">
-      <header className="mb-6 max-w-2xl">
-        <h1 className="font-royal text-3xl font-bold tracking-wide text-gold sm:text-4xl">The menu</h1>
-        <p lang="mr" className="mt-1 font-display-mr text-2xl text-cream/80">
+    <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:py-10">
+      <header className="mb-7 text-center">
+        <p lang="mr" className="font-display-mr text-3xl text-gold sm:text-4xl">
           आजीचा मेनू
         </p>
+        <h1 className="mt-1 font-royal text-2xl font-bold tracking-wide text-cream sm:text-3xl">
+          Turn the page, pick a dish
+        </h1>
       </header>
 
-      <MenuFilters
-        category={category}
-        onCategoryChange={(c) => updateParam("category", c)}
-        search={searchInput}
-        onSearchChange={setSearchInput}
-      />
-
-      <section className="mt-6" aria-labelledby="menu-results">
-        <h2 id="menu-results" className="sr-only">
-          Dishes
-        </h2>
-
-        {menu.isPending ? (
-          <MenuGridSkeleton />
-        ) : menu.isError ? (
-          <ErrorState title="Couldn't load the menu" error={menu.error} onRetry={() => void menu.refetch()} />
-        ) : menu.data.length === 0 ? (
-          <EmptyState
-            title={hasFilters ? "No dishes match that" : "The menu is being written"}
-            description={
-              hasFilters
-                ? search
-                  ? `Nothing on the menu matches “${search}”. Try another name, or clear the filters.`
-                  : "Nothing in this selection right now. Try another category."
-                : "Aaji hasn't added any dishes yet. Check back soon."
-            }
-            action={
-              hasFilters && (
-                <Button variant="outline" size="lg" onClick={clearFilters}>
-                  Clear filters
-                </Button>
-              )
-            }
-          />
-        ) : (
-          <>
-            <p className="mb-4 text-sm text-cream/70" aria-live="polite">
-              {menu.data.length} {menu.data.length === 1 ? "dish" : "dishes"}
-            </p>
-            <MenuGrid
-              items={menu.data}
-              className={cn(
-                "grid grid-cols-2 gap-3 transition-opacity sm:gap-4 md:grid-cols-3 lg:grid-cols-4",
-                menu.isPlaceholderData && "opacity-60",
-              )}
-            />
-          </>
-        )}
-      </section>
+      {menu.isPending ? (
+        <div className="flex justify-center">
+          <Skeleton className="h-[620px] w-full max-w-[1080px] rounded-sm" />
+        </div>
+      ) : menu.isError ? (
+        <ErrorState title="Couldn't load the menu" error={menu.error} onRetry={() => void menu.refetch()} />
+      ) : menu.data.length === 0 ? (
+        <EmptyState
+          title="The menu is being written"
+          description="Aaji hasn't added any dishes yet. Check back soon."
+        />
+      ) : (
+        <CookbookMenu items={menu.data} />
+      )}
     </div>
   );
 }

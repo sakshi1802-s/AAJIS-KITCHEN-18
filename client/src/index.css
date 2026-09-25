@@ -312,3 +312,64 @@
 [data-slot="card"] textarea {
   background-color: #fdf6e7;
 }
+
+/* ── Review cutouts ──────────────────────────────────────────────────────
+   Section three is a wall of square paper pieces torn out of a notebook and
+   drifting past. Two rows run opposite ways so the wall never looks like one
+   sliding strip. */
+.marquee-track--reverse {
+  animation-direction: reverse;
+}
+
+/* Each square is cut with slightly ragged edges, then tilted and bobbed on
+   its own offset so the row breathes instead of marching. */
+.paper-cutout {
+  clip-path: polygon(
+    1% 3%, 14% 0.5%, 32% 2.5%, 51% 0, 69% 2%, 86% 0.8%, 99% 3%,
+    98% 19%, 100% 38%, 98.5% 57%, 100% 76%, 98% 97%,
+    84% 99.5%, 66% 97.5%, 47% 100%, 29% 98%, 12% 99.5%, 2% 97%,
+    3% 78%, 0.5% 59%, 2% 40%, 0 21%
+  );
+  animation: cutout-bob 7s ease-in-out infinite;
+}
+
+@keyframes cutout-bob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(var(--tilt, 0deg));
+  }
+  50% {
+    transform: translate3d(0, -10px, 0) rotate(calc(var(--tilt, 0deg) * -0.6));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paper-cutout {
+    animation: none;
+  }
+}
+
+/* ── The two books ───────────────────────────────────────────────────────
+   react-pageflip positions its own pages; these rules only dress them. */
+.book-page {
+  background-color: #f3e3c3;
+  background-image: url("/textures/parchment-tile.png");
+  background-size: 400px auto;
+  color: #4a2410;
+  overflow: hidden;
+}
+
+/* The gutter shadow: paper curving into the spine. */
+.book-page--left {
+  box-shadow: inset -22px 0 26px -18px rgba(90, 55, 20, 0.55);
+}
+
+.book-page--right {
+  box-shadow: inset 22px 0 26px -18px rgba(90, 55, 20, 0.55);
+}
+
+.book-page--hard {
+  background-color: #7c2d12;
+  background-image: none;
+  color: #f8ecd5;
+}

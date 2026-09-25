@@ -7,6 +7,7 @@ import jwt from "jsonwebtoken";
 import { env } from "../../src/config/env";
 import { connectDB, disconnectDB } from "../../src/lib/db";
 import { Order } from "../../src/models/Order";
+import { Review } from "../../src/models/Review";
 import { User } from "../../src/models/User";
 
 const CUSTOMER_EMAIL = "qa.tester@example.invalid";
@@ -22,8 +23,11 @@ async function main() {
     const user = await User.findOne({ email: { $in: [CUSTOMER_EMAIL, OWNER_EMAIL] } });
     if (user) {
       const { deletedCount } = await Order.deleteMany({ userId: user._id });
+      const reviews = await Review.deleteMany({ userId: user._id });
       await user.deleteOne();
-      console.log(`Removed the test customer and ${deletedCount} of their orders`);
+      console.log(
+        `Removed the test customer, ${deletedCount} of their orders and ${reviews.deletedCount} of their reviews`,
+      );
     } else {
       console.log("No test customer to remove");
     }

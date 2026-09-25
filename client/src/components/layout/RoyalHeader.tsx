@@ -8,7 +8,7 @@ const NAV = [
   { to: "/", label: "Home" },
   { to: "/menu", label: "Menu" },
   { to: "/plan", label: "Planner AI" },
-  { to: "/cart", label: "Cart" },
+  { to: "/cart", label: "Plate" },
 ];
 
 /**
