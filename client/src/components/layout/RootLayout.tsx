@@ -19,14 +19,19 @@ export function RootLayout() {
 
   return (
     <div className="relative flex min-h-dvh flex-col">
-      {/* One photograph behind the whole home page; the laid table behind every
-          other page. Fixed, so it stays put while the content scrolls over it. */}
-      <div
-        aria-hidden="true"
-        className="fixed inset-0 -z-10 bg-wood-deep bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url('${isLanding ? "/hero/home-bg.webp" : "/hero/table-bg.webp"}')` }}
-      />
-      <div aria-hidden="true" className={`fixed inset-0 -z-10 ${isLanding ? "bg-black/25" : "bg-black/45"}`} />
+      {/* The laid table behind every page but the home page, which brings its
+          own single photograph and lays itself out to match it. Fixed, so it
+          stays put while the content scrolls over it. */}
+      {!isLanding && (
+        <>
+          <div
+            aria-hidden="true"
+            className="fixed inset-0 -z-10 bg-wood-deep bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: "url('/hero/table-bg.webp')" }}
+          />
+          <div aria-hidden="true" className="fixed inset-0 -z-10 bg-black/45" />
+        </>
+      )}
 
       <ScrollToTop />
       <PageLoader />
@@ -40,7 +45,7 @@ export function RootLayout() {
 
       <RoyalHeader />
 
-      <main id="main" className={isLanding ? "flex-1" : "flex-1 pt-28 pb-10 sm:pt-32"}>
+      <main id="main" className={isLanding ? "flex-1" : "flex-1 pt-24 pb-10 sm:pt-28"}>
         <PageTransition>
           <Outlet />
         </PageTransition>

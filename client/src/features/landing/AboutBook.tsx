@@ -1,9 +1,7 @@
-import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { FlipBook, type FlipBookHandle } from "@/components/FlipBook";
-import { Reveal } from "@/components/Reveal";
 
-/** Four spreads: her photograph on the left, a short piece of her story on the right. */
+/** Four spreads: a photograph on the left, a short piece of her story on the right. */
 const SPREADS = [
   {
     photo: "/aji/aaji.webp",
@@ -18,10 +16,10 @@ const SPREADS = [
     body: "The bhajani is ground at home, the masala is pounded and not bought, the ghee is her own, and the vegetables are picked the morning she cooks them.",
   },
   {
-    photo: "/dishes/puran-poli-thali.webp",
-    marathi: "एका वेळी एकच",
-    heading: "One order at a time",
-    body: "She reads and confirms every order herself, which is why the site asks her before it says yes. If she cannot do your day, she will tell you so.",
+    photo: "/aji/carrying.webp",
+    marathi: "आजोबांची साथ",
+    heading: "Aajoba does the running about",
+    body: "He reads her the orders off the phone, goes down to the market at six, turns the grinding stone when her wrist tires, and walks every tiffin out to the gate himself.",
   },
   {
     photo: "/dishes/ukadiche-modak.webp",
@@ -31,119 +29,191 @@ const SPREADS = [
   },
 ];
 
-const FLIP_EVERY_MS = 6000;
+/** It opens as soon as it is up; only the reading pace is leisurely. */
+const OPEN_AFTER_MS = 120;
+const TURN_EVERY_MS = 4600;
+
+/** A page must be a plain element: the flip library clones it to attach a ref. */
+function page({ key, side, children }: { key: string; side: "left" | "right"; children: ReactNode }) {
+  return (
+    <div key={key} className={`book-page book-page--${side}`}>
+      {children}
+    </div>
+  );
+}
 
 /**
- * Section two: Aaji's story as a book that turns its own pages. Hovering or
- * focusing it stops the timer so a page can be finished, and anyone who asked
- * for less motion turns it by hand.
+ * Section two: her story as a book resting on the table. Closed and lying
+ * flat until you scroll to it, then it stands up, opens at once and reads
+ * itself through, shuts and lies back down once you have gone past. The pages
+ * can also be turned by hand: click the right half to go on, the left to go
+ * back.
  */
 export function AboutBook() {
+  const bookBoxRef = useRef<HTMLDivElement>(null);
   const bookRef = useRef<FlipBookHandle>(null);
-  const [page, setPage] = useState(0);
-  const [paused, setPaused] = useState(false);
-  // Narrow screens show one page at a time, so the timer must step by one.
+  const [standing, setStanding] = useState(false);
+  const [page_, setPage] = useState(0);
+  // A narrow screen shows one page at a time, so the timer steps by one.
   const [step, setStep] = useState(2);
 
-  const pageCount = SPREADS.length * 2;
+  const pageCount = SPREADS.length * 2 + 2;
 
   useEffect(() => {
-    if (paused) return;
+    const element = bookBoxRef.current;
+    if (!element) return;
+
+    // Watch the book itself, not the section around it. The section is taller
+    // than a laptop window, so a ratio of it can never reach a high threshold
+    // and the book would never stand up.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const visible = Boolean(entry && entry.intersectionRatio >= 0.35);
+        setStanding(visible);
+        if (!visible) {
+          // Shut it as it lies back down, so it is closed the next time it
+          // comes up. No animation: nobody is looking at it.
+          bookRef.current?.pageFlip()?.turnToPage(0);
+          setPage(0);
+        }
+      },
+      { threshold: [0, 0.35, 1] },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!standing) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const id = setTimeout(() => {
-      const api = bookRef.current?.pageFlip();
-      if (!api) return;
-      if (page + step >= pageCount) api.flip(0);
-      else api.flipNext();
-    }, FLIP_EVERY_MS);
+    const id = setTimeout(
+      () => {
+        const api = bookRef.current?.pageFlip();
+        if (!api) return;
+        if (page_ + step >= pageCount) api.flip(0);
+        else api.flipNext();
+      },
+      page_ === 0 ? OPEN_AFTER_MS : TURN_EVERY_MS,
+    );
 
     return () => clearTimeout(id);
-  }, [page, paused, step, pageCount]);
+  }, [standing, page_, step, pageCount]);
 
   return (
-    <section id="about-aji" className="relative scroll-mt-4 overflow-hidden py-20 sm:py-24">
-      <Reveal className="mx-auto mb-10 w-full max-w-3xl px-4 text-center">
-        <p lang="mr" className="font-display-mr text-3xl text-gold sm:text-4xl">
-          आजीबद्दल
-        </p>
-        <h2 className="mt-1 font-royal text-3xl font-bold tracking-wide text-cream sm:text-4xl">
-          Her story, page by page
-        </h2>
-      </Reveal>
+    <section id="about-aji" className="relative flex min-h-[88svh] items-center justify-center px-4 py-10">
+      {/* A definite width: with size="stretch" the book measures its parent,
+          and a shrink-to-fit parent collapses it to the minimum. */}
+      <div ref={bookBoxRef} className="relative w-[min(90vw,44rem)]">
+        {/* The shadow it casts on the table: wide and soft while it lies flat,
+            tight underneath once it is upright. */}
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-x-0 -bottom-6 mx-auto h-10 rounded-[50%] bg-black/55 blur-2xl transition-all duration-[520ms] ${
+            standing ? "w-3/4 opacity-60" : "w-[115%] opacity-80"
+          }`}
+        />
 
-      {/* Deliberately outside <Reveal>: the flip library measures the book on
-          mount, and a parent mid-transform gives it the wrong size. */}
-      <div
-        className="flex justify-center px-4"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-        onFocusCapture={() => setPaused(true)}
-        onBlurCapture={() => setPaused(false)}
-      >
-        <FlipBook
-          ref={bookRef}
-          width={430}
-          height={560}
-          size="stretch"
-          minWidth={280}
-          maxWidth={520}
-          minHeight={380}
-          maxHeight={660}
-          maxShadowOpacity={0.4}
-          flippingTime={900}
-          mobileScrollSupport
-          className="aaji-book"
-          onFlip={(event) => setPage(event.data)}
-          onChangeOrientation={(event) => setStep(event.data === "landscape" ? 2 : 1)}
+        <div
+          className="transition-transform duration-[520ms] ease-[cubic-bezier(0.16,1,0.3,1)] [transform-style:preserve-3d] [filter:drop-shadow(0_16px_26px_rgba(0,0,0,0.55))]"
+          style={{
+            transform: standing
+              ? "perspective(1600px) rotateX(7deg) rotateZ(-1.5deg) scale(1)"
+              : "perspective(1600px) rotateX(64deg) rotateZ(-9deg) scale(0.74) translateY(8%)",
+          }}
         >
-          {SPREADS.flatMap((spread, i) => [
-            <div key={`photo-${spread.photo}`} className="book-page book-page--left">
-              <div className="flex h-full flex-col p-5 sm:p-7">
-                <img
-                  src={spread.photo}
-                  alt=""
-                  loading={i === 0 ? "eager" : "lazy"}
-                  decoding="async"
-                  className="min-h-0 w-full flex-1 rounded-sm object-cover shadow-[0_6px_18px_rgba(80,45,15,0.3)]"
+          <FlipBook
+            ref={bookRef}
+            width={360}
+            height={470}
+            size="stretch"
+            minWidth={230}
+            maxWidth={400}
+            minHeight={300}
+            maxHeight={520}
+            showCover
+            maxShadowOpacity={0.5}
+            flippingTime={620}
+            onFlip={(event) => setPage(event.data)}
+            onChangeOrientation={(event) => setStep(event.data === "landscape" ? 2 : 1)}
+          >
+            {[
+              <div key="cover" className="book-page book-page--hard relative" data-density="hard">
+                {/* Cloth, then a gold rule inside it, the way a bound book is. */}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_90%_at_30%_10%,rgba(255,220,150,0.16),transparent_62%)]"
                 />
-                <p lang="mr" className="mt-4 text-center font-display-mr text-2xl text-[#9a3412]">
-                  {spread.marathi}
-                </p>
-              </div>
-            </div>,
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-y-0 left-0 w-3 bg-gradient-to-r from-black/45 to-transparent"
+                />
+                <div className="relative flex h-full flex-col items-center justify-center gap-4 p-7 text-center">
+                  <span aria-hidden="true" className="absolute inset-4 rounded-md border border-[#fbbf24]/45" />
+                  <span aria-hidden="true" className="absolute inset-[1.15rem] rounded-sm border border-[#fbbf24]/20" />
 
-            <div key={`text-${spread.photo}`} className="book-page book-page--right">
-              <div className="flex h-full flex-col justify-center p-7 sm:p-9">
-                <h3 className="font-royal text-2xl leading-snug font-bold text-[#4a2410] sm:text-3xl">
-                  {spread.heading}
-                </h3>
-                <p className="mt-4 text-[1.02rem] leading-relaxed text-[#5b3620]">{spread.body}</p>
+                  <img src="/logo/aji-logo.webp" alt="" className="size-16 rounded-full opacity-95" />
+                  <p lang="mr" className="font-display-mr text-3xl leading-tight text-[#fbbf24]">
+                    आजीची गोष्ट
+                  </p>
+                  <span className="h-px w-14 bg-[#fbbf24]/50" />
+                  <p className="font-script text-base text-[#f8ecd5]/85">Her story, page by page</p>
+                </div>
+              </div>,
 
-                {i === SPREADS.length - 1 && (
-                  <div className="mt-7 flex flex-wrap gap-3">
-                    <Link
-                      to="/menu"
-                      className="rounded-full bg-[#9a3412] px-6 py-2.5 font-royal text-sm font-bold tracking-wide text-[#f8ecd5] transition-colors hover:bg-[#7c2d12]"
-                    >
-                      See the menu
-                    </Link>
-                    <Link
-                      to="/plan"
-                      className="rounded-full border border-[#9a3412]/50 px-6 py-2.5 font-royal text-sm font-bold tracking-wide text-[#7c2d12] transition-colors hover:bg-[#9a3412]/10"
-                    >
-                      Plan an occasion
-                    </Link>
-                  </div>
-                )}
+              ...SPREADS.flatMap((spread) => [
+                page({
+                  key: `photo-${spread.photo}`,
+                  side: "left",
+                  children: (
+                    <div className="flex h-full flex-col p-4 sm:p-5">
+                      <figure className="relative min-h-0 w-full flex-1">
+                        <img
+                          src={spread.photo}
+                          alt=""
+                          loading="lazy"
+                          decoding="async"
+                          className="absolute inset-[6%] size-[88%] rounded-lg object-cover"
+                        />
+                        <img
+                          src="/textures/page-frame.png"
+                          alt=""
+                          aria-hidden="true"
+                          className="pointer-events-none absolute inset-0 size-full select-none"
+                        />
+                      </figure>
+                      <p lang="mr" className="mt-3 text-center font-display-mr text-xl text-[#9a3412]">
+                        {spread.marathi}
+                      </p>
+                    </div>
+                  ),
+                }),
 
-                <span className="mt-auto pt-6 text-right font-script text-sm text-[#5b3620]/60">
-                  {i + 1} of {SPREADS.length}
-                </span>
-              </div>
-            </div>,
-          ])}
-        </FlipBook>
+                page({
+                  key: `text-${spread.photo}`,
+                  side: "right",
+                  children: (
+                    <div className="flex h-full flex-col justify-center p-6 sm:p-7">
+                      <h3 className="font-royal text-xl leading-snug font-bold text-[#4a2410] sm:text-2xl">
+                        {spread.heading}
+                      </h3>
+                      <p className="mt-3 text-[0.95rem] leading-relaxed text-[#5b3620]">{spread.body}</p>
+                    </div>
+                  ),
+                }),
+              ]),
+
+              <div key="back" className="book-page book-page--hard" data-density="hard">
+                <div className="flex h-full flex-col items-center justify-center gap-2 p-6 text-center">
+                  <p lang="mr" className="font-display-mr text-2xl text-[#fbbf24]">
+                    घरगुती चव, प्रेमाने
+                  </p>
+                </div>
+              </div>,
+            ]}
+          </FlipBook>
+        </div>
       </div>
     </section>
   );

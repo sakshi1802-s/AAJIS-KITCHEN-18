@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useRef } from "react";
 import { cn } from "@/lib/utils";
+import { useCoverBox } from "./coverMap";
 
 /**
  * Steam curling off the food in the hero photograph.
@@ -8,13 +9,10 @@ import { cn } from "@/lib/utils";
  * fades — so it reads as a curl of steam rather than a rising dot. Several
  * plumes per plate, on offset loops, give a continuous column.
  *
- * Positions are given in the PHOTOGRAPH's own pixels and mapped through the
- * same maths `object-fit: cover` uses, so a plume stays over its katori
- * whichever way the image gets cropped.
+ * Positions are given in the photograph's own pixels and mapped by
+ * `coverMap`, so a plume stays over its katori whichever way the picture gets
+ * cropped. This must sit in the same box as the background it belongs to.
  */
-
-const IMAGE_W = 1536;
-const IMAGE_H = 1024;
 
 interface Plume {
   /** where it starts, in the photograph's pixels */
@@ -34,75 +32,31 @@ interface Plume {
 
 // The thali she carries low, in her right hand.
 const LOWER_PLATE: Plume[] = [
-  { x: 235, y: 590, size: 200, delay: 0, duration: 7.5, sway: 38, peak: 0.72, spin: -1 },
-  { x: 300, y: 565, size: 165, delay: 1.2, duration: 8.2, sway: -30, peak: 0.6, spin: 1 },
-  { x: 360, y: 545, size: 215, delay: 2.4, duration: 7.8, sway: 32, peak: 0.68, spin: -1 },
-  { x: 430, y: 555, size: 175, delay: 3.6, duration: 8.6, sway: -34, peak: 0.62, spin: 1 },
-  { x: 500, y: 575, size: 205, delay: 4.8, duration: 8, sway: 30, peak: 0.66, spin: -1 },
-  { x: 275, y: 520, size: 240, delay: 6, duration: 9.2, sway: -26, peak: 0.5, spin: 1 },
-  { x: 400, y: 500, size: 255, delay: 2.9, duration: 9.6, sway: 24, peak: 0.46, spin: -1 },
+  { x: 110, y: 300, size: 86, delay: 0, duration: 7.5, sway: 17, peak: 0.66, spin: -1 },
+  { x: 150, y: 285, size: 72, delay: 1.2, duration: 8.2, sway: -14, peak: 0.56, spin: 1 },
+  { x: 196, y: 272, size: 92, delay: 2.4, duration: 7.8, sway: 15, peak: 0.62, spin: -1 },
+  { x: 245, y: 278, size: 76, delay: 3.6, duration: 8.6, sway: -16, peak: 0.58, spin: 1 },
+  { x: 296, y: 292, size: 88, delay: 4.8, duration: 8, sway: 14, peak: 0.6, spin: -1 },
+  { x: 140, y: 258, size: 112, delay: 6, duration: 9.2, sway: -12, peak: 0.44, spin: 1 },
+  { x: 232, y: 246, size: 120, delay: 2.9, duration: 9.6, sway: 11, peak: 0.4, spin: -1 },
 ];
 
 // The raised thali, up near her shoulder.
 const RAISED_PLATE: Plume[] = [
-  { x: 1000, y: 330, size: 195, delay: 0.6, duration: 7.6, sway: 36, peak: 0.74, spin: 1 },
-  { x: 1075, y: 300, size: 160, delay: 1.8, duration: 8.4, sway: -30, peak: 0.62, spin: -1 },
-  { x: 1150, y: 285, size: 210, delay: 3, duration: 7.9, sway: 32, peak: 0.7, spin: 1 },
-  { x: 1235, y: 300, size: 175, delay: 4.2, duration: 8.8, sway: -34, peak: 0.64, spin: -1 },
-  { x: 1320, y: 325, size: 200, delay: 5.4, duration: 8.1, sway: 30, peak: 0.68, spin: 1 },
-  { x: 1120, y: 235, size: 235, delay: 2.2, duration: 9.4, sway: 22, peak: 0.5, spin: 1 },
-  { x: 1270, y: 225, size: 225, delay: 6.4, duration: 9.8, sway: -24, peak: 0.46, spin: -1 },
+  { x: 452, y: 205, size: 84, delay: 0.6, duration: 7.6, sway: 16, peak: 0.66, spin: 1 },
+  { x: 500, y: 186, size: 70, delay: 1.8, duration: 8.4, sway: -14, peak: 0.56, spin: -1 },
+  { x: 552, y: 176, size: 90, delay: 3, duration: 7.9, sway: 15, peak: 0.62, spin: 1 },
+  { x: 606, y: 186, size: 76, delay: 4.2, duration: 8.8, sway: -16, peak: 0.58, spin: -1 },
+  { x: 656, y: 204, size: 86, delay: 5.4, duration: 8.1, sway: 14, peak: 0.6, spin: 1 },
+  { x: 524, y: 148, size: 110, delay: 2.2, duration: 9.4, sway: 10, peak: 0.44, spin: 1 },
+  { x: 618, y: 142, size: 106, delay: 6.4, duration: 9.8, sway: -11, peak: 0.4, spin: -1 },
 ];
 
 const PLUMES = [...LOWER_PLATE, ...RAISED_PLATE];
 
-interface CoverBox {
-  scale: number;
-  offsetX: number;
-  offsetY: number;
-}
-
-/** Where `object-fit: cover` actually puts the photo inside its box. */
-function useCoverBox(ref: RefObject<HTMLElement | null>): CoverBox | null {
-  const [box, setBox] = useState<CoverBox | null>(null);
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-
-    let frame = 0;
-
-    const measure = () => {
-      const { width, height } = element.getBoundingClientRect();
-      if (width === 0 || height === 0) {
-        // Mounted in a hidden tab or a collapsed pane: keep looking until the
-        // box has a size, rather than rendering nothing for ever.
-        frame = requestAnimationFrame(measure);
-        return;
-      }
-      const scale = Math.max(width / IMAGE_W, height / IMAGE_H);
-      setBox({
-        scale,
-        offsetX: (width - IMAGE_W * scale) / 2,
-        offsetY: (height - IMAGE_H * scale) / 2,
-      });
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => {
-      cancelAnimationFrame(frame);
-      observer.disconnect();
-    };
-  }, [ref]);
-
-  return box;
-}
-
-export function SteamWisps({ className }: { className?: string }) {
+export function SteamWisps({ className, panY = 0.5 }: { className?: string; panY?: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const box = useCoverBox(containerRef);
+  const box = useCoverBox(containerRef, panY);
 
   return (
     <div

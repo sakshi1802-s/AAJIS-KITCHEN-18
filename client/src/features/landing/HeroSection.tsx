@@ -1,54 +1,73 @@
 import { motion, useReducedMotion } from "motion/react";
-import { SteamWisps } from "./SteamWisps";
+import { useRef } from "react";
+import { START_PAN, useCoverBox } from "./coverMap";
 import { WrittenLine } from "./WrittenLine";
 
 const TAGLINE = "Bringing Aaji's authentic gaavran जेवण, cooked the way she always has, straight to your ताट...";
 
 /**
- * Section one: the photograph across the whole screen, with चटक मटक! in the
- * gap between the two thalis and one written line beneath it. The wordmark
- * and navigation come from the shared header.
+ * Where चटक sits, in the photograph's own pixels: the gap between the thali
+ * she carries low and the one up by her shoulder. Anchoring it to the picture
+ * rather than to the window keeps it in that gap on any screen shape.
  */
+const ANCHOR = { x: 292, y: 232 };
+
+/**
+ * Section one: चटक मटक! in the gap between the two thalis, with one written
+ * line beneath it. The photograph is the single background behind the whole
+ * page, so this section only carries the words; the wordmark and navigation
+ * come from the shared header.
+ */
+/** How wide the block gets, in px and as a share of the window; the class
+ *  below must say the same, because the clamp reads these. */
+const BLOCK_W = 416;
+const BLOCK_VW = 0.58;
+
 export function HeroSection() {
   const reduceMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  // The first screen is exactly one window tall and sits at the very top of
+  // the page, so the background's box and this section's box are the same.
+  const box = useCoverBox(sectionRef, START_PAN);
+
+  let placement: { left: number; top: number } | undefined;
+  if (box) {
+    const block = Math.min(BLOCK_W, box.width * BLOCK_VW);
+    const spot = box.at(ANCHOR.x, ANCHOR.y);
+    // Anchored to the picture, but never pushed off the side of a narrow one.
+    placement = { left: Math.max(16, Math.min(spot.left, box.width - block - 16)), top: spot.top };
+  }
 
   return (
-    <section className="relative isolate min-h-svh w-full overflow-hidden bg-wood-deep">
-      <img
-        src="/hero/ajji-thalis.webp"
-        alt="Aaji in a nauvari saree carrying two brass thalis of Maharashtrian food"
-        className="absolute inset-0 size-full object-cover object-center"
-        fetchPriority="high"
-      />
-
-      <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-black/55 via-transparent via-35% to-black/35" />
-
-      <SteamWisps />
-
-      <div className="relative flex min-h-svh items-center justify-center px-4 pt-16">
-        <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          className="relative mt-[12vh] sm:mt-[14vh] sm:translate-x-[16%]"
+    <section ref={sectionRef} className="relative min-h-svh w-full overflow-hidden">
+      <motion.div
+        initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute w-[min(26rem,58vw)]"
+        style={
+          placement ?? {
+            // Until it has measured, keep it hidden rather than in the wrong
+            // place for a frame.
+            opacity: 0,
+          }
+        }
+      >
+        {/* The same kind of light that sits behind "Kitchen" in the wordmark:
+            a close warm halo, not a lamp. */}
+        <p
+          lang="mr"
+          className="flex flex-col leading-[0.88] text-gold [text-shadow:0_3px_16px_rgba(0,0,0,0.8),0_0_12px_rgba(255,224,168,0.55),0_0_26px_rgba(255,196,110,0.3)]"
         >
-          {/* A soft warm light behind the words, so they lift off the photo. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -inset-x-24 -inset-y-16 -z-10 rounded-full bg-[radial-gradient(58%_58%_at_45%_45%,rgba(255,206,110,0.5),rgba(255,176,64,0.24)_48%,transparent_74%)] blur-3xl"
-          />
+          <span className="font-display-mr text-6xl sm:text-7xl md:text-8xl">चटक</span>
+          <span className="mt-1.5 ml-14 font-display-mr text-4xl sm:ml-20 sm:text-5xl md:text-6xl">मटक!</span>
+        </p>
 
-          <p lang="mr" className="flex flex-col leading-[0.88] text-gold [text-shadow:0_4px_26px_rgba(0,0,0,0.8),0_0_28px_rgba(255,206,120,0.65),0_0_70px_rgba(255,180,70,0.45)]">
-            <span className="font-display-mr text-6xl sm:text-7xl md:text-8xl">चटक</span>
-            <span className="mt-1.5 ml-14 font-display-mr text-4xl sm:ml-20 sm:text-5xl md:text-6xl">मटक!</span>
-          </p>
-
-          {/* Fixed height: the line draws itself without nudging anything. */}
-          <p className="mt-4 min-h-[5rem] max-w-md font-script text-lg italic text-cream [text-shadow:0_2px_14px_rgba(0,0,0,0.95)] sm:text-xl">
-            <WrittenLine text={TAGLINE} duration={4200} />
-          </p>
-        </motion.div>
-      </div>
+        {/* Fixed height: the line draws itself without nudging anything. */}
+        <p className="mt-4 min-h-[5rem] font-script text-lg italic text-cream [text-shadow:0_2px_14px_rgba(0,0,0,0.95)] sm:text-xl">
+          <WrittenLine text={TAGLINE} duration={4200} />
+        </p>
+      </motion.div>
     </section>
   );
 }

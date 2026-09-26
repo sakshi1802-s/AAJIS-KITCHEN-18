@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { CATEGORIES, type Category, type MenuItemDTO } from "@shared/api";
 import { FlipBook, type FlipBookHandle } from "@/components/FlipBook";
@@ -9,21 +9,21 @@ import { formatINR } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { getAvailability } from "./availability";
 
-/** Three dishes a page, so a spread reads as six, the size of a real page. */
-const PER_PAGE = 3;
+/** Four dishes a page, so a spread reads as eight, the size of a real page. */
+const PER_PAGE = 4;
 
 function Dish({ item }: { item: MenuItemDTO }) {
   const { canOrder } = getAvailability(item);
 
   return (
-    <li className="flex min-h-0 flex-1 items-start gap-3 border-b border-[#9a3412]/20 py-3 last:border-b-0">
+    <li className="flex min-h-0 flex-1 items-start gap-3 border-b border-[#9a3412]/20 py-2.5 last:border-b-0">
       <img
         src={item.imageUrl ?? "/logo/aji-logo.webp"}
         alt=""
         loading="lazy"
         decoding="async"
         className={cn(
-          "size-16 shrink-0 rounded-sm border border-[#9a3412]/25 object-cover shadow-[0_3px_8px_rgba(80,45,15,0.25)] sm:size-20",
+          "size-14 shrink-0 rounded-md border border-[#9a3412]/25 object-cover shadow-[0_3px_8px_rgba(80,45,15,0.25)] sm:size-16",
           !canOrder && "grayscale-[60%]",
         )}
       />
@@ -163,6 +163,29 @@ function buildPages(items: MenuItemDTO[]) {
   return { pages, starts };
 }
 
+/**
+ * The shape of one page. The flip library works out a page's height from its
+ * width and this ratio, so a phone showing a single page needs a tall, narrow
+ * page or four dishes will not fit on it.
+ */
+const SHAPE = {
+  wide: { width: 520, height: 540 },
+  narrow: { width: 360, height: 520 },
+};
+
+function useIsWide(): boolean {
+  const [wide, setWide] = useState(() => window.matchMedia("(min-width: 768px)").matches);
+
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 768px)");
+    const onChange = () => setWide(query.matches);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
+
+  return wide;
+}
+
 const TAB = "h-10 rounded-full border px-5 text-sm font-semibold transition-colors outline-none focus-visible:ring-3 focus-visible:ring-gold/40";
 const TAB_ON = "border-gold bg-gold text-[#4a2410]";
 const TAB_OFF = "border-gold/40 bg-black/30 text-cream hover:bg-black/45";
@@ -174,6 +197,8 @@ const TAB_OFF = "border-gold/40 bg-black/30 text-cream hover:bg-black/45";
 export function CookbookMenu({ items }: { items: MenuItemDTO[] }) {
   const bookRef = useRef<FlipBookHandle>(null);
   const [page, setPage] = useState(0);
+  const wide = useIsWide();
+  const shape = wide ? SHAPE.wide : SHAPE.narrow;
 
   // Built once per menu. Keeping this identity stable matters: the flip
   // library rebuilds every page whenever its children change.
@@ -188,7 +213,7 @@ export function CookbookMenu({ items }: { items: MenuItemDTO[] }) {
 
   return (
     <div className="flex flex-col items-center">
-      <div role="group" aria-label="Jump to a section" className="mb-6 flex flex-wrap justify-center gap-2">
+      <div role="group" aria-label="Jump to a section" className="mb-4 flex flex-wrap justify-center gap-2">
         <button type="button" aria-pressed={page === 0} onClick={() => goTo(0)} className={cn(TAB, page === 0 ? TAB_ON : TAB_OFF)}>
           All
         </button>
@@ -206,28 +231,31 @@ export function CookbookMenu({ items }: { items: MenuItemDTO[] }) {
       </div>
 
       <FlipBook
+        // The page shape is fixed when the book is built, so a change of
+        // shape has to build a new one.
+        key={wide ? "wide" : "narrow"}
         ref={bookRef}
-        width={460}
-        height={620}
+        width={shape.width}
+        height={shape.height}
         size="stretch"
-        minWidth={300}
-        maxWidth={540}
-        minHeight={420}
-        maxHeight={760}
+        minWidth={280}
+        maxWidth={560}
+        minHeight={380}
+        maxHeight={600}
         showCover
         maxShadowOpacity={0.5}
         flippingTime={800}
         mobileScrollSupport
-        // Pages turn from the corners or from the buttons, so tapping Add
-        // inside a page never turns the page by accident.
-        disableFlipByClick
+        // Click the right half of the book to go on, the left half to go back.
+        // Clicks on links and buttons are forwarded instead, so tapping Add
+        // never turns the page.
         className="cookbook"
         onFlip={(event) => setPage(event.data)}
       >
         {pages}
       </FlipBook>
 
-      <div className="mt-6 flex items-center gap-4">
+      <div className="mt-4 flex items-center gap-4">
         <button
           type="button"
           onClick={() => bookRef.current?.pageFlip()?.flipPrev()}

@@ -12,12 +12,13 @@ export function MenuPage() {
   const menu = useMenu();
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-8 sm:py-10">
-      <header className="mb-7 text-center">
-        <p lang="mr" className="font-display-mr text-3xl text-gold sm:text-4xl">
+    <div className="mx-auto w-full max-w-6xl px-4 pt-1 pb-8">
+      {/* One compact line, so the book itself sits high on the screen. */}
+      <header className="mb-3 flex items-baseline justify-center gap-3">
+        <p lang="mr" className="font-display-mr text-2xl text-gold sm:text-3xl">
           आजीचा मेनू
         </p>
-        <h1 className="mt-1 font-royal text-2xl font-bold tracking-wide text-cream sm:text-3xl">
+        <h1 className="font-royal text-sm font-bold tracking-wide text-cream/80 sm:text-base">
           Turn the page, pick a dish
         </h1>
       </header>

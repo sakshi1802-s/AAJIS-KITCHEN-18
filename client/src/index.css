@@ -359,16 +359,21 @@
   overflow: hidden;
 }
 
-/* The gutter shadow: paper curving into the spine. */
+/* Paper is cut square at the spine and worn round at the open edge, and the
+   gutter shadow is the sheet curving down into the binding. */
 .book-page--left {
+  border-radius: 12px 3px 3px 12px;
   box-shadow: inset -22px 0 26px -18px rgba(90, 55, 20, 0.55);
 }
 
 .book-page--right {
+  border-radius: 3px 12px 12px 3px;
   box-shadow: inset 22px 0 26px -18px rgba(90, 55, 20, 0.55);
 }
 
+/* A cover is rounded all the way round: closed, it is the whole book. */
 .book-page--hard {
+  border-radius: 12px;
   background-color: #7c2d12;
   background-image: none;
   color: #f8ecd5;
