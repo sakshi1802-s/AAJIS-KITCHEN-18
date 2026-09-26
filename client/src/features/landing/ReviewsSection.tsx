@@ -139,7 +139,7 @@ export function ReviewsSection() {
 
   return (
     <section
-      className="relative flex min-h-[74svh] flex-col justify-center overflow-hidden py-10"
+      className="relative flex min-h-[66svh] flex-col justify-center overflow-hidden py-8"
       aria-labelledby="reviews-heading"
     >
       <Reveal className="relative">

@@ -378,3 +378,52 @@
   background-image: none;
   color: #f8ecd5;
 }
+
+/* ── The home photograph ─────────────────────────────────────────────────
+   One picture, pinned to the window and panned down as the page scrolls:
+   her thalis at the top, the empty middle of the table where the book
+   rests, the near edge under the reviews.
+
+   The pan is a scroll-driven animation rather than a scroll handler on
+   purpose. Moving it from JavaScript always lands a frame behind the scroll
+   itself, and that gap between a still page and a late background is what
+   reads as shaking. This way the compositor moves it in step, and no
+   JavaScript runs while you scroll at all. */
+.bg-pan-layer {
+  --spare: calc(max(100vw * 2.782, 100svh) - 100svh);
+  height: max(calc(100vw * 2.782), 100svh);
+}
+
+@supports (animation-timeline: scroll()) {
+  @keyframes bg-pan {
+    from {
+      transform: translate3d(0, calc(var(--spare) * -0.05), 0);
+    }
+    to {
+      transform: translate3d(0, calc(var(--spare) * -0.92), 0);
+    }
+  }
+
+  .bg-pan-layer {
+    animation-name: bg-pan;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    /* Not a time; the scroll range is the whole duration. */
+    animation-duration: auto;
+    animation-timeline: scroll(root block);
+  }
+}
+
+/* Older browsers get no pan, so the picture just covers the window. */
+@supports not (animation-timeline: scroll()) {
+  .bg-pan-layer {
+    height: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-pan-layer {
+    animation: none;
+    height: 100%;
+  }
+}

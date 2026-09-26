@@ -104,7 +104,7 @@ export function AboutBook() {
   return (
     <section
       id="about-aji"
-      className="relative flex min-h-[88svh] flex-col items-center justify-center gap-6 px-4 py-10"
+      className="relative flex min-h-[82svh] flex-col items-center justify-center gap-5 px-4 py-8"
     >
       {/* A definite width: with size="stretch" the book measures its parent,
           and a shrink-to-fit parent collapses it to the minimum. */}
