@@ -102,7 +102,10 @@ export function AboutBook() {
   }, [standing, page_, step, pageCount]);
 
   return (
-    <section id="about-aji" className="relative flex min-h-[88svh] items-center justify-center px-4 py-10">
+    <section
+      id="about-aji"
+      className="relative flex min-h-[88svh] flex-col items-center justify-center gap-6 px-4 py-10"
+    >
       {/* A definite width: with size="stretch" the book measures its parent,
           and a shrink-to-fit parent collapses it to the minimum. */}
       <div ref={bookBoxRef} className="relative w-[min(90vw,44rem)]">
@@ -215,6 +218,14 @@ export function AboutBook() {
           </FlipBook>
         </div>
       </div>
+
+      <p
+        className={`font-script text-base text-cream/80 [text-shadow:0_2px_12px_rgba(0,0,0,0.9)] transition-opacity duration-500 sm:text-lg ${
+          standing ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        Flip the pages to know more
+      </p>
     </section>
   );
 }

@@ -6,11 +6,12 @@ import { WrittenLine } from "./WrittenLine";
 const TAGLINE = "Bringing Aaji's authentic gaavran जेवण, cooked the way she always has, straight to your ताट...";
 
 /**
- * Where चटक sits, in the photograph's own pixels: the gap between the thali
- * she carries low and the one up by her shoulder. Anchoring it to the picture
- * rather than to the window keeps it in that gap on any screen shape.
+ * How high चटक sits, in the photograph's own pixels: just above the gap
+ * between the thali she carries low and the one up by her shoulder. Taking
+ * the height from the picture rather than the window keeps it with the
+ * thalis on any screen shape; across, it simply sits in the middle.
  */
-const ANCHOR = { x: 292, y: 232 };
+const ANCHOR_Y = 206;
 
 /**
  * Section one: चटक मटक! in the gap between the two thalis, with one written
@@ -33,9 +34,7 @@ export function HeroSection() {
   let placement: { left: number; top: number } | undefined;
   if (box) {
     const block = Math.min(BLOCK_W, box.width * BLOCK_VW);
-    const spot = box.at(ANCHOR.x, ANCHOR.y);
-    // Anchored to the picture, but never pushed off the side of a narrow one.
-    placement = { left: Math.max(16, Math.min(spot.left, box.width - block - 16)), top: spot.top };
+    placement = { left: Math.round((box.width - block) / 2), top: box.at(0, ANCHOR_Y).top };
   }
 
   return (

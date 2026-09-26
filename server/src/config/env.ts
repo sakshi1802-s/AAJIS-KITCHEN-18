@@ -26,7 +26,7 @@ const EnvSchema = z.object({
   GOOGLE_CLIENT_ID: z.string().default(""),
 
   GEMINI_API_KEY: z.string().default(""),
-  GEMINI_MODEL: z.preprocess(blankToUndefined, z.string().default("gemini-2.5-flash-lite")),
+  GEMINI_MODEL: z.preprocess(blankToUndefined, z.string().default("gemini-3.5-flash-lite")),
 
   // Optional: no-op until n8n exists (roadmap section 7).
   N8N_WEBHOOK_URL: z.preprocess(blankToUndefined, z.url().optional()),

@@ -54,9 +54,10 @@ const RAISED_PLATE: Plume[] = [
 
 const PLUMES = [...LOWER_PLATE, ...RAISED_PLATE];
 
-export function SteamWisps({ className, panY = 0.5 }: { className?: string; panY?: number }) {
+export function SteamWisps({ className }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const box = useCoverBox(containerRef, panY);
+  // Its box is the picture's own box, so the pan never enters into it.
+  const box = useCoverBox(containerRef, 0);
 
   return (
     <div

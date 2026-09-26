@@ -100,11 +100,13 @@ export function PlanMyOrderPage() {
           <CardHeader>
             <CardTitle>Suggested spread</CardTitle>
             <p className="text-muted-foreground">{suggestion.summary}</p>
-            {suggestion.source === "fallback" && (
-              <p className="text-sm text-muted-foreground">
-                Put together by matching your words to the menu, have a look and change what you like.
-              </p>
-            )}
+            {/* Which of the two put this together, so it is never a mystery
+                whether the model answered or the tag match stood in. */}
+            <p className="text-sm text-muted-foreground">
+              {suggestion.source === "ai"
+                ? "Planned by Gemini from Aaji's menu, have a look and change what you like."
+                : "Put together by matching your words to the menu, have a look and change what you like."}
+            </p>
           </CardHeader>
           <CardContent>
             {suggestion.items.length === 0 ? (
