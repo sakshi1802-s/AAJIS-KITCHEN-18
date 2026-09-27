@@ -123,6 +123,15 @@ export function CredentialsForm({ allowRegister = false, redirectTo, idPrefix = 
           {isRegister && <p className="mt-1 text-xs text-[#6b4423]">At least 8 characters.</p>}
         </div>
 
+        {/* An account made through Google has no password to match, and the
+            server says the same thing either way so it can't be used to find
+            out which emails exist. So the hint goes here, to everyone. */}
+        {submit.isError && !isRegister && (
+          <p className="text-sm text-[#7c2d12]">
+            Made this account with Google? There's no password on it — use the Google button below.
+          </p>
+        )}
+
         <Button
           type="submit"
           size="lg"

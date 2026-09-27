@@ -3,6 +3,7 @@ import { Link, Navigate } from "react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { CredentialsForm } from "./CredentialsForm";
+import { GoogleSignInButton } from "./GoogleSignInButton";
 import { useAuth } from "./useAuth";
 
 /**
@@ -64,6 +65,18 @@ export function OwnerLoginPage() {
         ) : (
           <>
             <CredentialsForm redirectTo="/owner" idPrefix="kitchen" />
+
+            <div className="my-5 flex items-center gap-3 text-xs text-[#7c2d12]">
+              <span className="h-px flex-1 bg-[#9a3412]/30" />
+              or
+              <span className="h-px flex-1 bg-[#9a3412]/30" />
+            </div>
+
+            {/* The kitchen account was made with Google, so this is the way in
+                until a password is set on it. */}
+            <div className="flex justify-center">
+              <GoogleSignInButton redirectTo="/owner" />
+            </div>
 
             <p className="mt-5 text-center text-xs text-[#6b4423]">
               Ordering food instead?{" "}
