@@ -42,7 +42,15 @@ export function CheckoutPage() {
 
   const address = user.addresses.find((a) => a.id === addressId);
   const phoneLooksValid = /^(\+?91[\s-]?)?[6-9]\d{9}$/.test(phone.trim());
-  const canPlace = Boolean(address) && phoneLooksValid && Boolean(date) && !placeOrder.isPending;
+  // Say what is missing rather than leaving a dead button and no reason.
+  const missing = !address
+    ? "Pick a delivery address first"
+    : !phoneLooksValid
+      ? "Add a 10-digit mobile number Aaji can reach you on"
+      : !date
+        ? "Choose the day you want it"
+        : null;
+  const canPlace = missing === null && !placeOrder.isPending;
 
   const submit = async () => {
     if (!address) {
@@ -254,6 +262,12 @@ export function CheckoutPage() {
             >
               {placeOrder.isPending ? "Placing your order…" : "Place order"}
             </Button>
+            {missing && (
+              <p role="status" className="mt-2 text-center text-sm font-medium text-destructive">
+                {missing}
+              </p>
+            )}
+
             <p className="mt-2 text-center text-sm text-muted-foreground">
               You'll pay Aaji directly. <Link to="/cart" className="underline">Back to cart</Link>
             </p>

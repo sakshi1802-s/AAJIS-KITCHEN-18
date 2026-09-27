@@ -361,8 +361,15 @@ export async function transitionOrder({ orderId, to, actor, note }: TransitionIn
     status: updated.status,
     customerName: customer?.name ?? "Customer",
     customerPhone: updated.customerPhone,
+    items: updated.items.map((line) => ({
+      name: line.nameSnapshot,
+      quantity: line.quantity,
+      unitPrice: line.priceAtOrder,
+      lineTotal: line.priceAtOrder * line.quantity,
+    })),
     total: updated.totalAmount,
     requestedFor: updated.requestedFor,
+    deliveryAddress: updated.deliveryAddress,
     ownerNote: updated.ownerNote,
   });
 

@@ -8,9 +8,10 @@
  *      demos and deploys without n8n ever existing.
  *
  * n8n plugs in later: Webhook (guarded by the shared secret header) → Switch
- * on status → format the message → Twilio WhatsApp.
+ * on status → format the message → Twilio WhatsApp. Every price here is in
+ * paise, and the workflow divides by 100 for the bill it writes.
  */
-import type { OrderStatus, Slot } from "@shared/api";
+import type { DeliveryAddress, OrderStatus, Slot } from "@shared/api";
 import { env } from "../config/env";
 import { logger } from "../lib/logger";
 
@@ -19,9 +20,12 @@ export interface OrderNotification {
   status: OrderStatus;
   customerName: string;
   customerPhone: string;
+  /** The bill, line by line, so the message can carry an invoice. */
+  items: { name: string; quantity: number; unitPrice: number; lineTotal: number }[];
   /** paise */
   total: number;
   requestedFor: { date: string; slot: Slot };
+  deliveryAddress: DeliveryAddress;
   /** Aji's reason when she declines. */
   ownerNote: string | null;
 }

@@ -18,14 +18,26 @@ path either, so a slow or broken webhook can't hold up an order.
   "status": "ACCEPTED",
   "customerName": "Asha Kore",
   "customerPhone": "9876543210",
+  "items": [
+    { "name": "Bombil Thali", "quantity": 2, "unitPrice": 32000, "lineTotal": 64000 }
+  ],
   "total": 78000,
   "requestedFor": { "date": "2026-09-22", "slot": "evening" },
+  "deliveryAddress": {
+    "label": "Home",
+    "line1": "Flat 3, Shanti Nivas",
+    "line2": "Off FC Road",
+    "city": "Pune",
+    "pincode": "411004"
+  },
   "ownerNote": null
 }
 ```
 
-`total` is in **paise** — the workflow divides by 100 for the message.
-`status` is `ACCEPTED`, `DECLINED` or `CANCELLED`.
+Every price is in **paise** — the workflow divides by 100 for the bill it
+writes. `status` is `ACCEPTED`, `DECLINED` or `CANCELLED`, and `items` is what
+the customer actually ordered, snapshotted at order time, so the invoice can
+never drift from the price they were charged.
 
 ## Setting it up
 
