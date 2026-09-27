@@ -99,20 +99,29 @@ function Cutout({ review, index }: { review: ReviewDTO; index: number }) {
   );
 }
 
-/** Enough cards to cross a wide screen, so a short list still loops seamlessly. */
-const MIN_PER_COPY = 6;
+/** Below this a drifting row would be mostly gaps, so it stands still instead. */
+const ENOUGH_TO_DRIFT = 5;
 
 function Row({ reviews, reverse }: { reviews: ReviewDTO[]; reverse?: boolean }) {
   if (reviews.length === 0) return null;
 
-  const copy: ReviewDTO[] = [];
-  while (copy.length < MIN_PER_COPY) copy.push(...reviews);
+  // A handful of reviews sit still and centred. Repeating the same card across
+  // the screen to fill a moving row makes one review look like six.
+  if (reviews.length < ENOUGH_TO_DRIFT) {
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-6 px-4 py-2.5">
+        {reviews.map((review, i) => (
+          <Cutout key={review.id} review={review} index={i} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="marquee relative py-2.5">
       {/* Two copies of the row make the loop seamless. */}
       <div className={cn("marquee-track flex w-max items-center gap-6", reverse && "marquee-track--reverse")}>
-        {[...copy, ...copy].map((review, i) => (
+        {[...reviews, ...reviews].map((review, i) => (
           <Cutout key={`${review.id}-${i}`} review={review} index={i} />
         ))}
       </div>
@@ -130,9 +139,8 @@ export function ReviewsSection() {
   const reviews = published.data?.length ? published.data : SAMPLES;
   const isSample = !published.data?.length;
 
-  // Two rows once there are enough reviews to fill both without repeating the
-  // same card on each; until then, one row.
-  const split = reviews.length >= 4;
+  // Two rows only once there are enough to fill both; until then, one.
+  const split = reviews.length >= 2 * ENOUGH_TO_DRIFT;
   const half = Math.ceil(reviews.length / 2);
   const topRow = split ? reviews.slice(0, half) : reviews;
   const bottomRow = split ? reviews.slice(half) : [];

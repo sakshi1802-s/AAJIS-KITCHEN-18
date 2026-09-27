@@ -1,13 +1,14 @@
 import { useEffect, useRef } from "react";
 import { Link, Navigate } from "react-router";
 import { CredentialsForm } from "./CredentialsForm";
+import { GoogleSignInButton } from "./GoogleSignInButton";
 import { useAuth } from "./useAuth";
 
 /**
- * Aaji's door: her email and her password, and nothing else. No Google, so it
- * never reaches for whatever account the browser happens to be holding — that
- * belongs on the customer's door. A password is put on the account with
- * `npm --prefix server run set-owner-password`.
+ * Aaji's door: her email and password, or her Google account. Google's full
+ * button belongs here rather than on the customer's door — on her own
+ * kitchen's login, a card naming her account is the point. A password is put
+ * on the account with `npm --prefix server run set-owner-password`.
  *
  * Opening this page ends any customer session first, so the kitchen always
  * starts from a signed-out page rather than from whoever used the browser
@@ -42,6 +43,16 @@ export function OwnerLoginPage() {
         </div>
 
         <CredentialsForm redirectTo="/owner" idPrefix="kitchen" />
+
+        <div className="my-5 flex items-center gap-3 text-xs text-[#7c2d12]">
+          <span className="h-px flex-1 bg-[#9a3412]/30" />
+          or
+          <span className="h-px flex-1 bg-[#9a3412]/30" />
+        </div>
+
+        <div className="flex justify-center">
+          <GoogleSignInButton redirectTo="/owner" variant="wide" />
+        </div>
 
         <p className="mt-5 text-center text-xs text-[#6b4423]">
           Ordering food instead?{" "}

@@ -1,6 +1,4 @@
-import { ShieldX } from "lucide-react";
-import { Link, Navigate, Outlet, useLocation } from "react-router";
-import { Button } from "@/components/ui/button";
+import { Navigate, Outlet, useLocation } from "react-router";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "./useAuth";
 
@@ -30,29 +28,11 @@ export function ProtectedRoute({ ownerOnly = false }: { ownerOnly?: boolean }) {
     return <Navigate to={to} replace state={{ from: location.pathname + location.search }} />;
   }
 
-  // Signed in, but not the kitchen account: say so plainly rather than
-  // bouncing them somewhere confusing.
+  // Signed in, but not the kitchen account. Send them to the kitchen's own
+  // door rather than a dead end: opening it ends the customer session and
+  // asks for Aaji's, which is the only thing they could have wanted here.
   if (ownerOnly && !isOwner) {
-    return (
-      <div className="mx-auto w-full max-w-md px-4 py-16 text-center" role="alert">
-        <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-destructive/10 text-destructive">
-          <ShieldX className="size-7" aria-hidden="true" />
-        </span>
-        <h1 className="mt-4 font-royal text-2xl font-bold text-gold">Not your kitchen</h1>
-        <p className="mt-2 text-cream/80">
-          This area belongs to Aaji. Your account, {user.email}, is a customer account, which is all you need to
-          order.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <Button asChild>
-            <Link to="/menu">Browse the menu</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/orders">My orders</Link>
-          </Button>
-        </div>
-      </div>
-    );
+    return <Navigate to="/owner-login" replace />;
   }
 
   return <Outlet />;

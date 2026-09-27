@@ -8,12 +8,19 @@ import { useAuth } from "./useAuth";
 const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID ?? "";
 
 interface GoogleSignInButtonProps {
+  /**
+   * "icon" is the Google mark on its own. "wide" is Google's full button,
+   * which turns into a card with the account's name and photo once you have
+   * signed in with it before — right for the kitchen's own door, wrong for a
+   * public one.
+   */
+  variant?: "icon" | "wide";
   /** Where to go after signing in; owners always land on their dashboard. */
   redirectTo?: string;
   onSignedIn?: () => void;
 }
 
-export function GoogleSignInButton({ redirectTo = "/", onSignedIn }: GoogleSignInButtonProps) {
+export function GoogleSignInButton({ redirectTo = "/", onSignedIn, variant = "icon" }: GoogleSignInButtonProps) {
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -59,17 +66,12 @@ export function GoogleSignInButton({ redirectTo = "/", onSignedIn }: GoogleSignI
           cancel_on_tap_outside: true,
           ux_mode: "popup",
         });
-        // The icon-only button. Google's wide button turns into a card with
-        // your name and photo on it once you have signed in with it before,
-        // and there is no flag to turn that off — the icon has nowhere to put
-        // a name, so it stays the plain Google mark. It is Google's own
-        // button either way, which is what makes it work.
-        google.renderButton(containerRef.current, {
-          type: "icon",
-          theme: "outline",
-          size: "large",
-          shape: "circle",
-        });
+        google.renderButton(
+          containerRef.current,
+          variant === "wide"
+            ? { theme: "outline", size: "large", shape: "pill", text: "continue_with", width: 280 }
+            : { type: "icon", theme: "outline", size: "large", shape: "circle" },
+        );
       })
       .catch(() => {
         if (!cancelled) setScriptFailed(true);
@@ -78,7 +80,7 @@ export function GoogleSignInButton({ redirectTo = "/", onSignedIn }: GoogleSignI
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [variant]);
 
   if (!CLIENT_ID) {
     return (
@@ -100,7 +102,7 @@ export function GoogleSignInButton({ redirectTo = "/", onSignedIn }: GoogleSignI
   return (
     <div className="flex min-h-11 flex-col items-center gap-2">
       <div ref={containerRef} />
-      <p className="text-xs text-[#6b4423]">Continue with Google</p>
+      {variant === "icon" && <p className="text-xs text-[#6b4423]">Continue with Google</p>}
       {busy && <p className="text-sm text-muted-foreground">Signing you in…</p>}
     </div>
   );
