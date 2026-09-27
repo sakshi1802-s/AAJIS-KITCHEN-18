@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Link, Navigate } from "react-router";
 import { CredentialsForm } from "./CredentialsForm";
 import { useAuth } from "./useAuth";
@@ -8,12 +9,21 @@ import { useAuth } from "./useAuth";
  * belongs on the customer's door. A password is put on the account with
  * `npm --prefix server run set-owner-password`.
  *
- * Signing in here replaces whatever session is already open, so a customer who
- * wanders in just types the kitchen's details; there is nothing to sign out of
- * first.
+ * Opening this page ends any customer session first, so the kitchen always
+ * starts from a signed-out page rather than from whoever used the browser
+ * last.
  */
 export function OwnerLoginPage() {
-  const { user, isOwner } = useAuth();
+  const { user, isOwner, signOut } = useAuth();
+
+  // Once per visit: an owner who is already signed in is sent straight
+  // through, anyone else is signed out so the form starts clean.
+  const handled = useRef(false);
+  useEffect(() => {
+    if (handled.current || !user || isOwner) return;
+    handled.current = true;
+    void signOut();
+  }, [user, isOwner, signOut]);
 
   if (isOwner) return <Navigate to="/owner" replace />;
 
@@ -30,13 +40,6 @@ export function OwnerLoginPage() {
             For Aaji. Today's orders, the reviews waiting to go up, and the menu.
           </p>
         </div>
-
-        {user && (
-          <p className="mt-5 rounded-xl border border-[#9a3412]/30 bg-[#fdf6e7] px-4 py-3 text-center text-sm text-[#6b4423]">
-            Signed in as <span className="font-semibold text-[#7c2d12]">{user.email}</span>. Enter the kitchen's
-            details below to switch.
-          </p>
-        )}
 
         <CredentialsForm redirectTo="/owner" idPrefix="kitchen" />
 

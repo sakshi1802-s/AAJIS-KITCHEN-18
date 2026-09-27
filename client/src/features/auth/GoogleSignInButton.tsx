@@ -59,13 +59,16 @@ export function GoogleSignInButton({ redirectTo = "/", onSignedIn }: GoogleSignI
           cancel_on_tap_outside: true,
           ux_mode: "popup",
         });
+        // The icon-only button. Google's wide button turns into a card with
+        // your name and photo on it once you have signed in with it before,
+        // and there is no flag to turn that off — the icon has nowhere to put
+        // a name, so it stays the plain Google mark. It is Google's own
+        // button either way, which is what makes it work.
         google.renderButton(containerRef.current, {
+          type: "icon",
           theme: "outline",
           size: "large",
-          shape: "pill",
-          text: "continue_with",
-          width: 280,
-          logo_alignment: "center",
+          shape: "circle",
         });
       })
       .catch(() => {
@@ -96,13 +99,8 @@ export function GoogleSignInButton({ redirectTo = "/", onSignedIn }: GoogleSignI
 
   return (
     <div className="flex min-h-11 flex-col items-center gap-2">
-      {/*
-        Google's own button, rendered by Google. It was behind a plain button
-        of ours for a while so the page wouldn't show anyone's account name,
-        but an invisible button is one Google can refuse to act on, and a
-        sign-in that silently does nothing is worse than a tidy one.
-      */}
       <div ref={containerRef} />
+      <p className="text-xs text-[#6b4423]">Continue with Google</p>
       {busy && <p className="text-sm text-muted-foreground">Signing you in…</p>}
     </div>
   );

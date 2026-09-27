@@ -11,9 +11,11 @@ export interface GoogleCredentialResponse {
 }
 
 interface GoogleButtonOptions {
+  /** "icon" is the mark on its own, with no room for an account name. */
+  type?: "standard" | "icon";
   theme?: "outline" | "filled_blue" | "filled_black";
   size?: "small" | "medium" | "large";
-  shape?: "rectangular" | "pill";
+  shape?: "rectangular" | "pill" | "circle" | "square";
   text?: "signin_with" | "signup_with" | "continue_with";
   width?: number;
   logo_alignment?: "left" | "center";
