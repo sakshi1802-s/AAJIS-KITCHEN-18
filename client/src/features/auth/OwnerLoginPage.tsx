@@ -3,14 +3,16 @@ import { Link, Navigate } from "react-router";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { CredentialsForm } from "./CredentialsForm";
-import { GoogleSignInButton } from "./GoogleSignInButton";
 import { useAuth } from "./useAuth";
 
 /**
- * Aaji's door, and it asks for her email and password rather than reaching
- * for whatever account the browser happens to be holding. If someone is
- * already signed in as a customer it says so and offers to sign them out,
- * instead of quietly using that session and refusing the dashboard.
+ * Aaji's door: her email and her password, and nothing else. No Google, so it
+ * never reaches for whatever account the browser happens to be holding — that
+ * belongs on the customer's door, not here. A password is put on the account
+ * with `npm --prefix server run set-owner-password`.
+ *
+ * If someone is already signed in as a customer it says so and offers to sign
+ * them out, instead of quietly using that session and refusing the dashboard.
  */
 export function OwnerLoginPage() {
   const { user, isOwner, signOut } = useAuth();
@@ -65,18 +67,6 @@ export function OwnerLoginPage() {
         ) : (
           <>
             <CredentialsForm redirectTo="/owner" idPrefix="kitchen" />
-
-            <div className="my-5 flex items-center gap-3 text-xs text-[#7c2d12]">
-              <span className="h-px flex-1 bg-[#9a3412]/30" />
-              or
-              <span className="h-px flex-1 bg-[#9a3412]/30" />
-            </div>
-
-            {/* The kitchen account was made with Google, so this is the way in
-                until a password is set on it. */}
-            <div className="flex justify-center">
-              <GoogleSignInButton redirectTo="/owner" />
-            </div>
 
             <p className="mt-5 text-center text-xs text-[#6b4423]">
               Ordering food instead?{" "}

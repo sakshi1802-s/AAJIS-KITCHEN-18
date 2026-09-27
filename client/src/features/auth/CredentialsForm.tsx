@@ -126,7 +126,7 @@ export function CredentialsForm({ allowRegister = false, redirectTo, idPrefix = 
         {/* An account made through Google has no password to match, and the
             server says the same thing either way so it can't be used to find
             out which emails exist. So the hint goes here, to everyone. */}
-        {submit.isError && !isRegister && (
+        {submit.isError && !isRegister && allowRegister && (
           <p className="text-sm text-[#7c2d12]">
             Made this account with Google? There's no password on it — use the Google button below.
           </p>
