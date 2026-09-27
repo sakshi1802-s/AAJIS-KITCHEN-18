@@ -29,8 +29,13 @@ const SPREADS = [
   },
 ];
 
-/** It opens as soon as it is up; only the reading pace is leisurely. */
-const OPEN_AFTER_MS = 120;
+/**
+ * A beat of it lying shut on the table before the cover turns, so you see the
+ * book arrive rather than catching it mid-flip. Long enough to read as a
+ * pause, short enough that nobody waits on it.
+ */
+const STAND_MS = 620;
+const OPEN_AFTER_MS = 900;
 const TURN_EVERY_MS = 4600;
 
 /** A page must be a plain element: the flip library clones it to attach a ref. */
@@ -113,14 +118,15 @@ export function AboutBook() {
             tight underneath once it is upright. */}
         <div
           aria-hidden="true"
-          className={`pointer-events-none absolute inset-x-0 -bottom-6 mx-auto h-10 rounded-[50%] bg-black/55 blur-2xl transition-all duration-[520ms] ${
+          className={`pointer-events-none absolute inset-x-0 -bottom-6 mx-auto h-10 rounded-[50%] bg-black/55 blur-2xl transition-all duration-[620ms] ${
             standing ? "w-3/4 opacity-60" : "w-[115%] opacity-80"
           }`}
         />
 
         <div
-          className="transition-transform duration-[520ms] ease-[cubic-bezier(0.16,1,0.3,1)] [transform-style:preserve-3d] [filter:drop-shadow(0_16px_26px_rgba(0,0,0,0.55))]"
+          className="transition-transform ease-[cubic-bezier(0.16,1,0.3,1)] [transform-style:preserve-3d] [filter:drop-shadow(0_16px_26px_rgba(0,0,0,0.55))]"
           style={{
+            transitionDuration: `${STAND_MS}ms`,
             transform: standing
               ? "perspective(1600px) rotateX(7deg) rotateZ(-1.5deg) scale(1)"
               : "perspective(1600px) rotateX(64deg) rotateZ(-9deg) scale(0.74) translateY(8%)",

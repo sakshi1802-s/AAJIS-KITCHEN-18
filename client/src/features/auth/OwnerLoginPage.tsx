@@ -1,67 +1,80 @@
 import { ChefHat } from "lucide-react";
 import { Link, Navigate } from "react-router";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { GoogleSignInButton } from "./GoogleSignInButton";
+import { CredentialsForm } from "./CredentialsForm";
 import { useAuth } from "./useAuth";
 
 /**
- * Aaji's door. Same Google sign-in, different wording — and if the account that
- * signs in here isn't the kitchen's, it says so plainly instead of dropping
- * them on the home page wondering what happened.
+ * Aaji's door, and it asks for her email and password rather than reaching
+ * for whatever account the browser happens to be holding. If someone is
+ * already signed in as a customer it says so and offers to sign them out,
+ * instead of quietly using that session and refusing the dashboard.
  */
 export function OwnerLoginPage() {
-  const { user, isOwner } = useAuth();
+  const { user, isOwner, signOut } = useAuth();
 
   if (isOwner) return <Navigate to="/owner" replace />;
 
-  return (
-    <div className="mx-auto flex w-full max-w-md flex-col items-center px-4 py-14">
-      <Card className="w-full border-maroon/30">
-        <CardHeader className="items-center text-center">
-          <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-maroon/10 text-maroon">
-            <ChefHat className="size-6" aria-hidden="true" />
-          </span>
-          <CardTitle className="mt-3 font-heading text-2xl">Kitchen login</CardTitle>
-          <CardDescription>
-            For Aaji. Sign in with the kitchen's Google account to see today's orders, accept or decline them, and edit
-            the menu.
-          </CardDescription>
-        </CardHeader>
+  const signedInAsCustomer = Boolean(user);
 
-        <CardContent className="flex flex-col items-center gap-4">
-          {user && !isOwner ? (
-            <div role="alert" className="w-full rounded-xl border border-destructive/40 bg-destructive/5 p-4 text-sm">
-              <p className="font-medium text-destructive">
-                {user.email} isn't the kitchen account.
+  return (
+    <div className="mx-auto flex w-full max-w-md flex-col items-center px-4 py-8">
+      <div
+        className="w-full rounded-2xl border border-[#9a3412]/30 bg-[#e8d5b0] bg-repeat p-7 shadow-[0_20px_60px_rgba(0,0,0,0.5)]"
+        style={{ backgroundImage: "url('/textures/parchment-tile.png')", backgroundSize: "400px auto" }}
+      >
+        <div className="text-center">
+          <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#9a3412]/15 text-[#7c2d12]">
+            <ChefHat className="size-7" aria-hidden="true" />
+          </span>
+          <h1 className="mt-3 font-royal text-2xl font-bold tracking-wide text-[#4a2410]">Kitchen login</h1>
+          <p className="mt-1.5 text-sm text-[#6b4423]">
+            For Aaji. Today's orders, accepting and declining them, and the menu.
+          </p>
+        </div>
+
+        {signedInAsCustomer ? (
+          <div className="mt-6 space-y-4 text-center">
+            <div role="alert" className="rounded-xl border border-[#9a3412]/40 bg-[#fdf6e7] p-4 text-sm">
+              <p className="font-semibold text-[#7c2d12]">You're signed in as {user?.email}</p>
+              <p className="mt-1 text-[#6b4423]">
+                That's a customer account, which is fine for ordering. Sign out to use the kitchen's.
               </p>
-              <p className="mt-1 text-muted-foreground">
-                You're signed in as a customer, which is fine for ordering, the dashboard just isn't yours. Sign out
-                and use Aaji's Google account, or carry on ordering.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Button asChild size="sm">
-                  <Link to="/menu">Browse the menu</Link>
-                </Button>
-                <Button asChild size="sm" variant="outline">
-                  <Link to="/orders">My orders</Link>
-                </Button>
-              </div>
             </div>
-          ) : (
-            <>
-              <GoogleSignInButton redirectTo="/owner" />
-              <p className="text-center text-xs text-muted-foreground">
-                Ordering food instead?{" "}
-                <Link to="/signin" className="underline">
-                  Sign in over here
-                </Link>
-                .
-              </p>
-            </>
-          )}
-        </CardContent>
-      </Card>
+
+            <Button
+              size="lg"
+              className="h-12 w-full rounded-full bg-[#9a3412] font-royal text-base font-bold tracking-wide text-[#f8ecd5] hover:bg-[#7c2d12]"
+              onClick={() => {
+                void signOut().then(() => toast.success("Signed out. The kitchen login is ready."));
+              }}
+            >
+              Sign out and log in as the kitchen
+            </Button>
+
+            <p className="text-xs text-[#6b4423]">
+              Carrying on as a customer?{" "}
+              <Link to="/menu" className="underline">
+                Browse the menu
+              </Link>
+              .
+            </p>
+          </div>
+        ) : (
+          <>
+            <CredentialsForm redirectTo="/owner" idPrefix="kitchen" />
+
+            <p className="mt-5 text-center text-xs text-[#6b4423]">
+              Ordering food instead?{" "}
+              <Link to="/signin" className="underline">
+                Sign in over here
+              </Link>
+              .
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 }

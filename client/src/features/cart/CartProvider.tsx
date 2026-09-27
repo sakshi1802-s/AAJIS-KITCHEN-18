@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useReducer, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, type ReactNode } from "react";
+import { useAuth } from "@/features/auth/useAuth";
 import { CART_STORAGE_KEY, CartContext, type CartContextValue, type CartLine } from "./cartContext";
 import { cartReducer, cartTotal } from "./cartReducer";
 
@@ -28,6 +29,17 @@ function readStoredCart(): CartLine[] {
  */
 export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, dispatch] = useReducer(cartReducer, undefined, readStoredCart);
+  const { user } = useAuth();
+
+  // Signing out empties the plate, so the next person at this browser starts
+  // clean. Only on the way out: a guest who hasn't signed in yet keeps theirs,
+  // because they will want it at checkout.
+  const lastUserId = useRef<string | null>(null);
+  useEffect(() => {
+    const previous = lastUserId.current;
+    lastUserId.current = user?.id ?? null;
+    if (previous !== null && user === null) dispatch({ type: "clear" });
+  }, [user]);
 
   useEffect(() => {
     try {
