@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as owner from "../controllers/owner.controller";
 import * as reviews from "../controllers/reviews.controller";
-import { requireAuth, requireOwner } from "../middleware/requireAuth";
+import { requireKitchenAuth, requireOwner } from "../middleware/requireAuth";
 import { validate } from "../middleware/validate";
 import { idParams } from "../schemas/common.schema";
 import { createMenuItemSchema, updateMenuItemSchema } from "../schemas/menuItem.schema";
@@ -10,8 +10,9 @@ import { publishReviewSchema } from "../schemas/review.schema";
 
 export const ownerRouter = Router();
 
-// Aji only — every route below is behind both gates.
-ownerRouter.use(requireAuth, requireOwner);
+// Aji only, and only through the kitchen's own cookie — a customer session
+// in another window of the same browser is not a way in here.
+ownerRouter.use(requireKitchenAuth, requireOwner);
 
 ownerRouter.get("/orders", validate({ query: ownerOrdersQuerySchema }), owner.listOrders);
 ownerRouter.patch(

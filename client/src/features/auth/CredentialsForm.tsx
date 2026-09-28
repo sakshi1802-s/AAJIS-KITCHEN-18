@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ApiError, api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { authKeys } from "./authContext";
+import { authKeys, type SessionScope } from "./authContext";
 
 type Mode = "login" | "register";
 
@@ -19,6 +19,8 @@ interface CredentialsFormProps {
   redirectTo: string;
   /** Distinguishes the field ids when two forms could share a page. */
   idPrefix?: string;
+  /** Which door, and so which cookie this sign-in sets. */
+  scope?: SessionScope;
 }
 
 /**
@@ -26,7 +28,12 @@ interface CredentialsFormProps {
  * kitchen's at /owner-login. Which account is the owner is decided on the
  * server from OWNER_EMAIL, so nothing typed here can ask for the dashboard.
  */
-export function CredentialsForm({ allowRegister = false, redirectTo, idPrefix = "cred" }: CredentialsFormProps) {
+export function CredentialsForm({
+  allowRegister = false,
+  redirectTo,
+  idPrefix = "cred",
+  scope = "customer",
+}: CredentialsFormProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -38,10 +45,10 @@ export function CredentialsForm({ allowRegister = false, redirectTo, idPrefix = 
   const submit = useMutation({
     mutationFn: (payload: { name?: string; email: string; password: string }) =>
       mode === "register"
-        ? api.post<UserDTO>("/auth/register", payload)
-        : api.post<UserDTO>("/auth/login", { email: payload.email, password: payload.password }),
+        ? api.post<UserDTO>("/auth/register", { ...payload, scope })
+        : api.post<UserDTO>("/auth/login", { email: payload.email, password: payload.password, scope }),
     onSuccess: (account) => {
-      queryClient.setQueryData(authKeys.me, account);
+      queryClient.setQueryData(authKeys.me(scope), account);
       toast.success(`Welcome, ${account.name.split(" ")[0] ?? account.name}`);
       void navigate(account.role === "owner" ? "/owner" : redirectTo, { replace: true });
     },

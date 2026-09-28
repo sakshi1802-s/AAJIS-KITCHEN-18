@@ -24,7 +24,18 @@ import { User, type UserHydrated } from "../models/User";
 import { hashPassword, verifyPassword } from "../lib/password";
 import type { LoginInput, RegisterInput } from "../schemas/auth.schema";
 
-const COOKIE_NAME = "aji_session";
+/**
+ * Two sessions, two cookies, because the kitchen and the shop are two
+ * different doors. Aji signing in to her dashboard in one window must not
+ * turn the customer in another window into Aji, and vice versa. The browser
+ * sends both; each route reads only the one that belongs to it.
+ */
+export type SessionScope = "customer" | "kitchen";
+
+const COOKIE_NAMES: Record<SessionScope, string> = {
+  customer: "aji_session",
+  kitchen: "aji_kitchen_session",
+};
 const SESSION_DAYS = 7;
 const SESSION_MS = SESSION_DAYS * 24 * 60 * 60 * 1000;
 
@@ -168,8 +179,8 @@ export function signSession(user: UserHydrated): string {
  * The client and API share an origin — Vite proxy in dev, Vercel rewrite in
  * prod — so "lax" is enough and no third-party cookie is involved.
  */
-export function setSessionCookie(res: Response, token: string): void {
-  res.cookie(COOKIE_NAME, token, {
+export function setSessionCookie(res: Response, token: string, scope: SessionScope): void {
+  res.cookie(COOKIE_NAMES[scope], token, {
     httpOnly: true,
     secure: isProd,
     sameSite: "lax",
@@ -178,13 +189,13 @@ export function setSessionCookie(res: Response, token: string): void {
   });
 }
 
-export function clearSessionCookie(res: Response): void {
-  res.clearCookie(COOKIE_NAME, { httpOnly: true, secure: isProd, sameSite: "lax", path: "/" });
+export function clearSessionCookie(res: Response, scope: SessionScope): void {
+  res.clearCookie(COOKIE_NAMES[scope], { httpOnly: true, secure: isProd, sameSite: "lax", path: "/" });
 }
 
-/** Reads and verifies our session cookie. Returns null for anything invalid. */
-export function readSession(req: Request): Session | null {
-  const token: unknown = (req.cookies as Record<string, unknown> | undefined)?.[COOKIE_NAME];
+/** Reads and verifies one of our session cookies. Null for anything invalid. */
+export function readSession(req: Request, scope: SessionScope): Session | null {
+  const token: unknown = (req.cookies as Record<string, unknown> | undefined)?.[COOKIE_NAMES[scope]];
   if (typeof token !== "string" || !token) return null;
 
   try {

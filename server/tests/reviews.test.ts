@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import type { ReviewDTO, ReviewsListResponse } from "@shared/api";
 import { createApp } from "../src/app";
 import { Review } from "../src/models/Review";
-import { makeUser, sessionCookie } from "./helpers/session";
+import { makeUser, sessionCookie, kitchenCookie } from "./helpers/session";
 
 const app = createApp();
 
@@ -49,7 +49,7 @@ describe("leaving a review", () => {
     const aji = await makeUser({ role: "owner" });
     await request(app)
       .patch(`/api/owner/reviews/${(created.body as ReviewDTO).id}`)
-      .set("Cookie", sessionCookie(aji))
+      .set("Cookie", kitchenCookie(aji))
       .send({ isPublished: true })
       .expect(200);
 
@@ -67,8 +67,8 @@ describe("leaving a review", () => {
       .expect(201);
     const id = (created.body as ReviewDTO).id;
 
-    await request(app).patch(`/api/owner/reviews/${id}`).set("Cookie", sessionCookie(aji)).send({ isPublished: true });
-    await request(app).patch(`/api/owner/reviews/${id}`).set("Cookie", sessionCookie(aji)).send({ isPublished: false });
+    await request(app).patch(`/api/owner/reviews/${id}`).set("Cookie", kitchenCookie(aji)).send({ isPublished: true });
+    await request(app).patch(`/api/owner/reviews/${id}`).set("Cookie", kitchenCookie(aji)).send({ isPublished: false });
 
     const published = await request(app).get("/api/reviews").expect(200);
     expect((published.body as ReviewsListResponse).reviews).toHaveLength(0);
@@ -92,10 +92,13 @@ describe("leaving a review", () => {
     const mine = await request(app).get("/api/reviews/me").set("Cookie", cookie).expect(200);
     expect((mine.body as ReviewsListResponse).reviews).toHaveLength(1);
 
-    await request(app).get("/api/owner/reviews").set("Cookie", cookie).expect(403);
+    // A shop session is not a session at the kitchen door at all.
+    await request(app).get("/api/owner/reviews").set("Cookie", cookie).expect(401);
+    // And at that door, the role still decides.
+    await request(app).get("/api/owner/reviews").set("Cookie", kitchenCookie(customer)).expect(403);
     await request(app)
       .patch(`/api/owner/reviews/${(created.body as ReviewDTO).id}`)
-      .set("Cookie", cookie)
+      .set("Cookie", kitchenCookie(customer))
       .send({ isPublished: true })
       .expect(403);
   });
@@ -105,7 +108,7 @@ describe("leaving a review", () => {
     const aji = await makeUser({ role: "owner" });
     await request(app).post("/api/reviews").set("Cookie", sessionCookie(customer)).send(review()).expect(201);
 
-    const queue = await request(app).get("/api/owner/reviews").set("Cookie", sessionCookie(aji)).expect(200);
+    const queue = await request(app).get("/api/owner/reviews").set("Cookie", kitchenCookie(aji)).expect(200);
     expect((queue.body as ReviewsListResponse).reviews[0]).toMatchObject({ isPublished: false });
   });
 });

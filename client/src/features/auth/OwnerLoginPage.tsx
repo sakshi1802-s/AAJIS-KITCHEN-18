@@ -42,7 +42,7 @@ export function OwnerLoginPage() {
           </p>
         </div>
 
-        <CredentialsForm redirectTo="/owner" idPrefix="kitchen" />
+        <CredentialsForm redirectTo="/owner" idPrefix="kitchen" scope="kitchen" />
 
         <div className="my-5 flex items-center gap-3 text-xs text-[#7c2d12]">
           <span className="h-px flex-1 bg-[#9a3412]/30" />

@@ -8,7 +8,7 @@ function useUserMutation<TInput>(request: (input: TInput) => Promise<UserDTO>) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: request,
-    onSuccess: (user) => queryClient.setQueryData(authKeys.me, user),
+    onSuccess: (user) => queryClient.setQueryData(authKeys.me("customer"), user),
   });
 }
 

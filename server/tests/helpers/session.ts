@@ -16,7 +16,15 @@ export async function makeUser(overrides: Partial<{ role: Role; email: string; n
   });
 }
 
-/** A valid session cookie for supertest: `.set("Cookie", sessionCookie(user))`. */
+/**
+ * A valid session cookie for supertest: `.set("Cookie", sessionCookie(user))`.
+ * The shop and the kitchen hold separate cookies, so a test hitting
+ * /api/owner needs the kitchen one.
+ */
+export function kitchenCookie(user: UserHydrated): string {
+  return sessionCookie(user).replace("aji_session=", "aji_kitchen_session=");
+}
+
 export function sessionCookie(user: UserHydrated): string {
   const token = jwt.sign({ role: user.role }, process.env.JWT_SECRET!, {
     subject: user.id,

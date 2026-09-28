@@ -5,7 +5,7 @@ import { createApp } from "../src/app";
 import { MenuItem } from "../src/models/MenuItem";
 import { Order } from "../src/models/Order";
 import { makeMenuItem } from "./factories";
-import { makeUser, sessionCookie } from "./helpers/session";
+import { makeUser, sessionCookie, kitchenCookie } from "./helpers/session";
 
 const app = createApp();
 
@@ -31,7 +31,8 @@ async function placeOrder(overrides: { quantity?: number; stockCount?: number | 
 describe("the owner gate", () => {
   it("a customer gets 403 on every owner route; signed out gets 401", async () => {
     const customer = await makeUser();
-    const cookie = sessionCookie(customer);
+    // Signed in at the kitchen's own door, but not the kitchen's account.
+    const cookie = kitchenCookie(customer);
     // Every admin route, not a sample: the dashboard URL being unlisted is
     // tidiness, and this is the part that actually keeps customers out.
     const id = "64b000000000000000000000";
@@ -56,9 +57,17 @@ describe("the owner gate", () => {
 
   it("a customer cannot accept their own order through the owner route", async () => {
     const { customer, order } = await placeOrder();
+    // A shop session is not a key to the kitchen at all: it isn't the wrong
+    // role there, it simply isn't a session there.
     await request(app)
       .patch(`/api/owner/orders/${order.id}/status`)
       .set("Cookie", sessionCookie(customer))
+      .send({ decision: "ACCEPTED" })
+      .expect(401);
+    // Even signed in at the kitchen's own door, the role still decides.
+    await request(app)
+      .patch(`/api/owner/orders/${order.id}/status`)
+      .set("Cookie", kitchenCookie(customer))
       .send({ decision: "ACCEPTED" })
       .expect(403);
     expect((await Order.findById(order.id).lean())!.status).toBe("PLACED");
@@ -72,11 +81,11 @@ describe("GET /api/owner/orders", () => {
     const { order: decided } = await placeOrder();
     await request(app)
       .patch(`/api/owner/orders/${decided.id}/status`)
-      .set("Cookie", sessionCookie(aji))
+      .set("Cookie", kitchenCookie(aji))
       .send({ decision: "ACCEPTED" })
       .expect(200);
 
-    const res = await request(app).get("/api/owner/orders").set("Cookie", sessionCookie(aji)).expect(200);
+    const res = await request(app).get("/api/owner/orders").set("Cookie", kitchenCookie(aji)).expect(200);
     const orders = (res.body as OrdersListResponse).orders;
     expect(orders[0]!.id).toBe(waiting.id);
     expect(orders[0]!.customer).toMatchObject({ name: "Asha Kore" });
@@ -91,7 +100,7 @@ describe("GET /api/owner/orders", () => {
 
     const byDate = await request(app)
       .get(`/api/owner/orders?date=${soon.requestedFor.date}`)
-      .set("Cookie", sessionCookie(aji))
+      .set("Cookie", kitchenCookie(aji))
       .expect(200);
     expect((byDate.body as OrdersListResponse).orders.every((o) => o.requestedFor.date === soon.requestedFor.date)).toBe(
       true,
@@ -99,7 +108,7 @@ describe("GET /api/owner/orders", () => {
 
     const cancelled = await request(app)
       .get("/api/owner/orders?status=CANCELLED")
-      .set("Cookie", sessionCookie(aji))
+      .set("Cookie", kitchenCookie(aji))
       .expect(200);
     expect((cancelled.body as OrdersListResponse).orders).toEqual([]);
   });
@@ -112,7 +121,7 @@ describe("PATCH /api/owner/orders/:id/status", () => {
 
     const res = await request(app)
       .patch(`/api/owner/orders/${order.id}/status`)
-      .set("Cookie", sessionCookie(aji))
+      .set("Cookie", kitchenCookie(aji))
       .send({ decision: "ACCEPTED" })
       .expect(200);
 
@@ -127,13 +136,13 @@ describe("PATCH /api/owner/orders/:id/status", () => {
 
     await request(app)
       .patch(`/api/owner/orders/${order.id}/status`)
-      .set("Cookie", sessionCookie(aji))
+      .set("Cookie", kitchenCookie(aji))
       .send({ decision: "DECLINED" })
       .expect(400);
 
     const res = await request(app)
       .patch(`/api/owner/orders/${order.id}/status`)
-      .set("Cookie", sessionCookie(aji))
+      .set("Cookie", kitchenCookie(aji))
       .send({ decision: "DECLINED", reason: "I'm at a wedding that day" })
       .expect(200);
 
@@ -144,7 +153,7 @@ describe("PATCH /api/owner/orders/:id/status", () => {
   it("deciding twice is a 409", async () => {
     const aji = await makeUser({ role: "owner" });
     const { order } = await placeOrder();
-    const cookie = sessionCookie(aji);
+    const cookie = kitchenCookie(aji);
 
     await request(app).patch(`/api/owner/orders/${order.id}/status`).set("Cookie", cookie).send({ decision: "ACCEPTED" }).expect(200);
     const second = await request(app)
@@ -160,7 +169,7 @@ describe("PATCH /api/owner/orders/:id/status", () => {
     const { order } = await placeOrder();
     await request(app)
       .patch(`/api/owner/orders/${order.id}/status`)
-      .set("Cookie", sessionCookie(aji))
+      .set("Cookie", kitchenCookie(aji))
       .send({ decision: "CANCELLED" })
       .expect(400);
   });
@@ -169,7 +178,7 @@ describe("PATCH /api/owner/orders/:id/status", () => {
 describe("the menu manager", () => {
   it("creates, edits, toggles availability and sets or clears stock", async () => {
     const aji = await makeUser({ role: "owner" });
-    const cookie = sessionCookie(aji);
+    const cookie = kitchenCookie(aji);
 
     const created = await request(app)
       .post("/api/owner/menu")
@@ -207,7 +216,7 @@ describe("the menu manager", () => {
 
   it("a one-field edit leaves every other field alone", async () => {
     const aji = await makeUser({ role: "owner" });
-    const cookie = sessionCookie(aji);
+    const cookie = kitchenCookie(aji);
     const item = await makeMenuItem({
       name: "Ukadiche Modak",
       nameMarathi: "उकडीचे मोदक",
@@ -241,12 +250,12 @@ describe("the menu manager", () => {
   it("rejects an empty update", async () => {
     const aji = await makeUser({ role: "owner" });
     const item = await makeMenuItem({});
-    await request(app).patch(`/api/owner/menu/${item.id}`).set("Cookie", sessionCookie(aji)).send({}).expect(400);
+    await request(app).patch(`/api/owner/menu/${item.id}`).set("Cookie", kitchenCookie(aji)).send({}).expect(400);
   });
 
   it("rejects a dish with no name, a bad category or a fractional price", async () => {
     const aji = await makeUser({ role: "owner" });
-    const cookie = sessionCookie(aji);
+    const cookie = kitchenCookie(aji);
     const base = { name: "Test", category: "snacks", unitLabel: "per plate", price: 1000 };
 
     await request(app).post("/api/owner/menu").set("Cookie", cookie).send({ ...base, name: "" }).expect(400);
@@ -258,7 +267,7 @@ describe("the menu manager", () => {
     const aji = await makeUser({ role: "owner" });
     const { order, item } = await placeOrder();
 
-    await request(app).delete(`/api/owner/menu/${item.id}`).set("Cookie", sessionCookie(aji)).expect(204);
+    await request(app).delete(`/api/owner/menu/${item.id}`).set("Cookie", kitchenCookie(aji)).expect(204);
 
     const menu = await request(app).get("/api/menu").expect(200);
     expect(menu.body.items.some((i: MenuItemDTO) => i.id === item.id)).toBe(false);
@@ -270,7 +279,7 @@ describe("the menu manager", () => {
     expect((stillThere.body as OrderDTO).items[0]!.nameSnapshot).toBe(item.name);
 
     // A second delete is a 404, not a silent success.
-    await request(app).delete(`/api/owner/menu/${item.id}`).set("Cookie", sessionCookie(aji)).expect(404);
+    await request(app).delete(`/api/owner/menu/${item.id}`).set("Cookie", kitchenCookie(aji)).expect(404);
   });
 });
 
@@ -286,11 +295,11 @@ describe("GET /api/owner/stats", () => {
 
     await request(app)
       .patch(`/api/owner/orders/${first.id}/status`)
-      .set("Cookie", sessionCookie(aji))
+      .set("Cookie", kitchenCookie(aji))
       .send({ decision: "ACCEPTED" })
       .expect(200);
 
-    const res = await request(app).get("/api/owner/stats").set("Cookie", sessionCookie(aji)).expect(200);
+    const res = await request(app).get("/api/owner/stats").set("Cookie", kitchenCookie(aji)).expect(200);
     expect(res.body as OwnerStatsDTO).toEqual({ ordersToday: 2, waitingForDecision: 1, weekTotal: 6000 });
   });
 });
