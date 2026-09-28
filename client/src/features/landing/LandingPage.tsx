@@ -1,5 +1,6 @@
 import { AboutBook } from "./AboutBook";
 import { HeroSection } from "./HeroSection";
+import { PlannerSection } from "./PlannerSection";
 import { ReviewsSection } from "./ReviewsSection";
 import { SteamWisps } from "./SteamWisps";
 import { useSmoothScroll } from "./useSmoothScroll";
@@ -33,6 +34,7 @@ export function LandingPage() {
 
       <HeroSection />
       <AboutBook />
+      <PlannerSection />
       <ReviewsSection />
     </div>
   );
