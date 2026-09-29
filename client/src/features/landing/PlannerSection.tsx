@@ -7,8 +7,7 @@ import { Link } from "react-router";
  * the words written inside it.
  *
  * The plate is a real one, cut out of its photograph by
- * `server/scripts/dev/cutPlate.py` and taken down a fifth in brightness so
- * the words sit on it. Out of view it rests almost flat and
+ * `server/scripts/dev/cutPlate.py` and otherwise untouched. Out of view it rests almost flat and
  * small, the way a plate sits on a table; as you reach it, it lifts to face
  * you and grows. It turns slowly all the while — the words do not, because a
  * turning sentence cannot be read. Like the book, it plays again if you come
@@ -37,7 +36,7 @@ export function PlannerSection() {
     >
       <div
         ref={plateRef}
-        className="relative aspect-[363/370] w-[min(94vw,38rem)] transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+        className="relative aspect-[488/485] w-[min(94vw,38rem)] transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
         style={{
           transform: shown
             ? "perspective(1500px) rotateX(0deg) scale(1)"
@@ -55,7 +54,7 @@ export function PlannerSection() {
 
         {/* Inside the well, and never turning with the plate. */}
         <div
-          className={`absolute inset-[22%] flex flex-col items-center justify-center gap-1 text-center transition-opacity delay-300 duration-700 ${
+          className={`absolute inset-[27%] flex flex-col items-center justify-center gap-1 text-center transition-opacity delay-300 duration-700 ${
             shown ? "opacity-100" : "opacity-0"
           }`}
         >
