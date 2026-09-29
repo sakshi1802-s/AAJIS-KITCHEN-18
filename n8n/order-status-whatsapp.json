@@ -1,5 +1,5 @@
 {
-  "name": "Aji's Kitchen — order status to WhatsApp",
+  "name": "Aaji's Kitchen — order status on WhatsApp",
   "nodes": [
     {
       "parameters": {
@@ -9,50 +9,84 @@
         "responseMode": "onReceived",
         "options": {}
       },
-      "id": "a1111111-1111-4111-8111-111111111111",
+      "id": "11111111-1111-4111-8111-111111111111",
       "name": "Order status webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        20,
-        0
-      ],
-      "webhookId": "aji-order-status",
-      "notes": "Guarded by Header Auth: x-webhook-secret must match the server's N8N_SECRET."
+        0,
+        300
+      ]
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
             {
-              "id": "s1",
-              "name": "accountSid",
+              "id": "f0",
+              "name": "status",
               "type": "string",
-              "value": "PASTE_YOUR_TWILIO_ACCOUNT_SID_HERE"
+              "value": "={{ $json.body.status }}"
             },
             {
-              "id": "s2",
-              "name": "from",
+              "id": "f1",
+              "name": "orderNumber",
               "type": "string",
-              "value": "whatsapp:+17372508034"
+              "value": "={{ $json.body.orderNumber }}"
             },
             {
-              "id": "s3",
-              "name": "contentSid",
+              "id": "f2",
+              "name": "customerName",
               "type": "string",
-              "value": "HXfe5ab5f00277942d4d4200328b4d403c"
+              "value": "={{ $json.body.customerName }}"
+            },
+            {
+              "id": "f3",
+              "name": "to",
+              "type": "string",
+              "value": "=whatsapp:+91{{ $json.body.customerPhone }}"
+            },
+            {
+              "id": "f4",
+              "name": "bill",
+              "type": "string",
+              "value": "={{ $json.body.items.map(i => i.name + ' × ' + i.quantity + ' — ₹' + (i.lineTotal / 100).toFixed(0)).join(String.fromCharCode(10)) }}"
+            },
+            {
+              "id": "f5",
+              "name": "total",
+              "type": "string",
+              "value": "={{ ($json.body.total / 100).toFixed(0) }}"
+            },
+            {
+              "id": "f6",
+              "name": "wantedDate",
+              "type": "string",
+              "value": "={{ $json.body.requestedFor.date }}"
+            },
+            {
+              "id": "f7",
+              "name": "wantedSlot",
+              "type": "string",
+              "value": "={{ $json.body.requestedFor.slot }}"
+            },
+            {
+              "id": "f8",
+              "name": "ownerNote",
+              "type": "string",
+              "value": "={{ $json.body.ownerNote || '' }}"
             }
           ]
         },
         "options": {}
       },
-      "id": "aa000000-0000-4000-8000-000000000001",
-      "name": "Twilio settings",
+      "id": "22222222-2222-4222-8222-222222222222",
+      "name": "Read the order",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        240,
-        0
+        220,
+        300
       ]
     },
     {
@@ -67,7 +101,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.body.status }}",
+                    "leftValue": "={{ $json.status }}",
                     "rightValue": "ACCEPTED",
                     "operator": {
                       "type": "string",
@@ -78,7 +112,7 @@
                 "combinator": "and"
               },
               "renameOutput": true,
-              "outputKey": "accepted"
+              "outputKey": "confirmed"
             },
             {
               "conditions": {
@@ -88,7 +122,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.body.status }}",
+                    "leftValue": "={{ $json.status }}",
                     "rightValue": "DECLINED",
                     "operator": {
                       "type": "string",
@@ -105,49 +139,13 @@
         },
         "options": {}
       },
-      "id": "a2222222-2222-4222-8222-222222222222",
-      "name": "Which status?",
+      "id": "33333333-3333-4333-8333-333333333333",
+      "name": "Confirmed or declined?",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
       "position": [
-        460,
-        0
-      ],
-      "notes": "CANCELLED falls out of the switch: the customer already knows."
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "11a",
-              "name": "to",
-              "type": "string",
-              "value": "=whatsapp:+91{{ $('Order status webhook').item.json.body.customerPhone }}"
-            },
-            {
-              "id": "11b",
-              "name": "var1",
-              "type": "string",
-              "value": "=Order {{ $('Order status webhook').item.json.body.orderNumber }} is CONFIRMED by Aji's Kitchen"
-            },
-            {
-              "id": "11c",
-              "name": "var2",
-              "type": "string",
-              "value": "={{ $('Order status webhook').item.json.body.items.map(i => i.name + ' x' + i.quantity + ' ₹' + (i.lineTotal/100).toFixed(0)).join(', ') }} — total ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}, for {{ $('Order status webhook').item.json.body.requestedFor.date }} ({{ $('Order status webhook').item.json.body.requestedFor.slot }})"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "aa000000-0000-4000-8000-000000000011",
-      "name": "Accepted message",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        660,
-        0
+        440,
+        300
       ]
     },
     {
@@ -155,73 +153,76 @@
         "assignments": {
           "assignments": [
             {
-              "id": "12a",
+              "id": "f0",
               "name": "to",
               "type": "string",
-              "value": "=whatsapp:+91{{ $('Order status webhook').item.json.body.customerPhone }}"
+              "value": "={{ $('Read the order').item.json.to }}"
             },
             {
-              "id": "12b",
-              "name": "var1",
+              "id": "f1",
+              "name": "message",
               "type": "string",
-              "value": "=Order {{ $('Order status webhook').item.json.body.orderNumber }} could not be taken{{ $('Order status webhook').item.json.body.ownerNote ? ' — ' + $('Order status webhook').item.json.body.ownerNote : '' }}"
-            },
-            {
-              "id": "12c",
-              "name": "var2",
-              "type": "string",
-              "value": "={{ $('Order status webhook').item.json.body.items.map(i => i.name + ' x' + i.quantity + ' ₹' + (i.lineTotal/100).toFixed(0)).join(', ') }} — total ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}, for {{ $('Order status webhook').item.json.body.requestedFor.date }} ({{ $('Order status webhook').item.json.body.requestedFor.slot }})"
+              "value": "=🧾 *AAJI'S KITCHEN*\nOrder #{{ $('Read the order').item.json.orderNumber }}\n\n{{ $('Read the order').item.json.bill }}\n------------------------------\n*Total: ₹{{ $('Read the order').item.json.total }}*\n\n📅 {{ $('Read the order').item.json.wantedDate }}\n🕐 {{ $('Read the order').item.json.wantedSlot }}\n\nYour order has been confirmed ❤️\nPay Aaji directly on delivery."
             }
           ]
         },
         "options": {}
       },
-      "id": "aa000000-0000-4000-8000-000000000012",
-      "name": "Declined message",
+      "id": "44444444-4444-4444-8444-444444444444",
+      "name": "Confirmation message",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        660,
+        680,
         200
       ]
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $('Twilio settings').item.json.accountSid }}/Messages.json",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "twilioApi",
-        "sendBody": true,
-        "contentType": "form-urlencoded",
-        "bodyParameters": {
-          "parameters": [
+        "assignments": {
+          "assignments": [
             {
-              "name": "To",
-              "value": "={{ $json.to }}"
+              "id": "f0",
+              "name": "to",
+              "type": "string",
+              "value": "={{ $('Read the order').item.json.to }}"
             },
             {
-              "name": "From",
-              "value": "={{ $('Twilio settings').item.json.from }}"
-            },
-            {
-              "name": "ContentSid",
-              "value": "={{ $('Twilio settings').item.json.contentSid }}"
-            },
-            {
-              "name": "ContentVariables",
-              "value": "={{ JSON.stringify({ '1': $json.var1, '2': $json.var2 }) }}"
+              "id": "f1",
+              "name": "message",
+              "type": "string",
+              "value": "=🧾 *AAJI'S KITCHEN*\nOrder #{{ $('Read the order').item.json.orderNumber }}\n\nNamaskar {{ $('Read the order').item.json.customerName }}, Aaji can't take this one for {{ $('Read the order').item.json.wantedDate }}{{ $('Read the order').item.json.ownerNote ? ': ' + $('Read the order').item.json.ownerNote : '.' }}\n\n{{ $('Read the order').item.json.bill }}\n------------------------------\nTotal would have been ₹{{ $('Read the order').item.json.total }}\n\nNothing has been charged. Do try another day."
             }
           ]
         },
         "options": {}
       },
-      "id": "aa000000-0000-4000-8000-000000000020",
-      "name": "Send on WhatsApp",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "id": "55555555-5555-4555-8555-555555555555",
+      "name": "Declined message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
       "position": [
-        900,
-        100
+        680,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "whatsapp:+14155238886",
+        "to": "={{ $json.to }}",
+        "toWhatsapp": true,
+        "message": "={{ $json.message }}",
+        "options": {}
+      },
+      "id": "66666666-6666-4666-8666-666666666666",
+      "name": "Send on WhatsApp",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        920,
+        300
       ]
     }
   ],
@@ -230,29 +231,29 @@
       "main": [
         [
           {
-            "node": "Twilio settings",
+            "node": "Read the order",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Twilio settings": {
+    "Read the order": {
       "main": [
         [
           {
-            "node": "Which status?",
+            "node": "Confirmed or declined?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Which status?": {
+    "Confirmed or declined?": {
       "main": [
         [
           {
-            "node": "Accepted message",
+            "node": "Confirmation message",
             "type": "main",
             "index": 0
           }
@@ -266,7 +267,7 @@
         ]
       ]
     },
-    "Accepted message": {
+    "Confirmation message": {
       "main": [
         [
           {
@@ -291,9 +292,5 @@
   },
   "settings": {
     "executionOrder": "v1"
-  },
-  "pinData": {},
-  "meta": {
-    "description": "Receives order status changes from Aji's Kitchen and sends the customer a WhatsApp message. Import, then attach a Header Auth credential (x-webhook-secret) and Twilio credentials."
   }
 }
