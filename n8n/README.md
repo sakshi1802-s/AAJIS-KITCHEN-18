@@ -39,65 +39,63 @@ writes. `status` is `ACCEPTED`, `DECLINED` or `CANCELLED`, and `items` is what
 the customer actually ordered, snapshotted at order time, so the invoice can
 never drift from the price they were charged.
 
-## The shape of it
+## Setting it up
 
-```
-Order status webhook  →  Read the order  →  Confirmed or declined?
-                                                   ├─ confirmed → Confirmation message ─┐
-                                                   └─ declined  → Declined message ─────┴→ Send on WhatsApp
-```
-
-`Read the order` flattens the body once — phone, order number, the bill, the
-total, the day and slot — so the two message nodes stay readable. Anything
-that is neither ACCEPTED nor DECLINED (a customer's own cancellation) stops
-at the switch and sends nothing.
-
-## What you configure by hand
-
-Nothing secret is in this file. Four things to set in n8n after importing:
-
-1. **Header Auth credential** on `Order status webhook`. Name `x-webhook-secret`,
-   value the same string as `N8N_SECRET` in `server/.env`.
-2. **Twilio credential** on `Send on WhatsApp`: your Account SID and Auth
-   Token, entered in n8n. They never come near this repo.
-3. **The sender.** `from` is the sandbox number `whatsapp:+14155238886`. If
-   your sandbox shows a different one, change it in that node.
-4. **`server/.env`**:
+1. **Run n8n.** Either `npx n8n` locally (fine for a demo, but a local
+   instance is not reachable from a server deployed on Render) or n8n Cloud.
+2. **Import** `order-status-whatsapp.json` (Workflows → Import from file).
+3. **Add the shared secret.** Open the Webhook node → Authentication → Header
+   Auth → create a credential with name `x-webhook-secret` and the same value
+   you put in the server's `N8N_SECRET`.
+4. **Open "Twilio settings"** and paste your **Account SID** into
+   `accountSid`. The `from` and `contentSid` are already the trial sender and
+   template. Your **Auth Token does not go here** — it stays in the
+   credential, step 5.
+5. **Add the Twilio credential.** Open "Send on WhatsApp" → Credential for
+   Twilio API → add your Account SID and Auth Token there.
+6. **Join the sandbox** from the phone you will test with, if Twilio asks for
+   it. Every recipient has to, which is why a trial is fine for a demo and not
+   for real customers.
+7. **Point the server at it.** In `server/.env`:
    ```
-   N8N_WEBHOOK_URL=http://localhost:5678/webhook/aji-order-status
-   N8N_SECRET=<the same secret as step 1>
+   N8N_WEBHOOK_URL=https://<your-n8n>/webhook/aji-order-status
+   N8N_SECRET=<the same secret>
    ```
-   Restart the server after editing it; it reads `.env` once at boot.
+   Restart the server, then accept or decline an order.
 
-Copy the **Production URL** from the webhook node, not the Test URL — the
-test one only fires while you are watching the editor. Activate the workflow.
+## Why it calls Twilio over HTTP instead of using the Twilio node
 
-Before any of that works, join the sandbox from the phone you are testing
-with: WhatsApp `join <your-code>` to the sandbox number. Every recipient has
-to, which is why a sandbox is fine for a demo and not for real customers.
+A Twilio **trial** account refuses a free-text `Body` — it answers
 
-## What the customer gets
+> Invalid or disallowed parameters provided - trial accounts have limited
+> parameter access
 
-Confirmed:
+and demands the Content API instead: an approved template, named by a
+`ContentSid`, with the changing parts passed as `ContentVariables`. n8n's
+Twilio node has no ContentSid field, so the last step is an **HTTP Request**
+node posting to `Messages.json` directly. It authenticates with
+`predefinedCredentialType: twilioApi`, so n8n injects the same Twilio
+credential and the Auth Token never appears in this file.
 
-```
-🧾 *AAJI'S KITCHEN*
-Order #AK-260928-F2DC
+## What the message can and cannot say
 
-Bombil Thali × 2 — ₹640
-Fried Prawns × 1 — ₹300
-------------------------------
-*Total: ₹940*
+On a trial, the words are fixed by the approved template; only the variables
+change. The workflow fills two:
 
-📅 2026-09-30
-🕐 evening
+| | Accepted | Declined |
+|---|---|---|
+| `{{1}}` | `Order AK-… is CONFIRMED by Aji's Kitchen` | `Order AK-… could not be taken — <her reason>` |
+| `{{2}}` | `Bombil Thali x2 ₹640, Fried Prawns x1 ₹300 — total ₹940, for 2026-09-28 (evening)` | the same bill |
 
-Your order has been confirmed ❤️
-Pay Aaji directly on delivery.
-```
+So the invoice **is** in the message, as variable 2 — but it lands inside
+whatever sentence the template was approved with, which may read oddly.
 
-Declined carries Aaji's reason, the same bill, and says nothing has been
-charged.
+**To get the bill laid out properly**, make your own template in the Twilio
+Console (Content Template Builder), write the text you want with `{{1}}` and
+`{{2}}` where these two go, submit it for WhatsApp approval, then paste its
+new SID into the "Twilio settings" node. Nothing else changes. If your
+template needs more than two variables, add them to the `ContentVariables`
+field in "Send on WhatsApp" — it is a plain JSON object.
 
 ## Why this is deferred, honestly
 

@@ -6,8 +6,9 @@ import { Link } from "react-router";
  * Section three: an engraved copper thali lying face-up on the table, with
  * the words written inside it.
  *
- * The plate is the real one, cut out of the photograph by
- * `server/scripts/dev/cutPlate.py`. Out of view it rests almost flat and
+ * The plate is a real one, cut out of its photograph by
+ * `server/scripts/dev/cutPlate.py` and taken down a fifth in brightness so
+ * the words sit on it. Out of view it rests almost flat and
  * small, the way a plate sits on a table; as you reach it, it lifts to face
  * you and grows. It turns slowly all the while — the words do not, because a
  * turning sentence cannot be read. Like the book, it plays again if you come
@@ -36,7 +37,7 @@ export function PlannerSection() {
     >
       <div
         ref={plateRef}
-        className="relative aspect-[598/498] w-[min(94vw,38rem)] transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+        className="relative aspect-square w-[min(94vw,38rem)] transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
         style={{
           transform: shown
             ? "perspective(1500px) rotateX(0deg) scale(1)"
@@ -54,14 +55,14 @@ export function PlannerSection() {
 
         {/* Inside the well, and never turning with the plate. */}
         <div
-          className={`absolute inset-x-[23%] top-[25%] bottom-[19%] flex flex-col items-center justify-center gap-1 text-center transition-opacity delay-300 duration-700 ${
+          className={`absolute inset-[22%] flex flex-col items-center justify-center gap-1 text-center transition-opacity delay-300 duration-700 ${
             shown ? "opacity-100" : "opacity-0"
           }`}
         >
           {/* The centre of the plate is engraved; this lifts the words off it. */}
           <span
             aria-hidden="true"
-            className="pointer-events-none absolute -inset-x-6 -inset-y-4 rounded-[50%] bg-[radial-gradient(60%_60%_at_50%_50%,rgba(40,22,6,0.78),rgba(40,22,6,0.5)_58%,transparent_82%)] blur-[2px]"
+            className="pointer-events-none absolute -inset-x-8 -inset-y-6 rounded-[50%] bg-[radial-gradient(62%_62%_at_50%_50%,rgba(34,19,5,0.62),rgba(34,19,5,0.34)_60%,transparent_84%)] blur-[3px]"
           />
 
           <p
