@@ -431,3 +431,25 @@
     height: 100%;
   }
 }
+
+/* ── The planner's thali ─────────────────────────────────────────────────
+   The plate turns slowly on the table. Only the plate: the words sit in a
+   layer of their own, because a turning sentence cannot be read. */
+@keyframes thali-turn {
+  from {
+    rotate: 0deg;
+  }
+  to {
+    rotate: 360deg;
+  }
+}
+
+.thali-turn {
+  animation: thali-turn 48s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thali-turn {
+    animation: none;
+  }
+}
