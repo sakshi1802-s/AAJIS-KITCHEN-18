@@ -34,13 +34,7 @@
               "id": "s2",
               "name": "from",
               "type": "string",
-              "value": "whatsapp:+17372508034"
-            },
-            {
-              "id": "s3",
-              "name": "contentSid",
-              "type": "string",
-              "value": "HXfe5ab5f00277942d4d4200328b4d403c"
+              "value": "whatsapp:+14155238886"
             }
           ]
         },
@@ -127,15 +121,9 @@
             },
             {
               "id": "11b",
-              "name": "var1",
+              "name": "message",
               "type": "string",
-              "value": "=Order {{ $('Order status webhook').item.json.body.orderNumber }} is CONFIRMED by Aji's Kitchen"
-            },
-            {
-              "id": "11c",
-              "name": "var2",
-              "type": "string",
-              "value": "={{ $('Order status webhook').item.json.body.items.map(i => i.name + ' x' + i.quantity + ' ₹' + (i.lineTotal/100).toFixed(0)).join(', ') }} — total ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}, for {{ $('Order status webhook').item.json.body.requestedFor.date }} ({{ $('Order status webhook').item.json.body.requestedFor.slot }})"
+              "value": "=🧾 *AAJI'S KITCHEN*\nOrder #{{ $('Order status webhook').item.json.body.orderNumber }}\n\n{{ $('Order status webhook').item.json.body.items.map(i => i.name + ' × ' + i.quantity + ' — ₹' + (i.lineTotal / 100).toFixed(0)).join(String.fromCharCode(10)) }}\n------------------------------\n*Total: ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}*\n\n📅 {{ $('Order status webhook').item.json.body.requestedFor.date }}\n🕐 {{ $('Order status webhook').item.json.body.requestedFor.slot }}\n\nYour order has been confirmed ❤️\nPay Aaji directly on delivery."
             }
           ]
         },
@@ -162,15 +150,9 @@
             },
             {
               "id": "12b",
-              "name": "var1",
+              "name": "message",
               "type": "string",
-              "value": "=Order {{ $('Order status webhook').item.json.body.orderNumber }} could not be taken{{ $('Order status webhook').item.json.body.ownerNote ? ' — ' + $('Order status webhook').item.json.body.ownerNote : '' }}"
-            },
-            {
-              "id": "12c",
-              "name": "var2",
-              "type": "string",
-              "value": "={{ $('Order status webhook').item.json.body.items.map(i => i.name + ' x' + i.quantity + ' ₹' + (i.lineTotal/100).toFixed(0)).join(', ') }} — total ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}, for {{ $('Order status webhook').item.json.body.requestedFor.date }} ({{ $('Order status webhook').item.json.body.requestedFor.slot }})"
+              "value": "=🧾 *AAJI'S KITCHEN*\nOrder #{{ $('Order status webhook').item.json.body.orderNumber }}\n\nNamaskar {{ $('Order status webhook').item.json.body.customerName }}, Aaji can't take this one for {{ $('Order status webhook').item.json.body.requestedFor.date }}{{ $('Order status webhook').item.json.body.ownerNote ? ': ' + $('Order status webhook').item.json.body.ownerNote : '.' }}\n\n{{ $('Order status webhook').item.json.body.items.map(i => i.name + ' × ' + i.quantity + ' — ₹' + (i.lineTotal / 100).toFixed(0)).join(String.fromCharCode(10)) }}\n------------------------------\nTotal would have been ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}\n\nNothing has been charged. Do try another day."
             }
           ]
         },
@@ -204,12 +186,8 @@
               "value": "={{ $('Twilio settings').item.json.from }}"
             },
             {
-              "name": "ContentSid",
-              "value": "={{ $('Twilio settings').item.json.contentSid }}"
-            },
-            {
-              "name": "ContentVariables",
-              "value": "={{ JSON.stringify({ '1': $json.var1, '2': $json.var2 }) }}"
+              "name": "Body",
+              "value": "={{ $json.message }}"
             }
           ]
         },
