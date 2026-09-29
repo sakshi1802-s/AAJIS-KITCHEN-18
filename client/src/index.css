@@ -445,7 +445,7 @@
 }
 
 .thali-turn {
-  animation: thali-turn 48s linear infinite;
+  animation: thali-turn 75s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
