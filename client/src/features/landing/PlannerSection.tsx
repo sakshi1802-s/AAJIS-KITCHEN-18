@@ -1,62 +1,76 @@
 import { Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
-import { Reveal } from "@/components/Reveal";
-
-/** What a first-time customer is actually wondering, in the order they wonder it. */
-const STEPS = [
-  { n: "1", title: "Tell it the occasion", body: "A haldi for sixty. Diwali faral for the office. Upvas for twelve." },
-  { n: "2", title: "It reads Aaji's menu", body: "Only dishes she is cooking today, at the prices she set. It never invents either." },
-  { n: "3", title: "Change anything", body: "It is a suggestion, not an order. Adjust the quantities, drop what you like, then send it to her." },
-];
+import { BrassThali } from "./BrassThali";
 
 /**
- * Section three: the planner exists, and nobody arriving for the first time
- * would guess it from a nav link called "Planner AI". This says what it is in
- * one line, shows the three steps, and hands them a button.
+ * Section three: an empty thali resting on the table, which slides in from
+ * the left as you reach it while the words fade up beside it.
+ *
+ * "Planner AI" in the navigation tells a first-time customer nothing, so this
+ * says what it is and hands them the button. Like the book, it watches itself
+ * into view and plays again if you come back to it.
  */
 export function PlannerSection() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const element = sectionRef.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setShown(Boolean(entry && entry.intersectionRatio >= 0.3)),
+      { threshold: [0, 0.3, 1] },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <section className="relative flex min-h-[62svh] items-center justify-center px-4 py-14" aria-labelledby="planner-heading">
-      <Reveal className="w-full max-w-3xl">
+    <section
+      className="relative flex min-h-[72svh] items-center justify-center overflow-hidden px-4 py-14"
+      aria-labelledby="planner-heading"
+    >
+      <div
+        ref={sectionRef}
+        className="grid w-full max-w-4xl items-center gap-8 sm:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] sm:gap-12"
+      >
+        {/* Comes in from the left and settles, the way a plate is set down. */}
+        <BrassThali
+          className={`mx-auto w-[min(72vw,20rem)] transition-all duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            shown ? "translate-x-0 rotate-0 opacity-100" : "-translate-x-[130%] -rotate-12 opacity-0"
+          }`}
+        />
+
         <div
-          className="rounded-2xl border border-[#9a3412]/30 bg-[#e8d5b0] bg-repeat p-7 text-center shadow-[0_20px_60px_rgba(0,0,0,0.5)] sm:p-9"
-          style={{ backgroundImage: "url('/textures/parchment-tile.png')", backgroundSize: "400px auto" }}
+          className={`text-center transition-all delay-200 duration-[900ms] ease-[cubic-bezier(0.16,1,0.3,1)] sm:text-left ${
+            shown ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+          }`}
         >
-          <span className="mx-auto flex size-12 items-center justify-center rounded-full bg-[#9a3412]/15 text-[#9a3412]">
-            <Sparkles className="size-6" aria-hidden="true" />
-          </span>
-
-          <p lang="mr" className="mt-3 font-display-mr text-2xl text-[#9a3412] sm:text-3xl">
-            काय बनवायचं ठरत नाहीये?
+          <p lang="mr" className="font-display-mr text-2xl text-gold [text-shadow:0_3px_16px_rgba(0,0,0,0.9)] sm:text-3xl">
+            काय मागवायचं ठरत नाहीये?
           </p>
-          <h2 id="planner-heading" className="mt-1 font-royal text-2xl font-bold tracking-wide text-[#4a2410] sm:text-3xl">
-            Not sure what to order?
+          <h2
+            id="planner-heading"
+            className="mt-1 font-royal text-3xl font-bold tracking-wide text-cream [text-shadow:0_2px_14px_rgba(0,0,0,0.95)] sm:text-4xl"
+          >
+            Confused what to order?
           </h2>
-          <p className="mx-auto mt-3 max-w-xl text-[1.02rem] leading-relaxed text-[#5b3620]">
-            Let the planner work it out. Say who you are feeding and what the day is, and it puts a spread together
-            from Aaji's own menu.
-          </p>
 
-          <ol className="mt-7 grid gap-5 text-left sm:grid-cols-3">
-            {STEPS.map((step) => (
-              <li key={step.n}>
-                <span className="flex size-8 items-center justify-center rounded-full bg-[#9a3412] font-royal text-sm font-bold text-[#f8ecd5]">
-                  {step.n}
-                </span>
-                <h3 className="mt-2.5 font-royal text-base font-bold text-[#4a2410]">{step.title}</h3>
-                <p className="mt-1 text-sm leading-snug text-[#5b3620]">{step.body}</p>
-              </li>
-            ))}
-          </ol>
+          <p className="mt-4 max-w-md text-[1.05rem] leading-relaxed text-cream/90 [text-shadow:0_2px_12px_rgba(0,0,0,0.95)]">
+            Tell the Planner AI who you're feeding and what the day is, and it lays out a spread from Aaji's own menu.
+            Only what she is cooking, only at her prices. Change anything before you send it to her.
+          </p>
 
           <Link
             to="/plan"
-            className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#9a3412] px-8 py-3.5 font-royal text-base font-bold tracking-wide text-[#f8ecd5] outline-none transition-colors hover:bg-[#7c2d12] focus-visible:ring-3 focus-visible:ring-[#9a3412]/40"
+            className="mt-7 inline-flex items-center gap-2 rounded-full bg-[#9a3412] px-8 py-3.5 font-royal text-base font-bold tracking-wide text-[#f8ecd5] shadow-[0_10px_30px_rgba(0,0,0,0.45)] outline-none transition-colors hover:bg-[#7c2d12] focus-visible:ring-3 focus-visible:ring-gold/50"
           >
-            <Sparkles className="size-5" aria-hidden="true" /> Plan my menu
+            <Sparkles className="size-5" aria-hidden="true" /> Use the Planner AI
           </Link>
         </div>
-      </Reveal>
+      </div>
     </section>
   );
 }
