@@ -37,7 +37,7 @@ export function PlannerSection() {
     >
       <div
         ref={plateRef}
-        className="relative aspect-square w-[min(94vw,38rem)] transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
+        className="relative aspect-[363/370] w-[min(94vw,38rem)] transition-transform duration-[1100ms] ease-[cubic-bezier(0.16,1,0.3,1)]"
         style={{
           transform: shown
             ? "perspective(1500px) rotateX(0deg) scale(1)"
