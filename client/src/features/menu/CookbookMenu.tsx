@@ -186,9 +186,15 @@ function useIsWide(): boolean {
   return wide;
 }
 
-const TAB = "h-10 rounded-full border px-5 text-sm font-semibold transition-colors outline-none focus-visible:ring-3 focus-visible:ring-gold/40";
-const TAB_ON = "border-gold bg-gold text-[#4a2410]";
-const TAB_OFF = "border-gold/40 bg-black/30 text-cream hover:bg-black/45";
+/**
+ * The sections, as a ribbon of tabs down the left edge of the book — the way
+ * a recipe book has tabs cut into its pages, rather than a row of pills that
+ * could belong to any site.
+ */
+const TAB =
+  "group relative flex w-full items-center gap-3 rounded-l-lg border-y border-l py-3 pr-3 pl-4 text-left font-royal text-sm font-semibold tracking-wide transition-all outline-none focus-visible:ring-3 focus-visible:ring-gold/40";
+const TAB_ON = "border-[#9a3412]/50 bg-[#e8d5b0] text-[#4a2410] shadow-[0_6px_18px_rgba(0,0,0,0.4)]";
+const TAB_OFF = "border-transparent bg-black/35 text-cream/85 hover:bg-black/50 hover:pl-5";
 
 /**
  * The menu as Aaji's own recipe book: pick a section and the book turns to it.
@@ -213,24 +219,36 @@ export function CookbookMenu({ items }: { items: MenuItemDTO[] }) {
 
   return (
     <div className="flex flex-col items-center">
-      <div role="group" aria-label="Jump to a section" className="mb-4 flex flex-wrap justify-center gap-2">
-        <button type="button" aria-pressed={page === 0} onClick={() => goTo(0)} className={cn(TAB, page === 0 ? TAB_ON : TAB_OFF)}>
-          All
-        </button>
-        {sections.map((category) => (
+      <div className="flex w-full items-start justify-center gap-0">
+        <div
+          role="group"
+          aria-label="Jump to a section"
+          className="mt-10 flex w-[8.5rem] shrink-0 flex-col gap-1.5 sm:w-[11rem]"
+        >
           <button
-            key={category}
             type="button"
-            aria-pressed={current === category}
-            onClick={() => goTo(starts[category] ?? 0)}
-            className={cn(TAB, current === category ? TAB_ON : TAB_OFF)}
+            aria-pressed={page === 0}
+            onClick={() => goTo(0)}
+            className={cn(TAB, page === 0 ? TAB_ON : TAB_OFF)}
           >
-            {CATEGORY_LABELS[category].en}
+            <span className="h-6 w-0.5 shrink-0 rounded-full bg-current opacity-40" aria-hidden="true" />
+            All
           </button>
-        ))}
-      </div>
+          {sections.map((category) => (
+            <button
+              key={category}
+              type="button"
+              aria-pressed={current === category}
+              onClick={() => goTo(starts[category] ?? 0)}
+              className={cn(TAB, current === category ? TAB_ON : TAB_OFF)}
+            >
+              <span className="h-6 w-0.5 shrink-0 rounded-full bg-current opacity-40" aria-hidden="true" />
+              <span className="min-w-0 leading-tight">{CATEGORY_LABELS[category].en}</span>
+            </button>
+          ))}
+        </div>
 
-      <FlipBook
+        <FlipBook
         // The page shape is fixed when the book is built, so a change of
         // shape has to build a new one.
         key={wide ? "wide" : "narrow"}
@@ -253,7 +271,8 @@ export function CookbookMenu({ items }: { items: MenuItemDTO[] }) {
         onFlip={(event) => setPage(event.data)}
       >
         {pages}
-      </FlipBook>
+        </FlipBook>
+      </div>
 
       <div className="mt-4 flex items-center gap-4">
         <button

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, type ReactNode } from "react";
 import { useLocation } from "react-router";
-import { scopeForPath } from "@/features/auth/authContext";
+import { isKitchenPath, readTabScope } from "@/features/auth/authContext";
 import { useAuth } from "@/features/auth/useAuth";
 import { CART_STORAGE_KEY, CartContext, type CartContextValue, type CartLine } from "./cartContext";
 import { cartReducer, cartTotal } from "./cartReducer";
@@ -32,9 +32,10 @@ function readStoredCart(): CartLine[] {
 export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, dispatch] = useReducer(cartReducer, undefined, readStoredCart);
   const { user } = useAuth();
-  // On the kitchen's pages `user` is Aji, not the shopper, so those pages say
-  // nothing about whose plate this is.
-  const isShop = scopeForPath(useLocation().pathname) === "customer";
+  // In a kitchen window `user` is Aji, not a shopper, so it says nothing
+  // about whose plate this is.
+  const { pathname } = useLocation();
+  const isShop = !isKitchenPath(pathname) && readTabScope() === "customer";
 
   // Signing out of the shop empties the plate, so the next person at this
   // browser starts clean. Only on the way out: a guest who hasn't signed in

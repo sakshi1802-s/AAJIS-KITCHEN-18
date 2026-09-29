@@ -9,6 +9,7 @@ import { OwnerLoginPage } from "@/features/auth/OwnerLoginPage";
 import { SignInPage } from "@/features/auth/SignInPage";
 import { CartProvider } from "@/features/cart/CartProvider";
 import { CartPage } from "@/features/cart/CartPage";
+import { PlateBar } from "@/features/cart/PlateBar";
 import { LandingPage } from "@/features/landing/LandingPage";
 import { MenuPage } from "@/features/menu/MenuPage";
 import { MyOrdersPage } from "@/features/orders/MyOrdersPage";
@@ -84,7 +85,8 @@ export default function App() {
               </Route>
             </Routes>
           </Suspense>
-          <Toaster position="top-center" richColors closeButton />
+          <PlateBar />
+          <Toaster position="top-center" closeButton />
         </CartProvider>
       </AuthProvider>
     </BrowserRouter>

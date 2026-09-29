@@ -12,7 +12,7 @@ export function MenuPage() {
   const menu = useMenu();
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 pt-1 pb-8">
+    <div className="mx-auto w-full max-w-[88rem] px-4 pt-1 pb-8">
       {/* One compact line, so the book itself sits high on the screen. */}
       <header className="mb-3 flex items-baseline justify-center gap-3">
         <p lang="mr" className="font-display-mr text-2xl text-gold sm:text-3xl">

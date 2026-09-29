@@ -1,6 +1,6 @@
 import { ChefHat, LogOut, Receipt, User as UserIcon } from "lucide-react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,10 +13,15 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuth } from "@/features/auth/useAuth";
 import { cn } from "@/lib/utils";
+import { Curtain } from "./Curtain";
+import { randomSlogan } from "./slogans";
 
 /** `onHero` sits this over the photograph, where the styling has to be light. */
 export function AccountMenu({ onHero = false }: { onHero?: boolean }) {
   const { user, isLoading, isOwner, signOut } = useAuth();
+  // Signing out clears a cookie, a cache and the plate; the curtain covers
+  // that rather than letting the header flicker through it.
+  const [leaving, setLeaving] = useState<string | null>(null);
   const navigate = useNavigate();
 
   if (isLoading) return <Skeleton className="size-9 rounded-full" />;
@@ -100,15 +105,19 @@ export function AccountMenu({ onHero = false }: { onHero?: boolean }) {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => {
-            void signOut().then(() => {
-              toast.success("Signed out");
+            setLeaving(randomSlogan());
+            void signOut().finally(() => {
               void navigate("/");
+              // Long enough to read, short enough not to be a wait.
+              setTimeout(() => setLeaving(null), 700);
             });
           }}
         >
           <LogOut /> Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
+
+      {leaving && <Curtain slogan={leaving} />}
     </DropdownMenu>
   );
 }

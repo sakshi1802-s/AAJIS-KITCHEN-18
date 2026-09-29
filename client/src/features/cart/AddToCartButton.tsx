@@ -1,5 +1,4 @@
 import { Minus, Plus } from "lucide-react";
-import { toast } from "sonner";
 import type { MenuItemDTO } from "@shared/api";
 import { Button } from "@/components/ui/button";
 import { getAvailability } from "@/features/menu/availability";
@@ -27,23 +26,18 @@ export function AddToCartButton({ item }: { item: MenuItemDTO }) {
       <Button
         size="lg"
         className="rounded-full"
-        onClick={() => {
-          add(item);
-          toast.success(`${item.name} added`, { description: item.unitLabel });
-        }}
+        onClick={() => add(item)}
       >
         <Plus /> Add
       </Button>
     );
   }
 
+  // The plate pill at the bottom of the screen says what was added; a toast
+  // per tap would stack up while someone is choosing six dishes.
   const atMax = quantity >= maxQuantity;
   const step = () => {
-    if (atMax) {
-      toast.info(`Only ${maxQuantity} left today`);
-      return;
-    }
-    setQuantity(item.id, quantity + 1);
+    if (!atMax) setQuantity(item.id, quantity + 1);
   };
 
   return (

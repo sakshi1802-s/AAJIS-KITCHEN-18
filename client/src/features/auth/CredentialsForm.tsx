@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ApiError, api } from "@/lib/api";
 import { cn } from "@/lib/utils";
-import { authKeys, type SessionScope } from "./authContext";
+import { authKeys, writeTabScope, type SessionScope } from "./authContext";
 
 type Mode = "login" | "register";
 
@@ -48,6 +48,8 @@ export function CredentialsForm({
         ? api.post<UserDTO>("/auth/register", { ...payload, scope })
         : api.post<UserDTO>("/auth/login", { email: payload.email, password: payload.password, scope }),
     onSuccess: (account) => {
+      // This window is now at that door, wherever it navigates next.
+      writeTabScope(scope);
       queryClient.setQueryData(authKeys.me(scope), account);
       toast.success(`Welcome, ${account.name.split(" ")[0] ?? account.name}`);
       void navigate(account.role === "owner" ? "/owner" : redirectTo, { replace: true });
