@@ -6,7 +6,7 @@
         "httpMethod": "POST",
         "path": "aji-order-status",
         "authentication": "headerAuth",
-        "responseMode": "onReceived",
+        "responseMode": "lastNode",
         "options": {}
       },
       "id": "a1111111-1111-4111-8111-111111111111",
@@ -34,7 +34,13 @@
               "id": "s2",
               "name": "from",
               "type": "string",
-              "value": "whatsapp:+14155238886"
+              "value": "whatsapp:+17372508034"
+            },
+            {
+              "id": "s3",
+              "name": "contentSid",
+              "type": "string",
+              "value": "HXfe5ab5f00277942d4d4200328b4d403c"
             }
           ]
         },
@@ -117,13 +123,19 @@
               "id": "11a",
               "name": "to",
               "type": "string",
-              "value": "=whatsapp:+91{{ $('Order status webhook').item.json.body.customerPhone }}"
+              "value": "={{ (() => { const d = String($('Order status webhook').item.json.body.customerPhone || '').replace(/\\D/g, ''); const ten = d.slice(-10); return ten.length === 10 ? 'whatsapp:+91' + ten : ''; })() }}"
             },
             {
               "id": "11b",
-              "name": "message",
+              "name": "var1",
               "type": "string",
-              "value": "=🧾 *AAJI'S KITCHEN*\nOrder #{{ $('Order status webhook').item.json.body.orderNumber }}\n\n{{ $('Order status webhook').item.json.body.items.map(i => i.name + ' × ' + i.quantity + ' — ₹' + (i.lineTotal / 100).toFixed(0)).join(String.fromCharCode(10)) }}\n------------------------------\n*Total: ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}*\n\n📅 {{ $('Order status webhook').item.json.body.requestedFor.date }}\n🕐 {{ $('Order status webhook').item.json.body.requestedFor.slot }}\n\nYour order has been confirmed ❤️\nPay Aaji directly on delivery."
+              "value": "=Order {{ $('Order status webhook').item.json.body.orderNumber }} CONFIRMED by Aji's Kitchen"
+            },
+            {
+              "id": "11c",
+              "name": "var2",
+              "type": "string",
+              "value": "={{ $('Order status webhook').item.json.body.items.map(i => i.name + ' x' + i.quantity + ' ₹' + (i.lineTotal / 100).toFixed(0)).join(', ') }} — total ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}, for {{ $('Order status webhook').item.json.body.requestedFor.date }} ({{ $('Order status webhook').item.json.body.requestedFor.slot }})"
             }
           ]
         },
@@ -146,13 +158,19 @@
               "id": "12a",
               "name": "to",
               "type": "string",
-              "value": "=whatsapp:+91{{ $('Order status webhook').item.json.body.customerPhone }}"
+              "value": "={{ (() => { const d = String($('Order status webhook').item.json.body.customerPhone || '').replace(/\\D/g, ''); const ten = d.slice(-10); return ten.length === 10 ? 'whatsapp:+91' + ten : ''; })() }}"
             },
             {
               "id": "12b",
-              "name": "message",
+              "name": "var1",
               "type": "string",
-              "value": "=🧾 *AAJI'S KITCHEN*\nOrder #{{ $('Order status webhook').item.json.body.orderNumber }}\n\nNamaskar {{ $('Order status webhook').item.json.body.customerName }}, Aaji can't take this one for {{ $('Order status webhook').item.json.body.requestedFor.date }}{{ $('Order status webhook').item.json.body.ownerNote ? ': ' + $('Order status webhook').item.json.body.ownerNote : '.' }}\n\n{{ $('Order status webhook').item.json.body.items.map(i => i.name + ' × ' + i.quantity + ' — ₹' + (i.lineTotal / 100).toFixed(0)).join(String.fromCharCode(10)) }}\n------------------------------\nTotal would have been ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}\n\nNothing has been charged. Do try another day."
+              "value": "=Order {{ $('Order status webhook').item.json.body.orderNumber }} could not be taken{{ $('Order status webhook').item.json.body.ownerNote ? ' — ' + $('Order status webhook').item.json.body.ownerNote : '' }}"
+            },
+            {
+              "id": "12c",
+              "name": "var2",
+              "type": "string",
+              "value": "={{ $('Order status webhook').item.json.body.items.map(i => i.name + ' x' + i.quantity + ' ₹' + (i.lineTotal / 100).toFixed(0)).join(', ') }} — total ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}, for {{ $('Order status webhook').item.json.body.requestedFor.date }} ({{ $('Order status webhook').item.json.body.requestedFor.slot }})"
             }
           ]
         },
@@ -186,12 +204,23 @@
               "value": "={{ $('Twilio settings').item.json.from }}"
             },
             {
-              "name": "Body",
-              "value": "={{ $json.message }}"
+              "name": "ContentSid",
+              "value": "={{ $('Twilio settings').item.json.contentSid }}"
+            },
+            {
+              "name": "ContentVariables",
+              "value": "={{ JSON.stringify({ '1': $json.var1, '2': $json.var2 }) }}"
             }
           ]
         },
-        "options": {}
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "fullResponse": true
+            }
+          }
+        }
       },
       "id": "aa000000-0000-4000-8000-000000000020",
       "name": "Send on WhatsApp",
