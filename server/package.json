@@ -14,7 +14,8 @@
     "set-owner-password": "tsx scripts/setOwnerPassword.ts",
     "dev:session": "tsx scripts/dev/devSession.ts",
     "dev:poke": "tsx scripts/dev/poke.ts",
-    "check:gemini": "tsx scripts/dev/checkGemini.ts"
+    "check:gemini": "tsx scripts/dev/checkGemini.ts",
+    "check:n8n": "tsx scripts/dev/checkN8n.ts"
   },
   "type": "module",
   "dependencies": {
