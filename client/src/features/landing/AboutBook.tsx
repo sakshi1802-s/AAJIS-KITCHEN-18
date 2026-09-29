@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { FlipBook, type FlipBookHandle } from "@/components/FlipBook";
 
-/** Four spreads: a photograph on the left, a short piece of her story on the right. */
+/** Her photograph on the left, a short piece of her story on the right. */
 const SPREADS = [
   {
     photo: "/aji/aaji.webp",
@@ -10,22 +10,28 @@ const SPREADS = [
     body: "Aaji has cooked for her family since she was nineteen. First for her own house, then for every wedding, haldi and Ganpati on the street.",
   },
   {
-    photo: "/aji/thali-raised.webp",
+    photo: "/aji/thali.webp",
     marathi: "घरचंच, सगळं",
     heading: "Nothing out of a packet",
     body: "The bhajani is ground at home, the masala is pounded and not bought, the ghee is her own, and the vegetables are picked the morning she cooks them.",
   },
   {
-    photo: "/aji/carrying.webp",
+    photo: "/aji/aaji-aajoba.webp",
     marathi: "आजोबांची साथ",
     heading: "Aajoba does the running about",
     body: "He reads her the orders off the phone, goes down to the market at six, turns the grinding stone when her wrist tires, and walks every tiffin out to the gate himself.",
   },
   {
-    photo: "/dishes/ukadiche-modak.webp",
+    photo: "/aji/faral.webp",
+    marathi: "दिवाळीचा फराळ",
+    heading: "Diwali comes out of this kitchen",
+    body: "Chakli, sev, chivda, shankarpali, besan ladoo. The tins go out to half the street, and they are filled the week before, not the night before.",
+  },
+  {
+    photo: "/aji/modak.webp",
     marathi: "सणासुदीला",
     heading: "For the days that matter",
-    body: "Modak at Ganpati, faral tins at Diwali, puran poli at Holi, a full naivedya thali for a puja. Tell her the occasion and she will cook to it.",
+    body: "Twenty-one modak at Ganpati, steamed that morning. Puran poli at Holi, a full naivedya thali for a puja. Tell her the occasion and she will cook to it.",
   },
 ];
 
@@ -109,7 +115,7 @@ export function AboutBook() {
   return (
     <section
       id="about-aji"
-      className="relative flex min-h-[82svh] flex-col items-center justify-center gap-5 px-4 py-8"
+      className="relative flex min-h-[92svh] flex-col items-center justify-end gap-5 px-4 pt-[18svh] pb-[9svh]"
     >
       {/* A definite width: with size="stretch" the book measures its parent,
           and a shrink-to-fit parent collapses it to the minimum. */}
