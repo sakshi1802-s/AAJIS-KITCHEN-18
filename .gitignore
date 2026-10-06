@@ -25,3 +25,6 @@ Thumbs.db
 # test / tooling
 coverage/
 .vercel/
+
+# Local editor/tooling config
+.claude/

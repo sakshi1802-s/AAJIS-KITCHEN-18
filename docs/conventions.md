@@ -1,4 +1,4 @@
-# Aji's Kitchen — rules for the build
+# Aaji's Kitchen — conventions
 
 Source of truth: the roadmap (sections 1–11). The flow is **browse → cart → place order → Aji accepts → WhatsApp confirmation**.
 Repo: `/client` (Vite + React + TS), `/server` (Express 5 + TS), `/types` (shared API contract, types only), `/n8n` (workflow export).
