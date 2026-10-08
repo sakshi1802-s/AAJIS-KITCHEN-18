@@ -14,15 +14,21 @@ Aaji's Kitchen is the full stack web platform I built for that business. A custo
 
 ## Architecture
 
-<img width="600" alt="Aaji's Kitchen architecture" src="https://github.com/user-attachments/assets/d3eb1af8-08f4-4a89-902d-bef20f132637" />
+<img width="435" height="282" alt="aajis kitchen drawing" src="https://github.com/user-attachments/assets/d31e2467-e0f3-4f8a-b103-e9ee41a3e3c4" />
+
 
 ## Demo
 
-https://github.com/user-attachments/assets/c4e73399-abbb-4cb0-83d4-7173e6d2a52d
+
+
+https://github.com/user-attachments/assets/57f4b9af-6c2f-498d-bf55-c5efa48beb38
+
+
 
 ## WhatsApp confirmation
 
-<img width="391" alt="WhatsApp confirmation on Twilio trial" src="https://github.com/user-attachments/assets/38aca889-9cde-481c-b4a2-ef736a34b817" />
+<img width="391" height="253" alt="twilio trial" src="https://github.com/user-attachments/assets/5a6a6562-6ef4-4fd6-b028-aef9037777a2" />
+
 
 > I'm on Twilio's free template, which is why the confirmation looks like this and can arrive slightly delayed. On a paid plan the same message can be formatted as a proper invoice.
 
