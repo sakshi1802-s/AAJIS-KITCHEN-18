@@ -6,54 +6,24 @@
         "httpMethod": "POST",
         "path": "aji-order-status",
         "authentication": "headerAuth",
-        "responseMode": "lastNode",
         "options": {}
       },
-      "id": "a1111111-1111-4111-8111-111111111111",
+      "id": "f51f44ee-1f91-458a-97d9-b19ab4eda5ab",
       "name": "Order status webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
       "position": [
-        20,
-        0
+        -496,
+        128
       ],
       "webhookId": "aji-order-status",
-      "notes": "Guarded by Header Auth: x-webhook-secret must match the server's N8N_SECRET."
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "s1",
-              "name": "accountSid",
-              "type": "string",
-              "value": "PASTE_YOUR_TWILIO_ACCOUNT_SID_HERE"
-            },
-            {
-              "id": "s2",
-              "name": "from",
-              "type": "string",
-              "value": "whatsapp:+17372508034"
-            },
-            {
-              "id": "s3",
-              "name": "contentSid",
-              "type": "string",
-              "value": "HXfe5ab5f00277942d4d4200328b4d403c"
-            }
-          ]
-        },
-        "options": {}
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "xQfFEgdVf3NKiWnW",
+          "name": "Header Auth account"
+        }
       },
-      "id": "aa000000-0000-4000-8000-000000000001",
-      "name": "Twilio settings",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        240,
-        0
-      ]
+      "notes": "Guarded by Header Auth: x-webhook-secret must match the server's N8N_SECRET."
     },
     {
       "parameters": {
@@ -63,7 +33,9 @@
               "conditions": {
                 "options": {
                   "caseSensitive": true,
-                  "version": 2
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
                 },
                 "conditions": [
                   {
@@ -72,7 +44,8 @@
                     "operator": {
                       "type": "string",
                       "operation": "equals"
-                    }
+                    },
+                    "id": "fd0ec8b8-662b-4eab-afec-6f95dd925590"
                   }
                 ],
                 "combinator": "and"
@@ -84,7 +57,9 @@
               "conditions": {
                 "options": {
                   "caseSensitive": true,
-                  "version": 2
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
                 },
                 "conditions": [
                   {
@@ -93,7 +68,8 @@
                     "operator": {
                       "type": "string",
                       "operation": "equals"
-                    }
+                    },
+                    "id": "ea21ab5a-8c6a-41c4-85d2-ce29f5109b82"
                   }
                 ],
                 "combinator": "and"
@@ -105,13 +81,13 @@
         },
         "options": {}
       },
-      "id": "a2222222-2222-4222-8222-222222222222",
+      "id": "cca4ddee-1e02-4b9b-9470-181b6b588c3c",
       "name": "Which status?",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
       "position": [
-        460,
-        0
+        -256,
+        128
       ],
       "notes": "CANCELLED falls out of the switch: the customer already knows."
     },
@@ -120,33 +96,27 @@
         "assignments": {
           "assignments": [
             {
-              "id": "11a",
+              "id": "m1",
               "name": "to",
               "type": "string",
-              "value": "={{ (() => { const d = String($('Order status webhook').item.json.body.customerPhone || '').replace(/\\D/g, ''); const ten = d.slice(-10); return ten.length === 10 ? 'whatsapp:+91' + ten : ''; })() }}"
+              "value": "=whatsapp:+91{{ $json.body.customerPhone }}"
             },
             {
-              "id": "11b",
-              "name": "var1",
+              "id": "m2",
+              "name": "message",
               "type": "string",
-              "value": "=Order {{ $('Order status webhook').item.json.body.orderNumber }} CONFIRMED by Aji's Kitchen"
-            },
-            {
-              "id": "11c",
-              "name": "var2",
-              "type": "string",
-              "value": "={{ $('Order status webhook').item.json.body.items.map(i => i.name + ' x' + i.quantity + ' ₹' + (i.lineTotal / 100).toFixed(0)).join(', ') }} — total ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}, for {{ $('Order status webhook').item.json.body.requestedFor.date }} ({{ $('Order status webhook').item.json.body.requestedFor.slot }})"
+              "value": "=Namaskar {{ $json.body.customerName }}!\n\nAji has confirmed your order *{{ $json.body.orderNumber }}*\n\n*BILL*\n{{ $json.body.items.map(i => i.name + '  x' + i.quantity + '   ₹' + (i.lineTotal/100).toFixed(0)).join(String.fromCharCode(10)) }}\n------------------------------\n*Total   ₹{{ ($json.body.total / 100).toFixed(0) }}*\n\nDelivery: {{ $json.body.requestedFor.date }} ({{ $json.body.requestedFor.slot }})\nTo: {{ [$json.body.deliveryAddress.line1, $json.body.deliveryAddress.line2, $json.body.deliveryAddress.city, $json.body.deliveryAddress.pincode].filter(Boolean).join(', ') }}\n\nPay Aji directly on delivery. Dhanyavaad!"
             }
           ]
         },
         "options": {}
       },
-      "id": "aa000000-0000-4000-8000-000000000011",
+      "id": "46025839-0fce-4978-a601-fc019c24408c",
       "name": "Accepted message",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        660,
+        0,
         0
       ]
     },
@@ -155,96 +125,57 @@
         "assignments": {
           "assignments": [
             {
-              "id": "12a",
+              "id": "d1",
               "name": "to",
               "type": "string",
-              "value": "={{ (() => { const d = String($('Order status webhook').item.json.body.customerPhone || '').replace(/\\D/g, ''); const ten = d.slice(-10); return ten.length === 10 ? 'whatsapp:+91' + ten : ''; })() }}"
+              "value": "=whatsapp:+91{{ $json.body.customerPhone }}"
             },
             {
-              "id": "12b",
-              "name": "var1",
+              "id": "d2",
+              "name": "message",
               "type": "string",
-              "value": "=Order {{ $('Order status webhook').item.json.body.orderNumber }} could not be taken{{ $('Order status webhook').item.json.body.ownerNote ? ' — ' + $('Order status webhook').item.json.body.ownerNote : '' }}"
-            },
-            {
-              "id": "12c",
-              "name": "var2",
-              "type": "string",
-              "value": "={{ $('Order status webhook').item.json.body.items.map(i => i.name + ' x' + i.quantity + ' ₹' + (i.lineTotal / 100).toFixed(0)).join(', ') }} — total ₹{{ ($('Order status webhook').item.json.body.total / 100).toFixed(0) }}, for {{ $('Order status webhook').item.json.body.requestedFor.date }} ({{ $('Order status webhook').item.json.body.requestedFor.slot }})"
+              "value": "=Namaskar {{ $json.body.customerName }}, Aji can't take order *{{ $json.body.orderNumber }}* for {{ $json.body.requestedFor.date }}{{ $json.body.ownerNote ? ': ' + $json.body.ownerNote : '.' }}\n\nNothing has been charged. Do try another day."
             }
           ]
         },
         "options": {}
       },
-      "id": "aa000000-0000-4000-8000-000000000012",
+      "id": "71febe37-6347-4fbd-ad58-13cc6636d5b4",
       "name": "Declined message",
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        660,
-        200
+        0,
+        224
       ]
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $('Twilio settings').item.json.accountSid }}/Messages.json",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "twilioApi",
-        "sendBody": true,
-        "contentType": "form-urlencoded",
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "To",
-              "value": "={{ $json.to }}"
-            },
-            {
-              "name": "From",
-              "value": "={{ $('Twilio settings').item.json.from }}"
-            },
-            {
-              "name": "ContentSid",
-              "value": "={{ $('Twilio settings').item.json.contentSid }}"
-            },
-            {
-              "name": "ContentVariables",
-              "value": "={{ JSON.stringify({ '1': $json.var1, '2': $json.var2 }) }}"
-            }
-          ]
-        },
-        "options": {
-          "response": {
-            "response": {
-              "neverError": true,
-              "fullResponse": true
-            }
-          }
+        "from": "whatsapp:+17372508034",
+        "to": "={{ $json.to }}",
+        "toWhatsapp": true,
+        "message": "={{ $json.message }}",
+        "options": {}
+      },
+      "id": "de8fa011-eeb8-4ee4-a8c2-a8b32cb03a00",
+      "name": "Send on WhatsApp",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        288,
+        112
+      ],
+      "credentials": {
+        "twilioApi": {
+          "id": "TIsnsmV2NcRwWhx7",
+          "name": "Twilio account"
         }
       },
-      "id": "aa000000-0000-4000-8000-000000000020",
-      "name": "Send on WhatsApp",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        900,
-        100
-      ]
+      "notes": "Twilio sandbox number. Each recipient must send the join code once."
     }
   ],
   "connections": {
     "Order status webhook": {
-      "main": [
-        [
-          {
-            "node": "Twilio settings",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Twilio settings": {
       "main": [
         [
           {
@@ -297,10 +228,7 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
-  },
-  "pinData": {},
-  "meta": {
-    "description": "Receives order status changes from Aji's Kitchen and sends the customer a WhatsApp message. Import, then attach a Header Auth credential (x-webhook-secret) and Twilio credentials."
+    "executionOrder": "v1",
+    "binaryMode": "separate"
   }
 }

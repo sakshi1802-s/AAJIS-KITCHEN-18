@@ -41,17 +41,33 @@ never drift from the price they were charged.
 
 ## Setting it up
 
-1. **Run n8n.** Either `npx n8n` locally (fine for a demo, but a local
-   instance is not reachable from a server deployed on Render) or n8n Cloud.
+1. **Run n8n.** Copy `package.json` into a folder whose path contains **no apostrophe** — `C:\Users\<you>\aji-kitchen-n8n`
+   works — then run `npm install` there once, and `npm start` to launch it.
+
+   Two things make that instruction look stranger than it is:
+
+   - The version is pinned on purpose. `npx n8n` re-resolves to whatever is
+     newest on every run, and an unasked-for upgrade rewrites the instance
+     encryption keys. After that, n8n cannot read its own stored credentials
+     and every message stops — with only a `DEK ... is in an unrecognized
+     format` line in the log to explain why.
+   - n8n cannot run from a path containing an apostrophe. It builds a
+     `require('<absolute path>')` string and `eval`s it, so a folder named
+     `Aaji's Kitchen` closes the quote early and node throws
+     `SyntaxError: missing ) after argument list` before the server starts.
+
+   A local instance is fine for a demo but is not reachable from a server
+   deployed on Render; use n8n Cloud for that.
 2. **Import** `order-status-whatsapp.json` (Workflows → Import from file).
 3. **Add the shared secret.** Open the Webhook node → Authentication → Header
    Auth → create a credential with name `x-webhook-secret` and the same value
    you put in the server's `N8N_SECRET`.
-4. **Open "Twilio settings"** and paste your **Account SID** into
-   `accountSid`. The `from` is already the WhatsApp sandbox sender. Your
-   **Auth Token does not go here** — it stays in the credential, step 5.
-5. **Add the Twilio credential.** Open "Send on WhatsApp" → Credential for
-   Twilio API → add your Account SID and Auth Token there.
+4. **Add the Twilio credential.** Open "Send on WhatsApp" → Credential for
+   Twilio API → add your Account SID and Auth Token. Both live in the
+   credential and nowhere else, so neither reaches this repo.
+5. **Set the sender.** In the same node, `from` is the WhatsApp sandbox
+   number. The message body is built by the two Set nodes before it, so the
+   text is ours — not one of Twilio's fixed templates.
 6. **Join the sandbox** from every phone that should receive a message:
    WhatsApp `join <your-code>` to the sandbox number. This is not optional —
    it is what opens the 24-hour window a plain message needs. It is also why

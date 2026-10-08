@@ -1,0 +1,11 @@
+{
+  "name": "aji-kitchen-n8n",
+  "private": true,
+  "description": "Pinned n8n for the order-status WhatsApp workflow",
+  "scripts": {
+    "start": "n8n start"
+  },
+  "dependencies": {
+    "n8n": "2.41.7"
+  }
+}
